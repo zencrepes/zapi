@@ -4,6 +4,6 @@ import { AliveService } from './alive.service';
 
 @Module({
   controllers: [AliveController],
-  providers: [AliveService]
+  providers: [AliveService],
 })
 export class AliveModule {}

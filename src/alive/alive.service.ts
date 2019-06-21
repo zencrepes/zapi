@@ -6,8 +6,8 @@ import { EsClientSettings } from '../types';
 
 @Injectable()
 export class AliveService {
-  async getAlive(EsClientSettings: EsClientSettings): Promise<any> {
-    const client = await esClient(EsClientSettings);
+  async getAlive(EsSettings: EsClientSettings): Promise<any> {
+    const client = await esClient(EsSettings);
     const connectedUser: ApiResponse = await client.security.authenticate();
     return connectedUser;
   }
