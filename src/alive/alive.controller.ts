@@ -8,8 +8,9 @@ export class AliveController {
 
   @Get()
   async getAlive(@Req() request: Request) {
+    const connector = request.headers.cfg_connector;
     const alive = await this.aliveService.getAlive(
-      JSON.parse(request.headers.cfg_connector),
+      JSON.parse(connector.toString()),
     );
     return alive;
   }
