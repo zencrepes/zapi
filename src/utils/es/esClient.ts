@@ -1,4 +1,4 @@
-//https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/auth-reference.html
+// https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/auth-reference.html
 import { Client } from '@elastic/elasticsearch';
 import { EsClientSettings } from '../../types';
 import * as fs from 'fs';
