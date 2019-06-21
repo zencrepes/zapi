@@ -2,7 +2,5 @@ zapi_prod:
   image: zencrepes/zapi
   ports:
     - '5000:5000'
-  links:
-    - mongo_prod
   environment:
     - ROOT_URL=https://api.zencrepes.io
