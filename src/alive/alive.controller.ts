@@ -14,8 +14,8 @@ export class AliveController {
 
   @Get()
   async getAlive(@Req() request: Request) {
-    const connector = request.headers.cfg_connector;
-    if (request.headers.cfg_connect === undefined) {
+    const connector = request.headers['X-CfgConnector'];
+    if (request.headers['X-CfgConnector'] === undefined) {
       throw new HttpException(
         'Elasticsearch connection headers missing',
         HttpStatus.BAD_REQUEST,
