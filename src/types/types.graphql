@@ -1,0 +1,12 @@
+type Query {
+  types: [Type]
+  type(id: ID!): Type
+}
+
+type Type {
+  id: String
+  key: String
+  name: String
+  index: String
+  active: Boolean
+}

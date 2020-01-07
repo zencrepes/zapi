@@ -1,9 +1,8 @@
 // https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/auth-reference.html
 import { Client } from '@elastic/elasticsearch';
-import { EsClientSettings } from '../../types';
 import * as fs from 'fs';
 
-function esClient(p: EsClientSettings) {
+function esClient(p: any) {
   const {
     cfg_es_type,
     cfg_es_host,

@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
 import esClient from '../utils/es/esClient';
 
-import { EsClientSettings } from '../types';
-
 const getIssuePoints = issue => {
   if (issue.labels !== undefined) {
     //Get points from labels
@@ -26,7 +24,7 @@ const getIssuePoints = issue => {
 @Injectable()
 export class IssuesService {
   async getIssues(
-    EsSettings: EsClientSettings,
+    EsSettings: any,
     query: String,
     paginationFrom: Number,
     paginationSize: Number,
