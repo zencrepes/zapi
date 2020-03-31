@@ -14,7 +14,7 @@ export default class PullRequest {
   id: string;
 
   @Field(type => UserConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of Users assigned to this object.',
   })
   assignees: UserConnection;
@@ -56,13 +56,13 @@ export default class PullRequest {
   databaseId: number;
 
   @Field(type => LabelConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of labels associated with the object.',
   })
   labels: LabelConnection;
 
   @Field(type => Milestone, {
-    nullable: false,
+    nullable: true,
     description: 'A list of labels associated with the object.',
   })
   milestone: Milestone;

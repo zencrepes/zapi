@@ -19,4 +19,10 @@ export default class User {
     description: 'The HTTP URL for this actor.',
   })
   url: string;
+
+  @Field(type => String, {
+    nullable: false,
+    description: 'The user public profile name.',
+  })
+  name: string;
 }

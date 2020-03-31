@@ -14,8 +14,20 @@ type Actor {
   url: String!
 }
 
+type Aggregation {
+  """The Bucket key"""
+  key: String!
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+}
+
 type Aggregations {
-  id: ID!
+  """The filed that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [Aggregation!]!
 }
 
 type CommentConnection {
@@ -106,7 +118,12 @@ type GithubPullrequestsData {
   ): PullRequest!
 
   """Return aggregations (facets)"""
-  aggregations: Aggregations!
+  aggregations(
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): Aggregations!
 }
 
 type Issue {
@@ -234,7 +251,7 @@ type PullRequest {
   id: ID!
 
   """A list of Users assigned to this object."""
-  assignees: UserConnection!
+  assignees: UserConnection
 
   """The actor who authored the comment."""
   author: Actor!
@@ -255,10 +272,10 @@ type PullRequest {
   databaseId: Float!
 
   """A list of labels associated with the object."""
-  labels: LabelConnection!
+  labels: LabelConnection
 
   """A list of labels associated with the object."""
-  milestone: Milestone!
+  milestone: Milestone
 
   """ Identifies the issue number."""
   number: String!
@@ -328,6 +345,9 @@ type User {
 
   """The HTTP URL for this actor."""
   url: String!
+
+  """The user public profile name."""
+  name: String!
 }
 
 type UserConnection {

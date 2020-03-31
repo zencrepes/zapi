@@ -12,8 +12,9 @@ import Item from './items/item.type';
 import PullRequest from '../../utils/github/types/pullrequest';
 import ItemConnection from './items/items.pagination';
 import ItemOrder from './items/item.order';
-import fetchItems from './items/fetchItems';
+import findAll from './items/items.service';
 import Aggregations from './aggregations/aggregations.type';
+import fetchAggregations from './aggregations/aggregations.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -49,7 +50,7 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = fetchItems(first, size, parent.query, orderBy);
+    const data = findAll(first, size, parent.query, orderBy);
     return data;
   }
 
@@ -76,9 +77,19 @@ export default class DataResolver {
     name: 'aggregations',
     description: 'Return aggregations (facets)',
   })
-  public async getAggregationsProperty(@Parent() parent: Data) {
-    const aggregations = new Aggregations();
-    aggregations.id = 'Aggregations ID';
-    return aggregations;
+  public async getAggregationsProperty(
+    @Args({
+      name: 'field',
+      type: () => String,
+      description:
+        'Field to aggregate on, using the node as the root object (examples: states, author.login)',
+      nullable: false,
+    })
+    field: string,
+    @Parent()
+    parent: Data,
+  ) {
+    const data = fetchAggregations(field);
+    return data;
   }
 }
