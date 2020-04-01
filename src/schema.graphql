@@ -57,6 +57,31 @@ type Config {
   dataset(id: String!): Dataset!
 }
 
+type ConfigAggregation {
+  """Actual field that can be aggregated upon"""
+  field: String!
+
+  """Type of aggregation (term, date, ...)"""
+  facetType: String
+
+  """Displayable name for the aggregation"""
+  name: String
+
+  """Value to display if field is null"""
+  nullValue: String
+
+  """Should the aggregation be displayed by default"""
+  default: Boolean
+}
+
+type ConfigAggregationsConnection {
+  """A list of edges."""
+  nodes: [ConfigAggregation!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
 type Dataset {
   id: ID!
 
@@ -93,7 +118,11 @@ type GithubPullrequests {
 }
 
 type GithubPullrequestsConfig {
+  """Query received as a parameter"""
   query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregationsConnection!
 }
 
 type GithubPullrequestsData {
