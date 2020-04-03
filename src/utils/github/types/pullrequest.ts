@@ -47,7 +47,7 @@ export default class PullRequest {
     nullable: false,
     description: 'Identifies the date and time when the object was created.',
   })
-  createdAt?: string;
+  createdAt: string;
 
   @Field({
     nullable: false,

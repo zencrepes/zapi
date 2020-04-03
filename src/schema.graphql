@@ -51,7 +51,7 @@ type Config {
   """
   Collection of supported types of dataset, for example github issues, jira projects, etc...
   """
-  datasets: DatasetConnection!
+  datasets: Datasets!
 
   """A single dataset element"""
   dataset(id: String!): Dataset!
@@ -98,12 +98,17 @@ type Dataset {
   active: Boolean
 }
 
-type DatasetConnection {
-  """A list of edges."""
-  nodes: [Dataset!]!
+type Datasets {
+  """Total count of elements"""
+  totalCount: Float!
 
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
+  """A list of available datasets"""
+  nodes: [Dataset!]!
+}
+
+type DatasetsConfig {
+  """Query received as a parameter"""
+  query: String!
 }
 
 type GithubPullrequests {

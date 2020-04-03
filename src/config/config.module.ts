@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import ConfigResolvers from './config.resolvers';
-import DatasetsService from './datasets/datasets.service';
+import DatasetsResolvers from './datasets/datasets.resolvers';
 
 @Module({
-  providers: [ConfigResolvers, DatasetsService],
+  providers: [ConfigResolvers, DatasetsResolvers],
 })
 export class ConfigModule {}
