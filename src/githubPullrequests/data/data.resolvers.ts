@@ -89,7 +89,7 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = fetchAggregations(field);
+    const data = fetchAggregations(field, parent.query);
     return data;
   }
 }

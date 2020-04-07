@@ -10,11 +10,14 @@ import {
 import Config from '../config.type';
 import Dataset from './dataset.type';
 import Datasets from './datasets.type';
-import { fetchItems, fetchItem } from './datasets.service';
+// import { fetchItems, fetchItem } from './datasets.service';
+import DatasetsService from './datasets.service';
 
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(Config)
 export default class DatasetsResolvers {
+  constructor(private readonly datasetService: DatasetsService) {}
+
   @ResolveProperty(() => Datasets, {
     name: 'datasets',
     description:
@@ -24,7 +27,7 @@ export default class DatasetsResolvers {
     @Parent()
     parent: Config,
   ) {
-    return await fetchItems();
+    return await this.datasetService.fetchItems();
   }
 
   @ResolveProperty(() => Dataset, {
@@ -37,6 +40,6 @@ export default class DatasetsResolvers {
     @Parent()
     parent: Config,
   ) {
-    return fetchItem(id);
+    return this.datasetService.fetchItem(id);
   }
 }

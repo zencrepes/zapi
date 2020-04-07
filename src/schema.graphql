@@ -381,7 +381,7 @@ type User {
   url: String!
 
   """The user public profile name."""
-  name: String!
+  name: String
 }
 
 type UserConnection {

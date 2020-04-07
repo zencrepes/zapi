@@ -21,7 +21,7 @@ export default class User {
   url: string;
 
   @Field(type => String, {
-    nullable: false,
+    nullable: true,
     description: 'The user public profile name.',
   })
   name: string;
