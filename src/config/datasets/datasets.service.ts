@@ -2,13 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Client } from '@elastic/elasticsearch';
 import { ApiResponse } from '@elastic/elasticsearch';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
-import { EsService } from '../../es.service';
 
 @Injectable()
 export default class DatasetsService {
   constructor(private readonly esClient: ElasticsearchService) {}
 
-  async fetchItems(): Promise<any> {
+  async findAll(): Promise<any> {
     const datasets: ApiResponse = await this.esClient.search({
       index: 'datasets',
       body: {
@@ -28,7 +27,7 @@ export default class DatasetsService {
     };
   }
 
-  async fetchItem(id: string): Promise<any> {
+  async findOneById(id: string): Promise<any> {
     const datasets: ApiResponse = await this.esClient.search({
       index: 'datasets',
       body: {

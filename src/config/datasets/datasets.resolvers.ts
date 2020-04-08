@@ -27,7 +27,7 @@ export default class DatasetsResolvers {
     @Parent()
     parent: Config,
   ) {
-    return await this.datasetService.fetchItems();
+    return await this.datasetService.findAll();
   }
 
   @ResolveProperty(() => Dataset, {
@@ -40,6 +40,6 @@ export default class DatasetsResolvers {
     @Parent()
     parent: Config,
   ) {
-    return this.datasetService.fetchItem(id);
+    return this.datasetService.findOneById(id);
   }
 }

@@ -8,14 +8,18 @@ import {
 } from '@nestjs/graphql';
 
 import Config from './config.type';
-import getAvailableAggregations from './aggregations/aggregations.service';
-import AggregationConnection from './aggregations/aggregationConnection.type';
+import ConfigAggregationsService from './aggregations/aggregations.service';
+import ConfigAggregations from './aggregations/aggregations.type';
 
 // https://github.com/nestjs/graphql/issues/475
 
 @Resolver(Config)
 export default class ConfigResolver {
-  @ResolveProperty(() => AggregationConnection, {
+  constructor(
+    private readonly aggregationsService: ConfigAggregationsService,
+  ) {}
+
+  @ResolveProperty(() => ConfigAggregations, {
     name: 'aggregations',
     description: 'Returns a paginated list of available aggregations',
   })
@@ -23,7 +27,7 @@ export default class ConfigResolver {
     @Parent()
     parent: Config,
   ) {
-    const data = getAvailableAggregations();
+    const data = this.aggregationsService.findAll();
     return data;
   }
 }

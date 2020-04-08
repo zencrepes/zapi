@@ -22,14 +22,6 @@ type Aggregation {
   docCount: Float!
 }
 
-type Aggregations {
-  """The filed that was aggregated on"""
-  field: String!
-
-  """A list of aggregation buckets"""
-  buckets: [Aggregation!]!
-}
-
 type CommentConnection {
   """A list of edges."""
   edges: [CommentEdge!]!
@@ -74,12 +66,37 @@ type ConfigAggregation {
   default: Boolean
 }
 
-type ConfigAggregationsConnection {
-  """A list of edges."""
-  nodes: [ConfigAggregation!]!
+type ConfigAggregations {
+  """Total count of elements"""
+  totalCount: Float!
 
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
+  """A list of available datasets"""
+  nodes: [ConfigAggregation!]!
+}
+
+type DataAggregations {
+  """The filed that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [Aggregation!]!
+}
+
+type DataMetrics {
+  """The filed that was aggregated on"""
+  field: String!
+
+  """Minimum value for the current query"""
+  min: Float!
+
+  """Maximum value for the current query"""
+  max: Float!
+
+  """Overall minimum value (current query with field excluded)"""
+  overallMin: Float!
+
+  """Overall maximum value (current query with field excluded)"""
+  overallMax: Float!
 }
 
 type Dataset {
@@ -127,7 +144,7 @@ type GithubPullrequestsConfig {
   query: String!
 
   """Returns a paginated list of available aggregations"""
-  aggregations: ConfigAggregationsConnection!
+  aggregations: ConfigAggregations!
 }
 
 type GithubPullrequestsData {
@@ -157,7 +174,15 @@ type GithubPullrequestsData {
     Field to aggregate on, using the node as the root object (examples: states, author.login)
     """
     field: String!
-  ): Aggregations!
+  ): DataAggregations!
+
+  """Return aggregations (facets)"""
+  metrics(
+    """
+    Numberic field to filter on, using the node as the root object (examples: labels.totalCount, comments.totalCount)
+    """
+    field: String!
+  ): DataMetrics!
 }
 
 type Issue {
