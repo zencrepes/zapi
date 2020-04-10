@@ -98,10 +98,30 @@ export default class DataResolver {
       nullable: false,
     })
     field: string,
+    @Args({
+      name: 'aggType',
+      type: () => String,
+      description: 'Type of aggregation (default: term)',
+      nullable: true,
+    })
+    aggType: string,
+    @Args({
+      name: 'aggOptions',
+      type: () => String,
+      description:
+        'Additional options as a stringified object (more details in the documentation)',
+      nullable: true,
+    })
+    options: string,
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query);
+    const data = await this.aggregationsService.findAll(
+      field,
+      parent.query,
+      aggType,
+      options,
+    );
     return data;
   }
 
