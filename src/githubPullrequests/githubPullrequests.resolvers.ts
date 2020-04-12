@@ -11,6 +11,28 @@ import GithubPullrequests from './githubPullrequests.type';
 import GithubPullrequestsData from './data/data.type';
 import GithubPullrequestsConfig from './config/config.type';
 
+import { buildQuery } from '@arranger/middleware';
+
+import { getNestedFields } from '../utils/query';
+
+const getEsQuery = async (query: string) => {
+  const queryObj = JSON.parse(query);
+  const nestedFields = getNestedFields(queryObj);
+
+  const prepQuery = {
+    nestedFields,
+    filters: queryObj,
+  };
+
+  let updatedQuery = await buildQuery(prepQuery);
+  if (Object.entries(updatedQuery).length === 0) {
+    updatedQuery = {
+      match_all: {},
+    };
+  }
+  return JSON.stringify(updatedQuery);
+};
+
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(GithubPullrequests)
 export default class GithubPullrequestsResolver {
@@ -39,6 +61,7 @@ export default class GithubPullrequestsResolver {
   ): Promise<GithubPullrequestsData> {
     const data = new GithubPullrequestsData();
     data.query = query;
+    data.esQuery = await getEsQuery(query);
     return data;
   }
 
