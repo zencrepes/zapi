@@ -1,12 +1,14 @@
 import { Field, ObjectType, ID } from 'type-graphql';
 
 import UserConnection from './userConnection';
+import ReviewRequestConnection from './reviewRequestConnection';
 import LabelConnection from './labelConnection';
 import CommentConnection from './commentConnection';
 import ProjectCardConnection from './projectCardConnection';
 import Actor from './actor';
 import Repository from './repository';
 import Milestone from './milestone';
+import PullRequestReviewConnection from './pullRequestReviewConnection';
 
 @ObjectType()
 export default class PullRequest {
@@ -18,6 +20,18 @@ export default class PullRequest {
     description: 'A list of Users assigned to this object.',
   })
   assignees: UserConnection;
+
+  @Field(type => ReviewRequestConnection, {
+    nullable: true,
+    description: 'A list of Review Requests assigned to this object.',
+  })
+  reviewRequests: ReviewRequestConnection;
+
+  @Field(type => PullRequestReviewConnection, {
+    nullable: true,
+    description: 'A list of Reviews assigned to this object.',
+  })
+  reviews: PullRequestReviewConnection;
 
   @Field(type => Actor, {
     nullable: false,

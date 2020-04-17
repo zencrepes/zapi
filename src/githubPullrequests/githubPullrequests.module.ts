@@ -11,6 +11,7 @@ import ConfigAggregationsService from './config/aggregations/aggregations.servic
 import DataAggregationsService from './data/aggregations/aggregations.service';
 import DataItemsService from './data/items/items.service';
 import DataMetricsService from './data/metrics/metrics.service';
+import DataActivityService from './data/activity/activity.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import DataMetricsService from './data/metrics/metrics.service';
     DataAggregationsService,
     DataItemsService,
     DataMetricsService,
+    DataActivityService,
   ],
 })
 export class GithubPullrequestsModule {}

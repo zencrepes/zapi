@@ -3,6 +3,20 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type ActivityBucket {
+  """The Bucket key"""
+  key: String!
+
+  """Representation of the key as a string (useful for dates)"""
+  keyAsString: String
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+
+  """Weeks of activity"""
+  weeks: [BucketWeek!]!
+}
+
 type Actor {
   """A URL pointing to the actor public avatar."""
   avatarUrl: String
@@ -22,6 +36,14 @@ type Aggregation {
   keyAsString: String
 
   """The number of elements in the bucket"""
+  docCount: Float!
+}
+
+type BucketWeek {
+  """First day of the week"""
+  weekStart: String!
+
+  """The number of documents that week"""
   docCount: Float!
 }
 
@@ -75,6 +97,20 @@ type ConfigAggregations {
 
   """A list of available datasets"""
   nodes: [ConfigAggregation!]!
+}
+
+type DataActivity {
+  """The filed that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [ActivityBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromWeekStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toWeekStart: String!
 }
 
 type DataAggregations {
@@ -197,6 +233,15 @@ type GithubPullrequestsData {
     """
     field: String!
   ): DataMetrics!
+
+  """Return a matrix aggregation per week and field"""
+  activity(
+    """Field to be used for the aggregations (for example: repository.name)"""
+    field: String!
+
+    """Date field to be used for the aggregation (for example: ClosedAt)"""
+    dateField: String!
+  ): DataActivity!
 }
 
 type Issue {
@@ -326,6 +371,12 @@ type PullRequest {
   """A list of Users assigned to this object."""
   assignees: UserConnection
 
+  """A list of Review Requests assigned to this object."""
+  reviewRequests: ReviewRequestConnection
+
+  """A list of Reviews assigned to this object."""
+  reviews: PullRequestReviewConnection
+
   """The actor who authored the comment."""
   author: Actor!
 
@@ -375,6 +426,27 @@ type PullRequest {
   url: String!
 }
 
+type PullRequestReview {
+  """The actor."""
+  author: Actor!
+
+  """The review state"""
+  state: String!
+}
+
+type PullRequestReviewConnection {
+  """A list of edges."""
+  edges: [PullRequestReviewEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type PullRequestReviewEdge {
+  """The item at the end of the edge."""
+  node: PullRequestReview!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
@@ -407,6 +479,24 @@ type RepositoryOwner {
 
   """The HTTP URL for this repository."""
   url: String!
+}
+
+type ReviewRequest {
+  """The actor."""
+  requestedReviewer: User!
+}
+
+type ReviewRequestConnection {
+  """A list of edges."""
+  edges: [ReviewRequestEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type ReviewRequestEdge {
+  """The item at the end of the edge."""
+  node: ReviewRequest!
 }
 
 type User {

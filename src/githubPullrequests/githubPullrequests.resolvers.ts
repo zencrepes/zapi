@@ -60,6 +60,9 @@ export default class GithubPullrequestsResolver {
     @Parent() parent: GithubPullrequests,
   ): Promise<GithubPullrequestsData> {
     const data = new GithubPullrequestsData();
+    if (query === undefined || query === null) {
+      query = JSON.stringify({});
+    }
     data.query = query;
     data.esQuery = await getEsQuery(query);
     return data;
