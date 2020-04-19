@@ -1,4 +1,4 @@
-import { Field, ArgsType, Int } from 'type-graphql';
+import { Field, ArgsType, Int } from '@nestjs/graphql';
 
 @ArgsType()
 export class PaginationArgs {

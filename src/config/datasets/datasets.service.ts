@@ -9,7 +9,7 @@ export default class DatasetsService {
 
   async findAll(): Promise<any> {
     const datasets: ApiResponse = await this.esClient.search({
-      index: 'datasets',
+      index: 'config',
       body: {
         from: 0,
         size: 10000,
@@ -29,7 +29,7 @@ export default class DatasetsService {
 
   async findOneById(id: string): Promise<any> {
     const datasets: ApiResponse = await this.esClient.search({
-      index: 'datasets',
+      index: 'config',
       body: {
         from: 0,
         size: 10000,

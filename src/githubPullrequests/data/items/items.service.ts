@@ -14,6 +14,14 @@ export default class DataItemsService {
     const queryObj = JSON.parse(query);
     const nestedFields = getNestedFields(queryObj);
 
+    let sort: Array<any> = ['_score'];
+    if (orderBy !== undefined) {
+      const customSort = {};
+      customSort[orderBy.field] = { order: orderBy.direction };
+      sort = [customSort, ...sort];
+    }
+    console.log(orderBy);
+    console.log(sort);
     const prepQuery = {
       nestedFields,
       filters: queryObj,
@@ -39,6 +47,7 @@ export default class DataItemsService {
         from: from === undefined ? 0 : from,
         size: from === undefined ? 10 : size,
         query: updatedQuery,
+        sort,
       },
     });
     const results = datasets.body.hits;

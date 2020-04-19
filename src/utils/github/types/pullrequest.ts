@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from 'type-graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 import UserConnection from './userConnection';
 import ReviewRequestConnection from './reviewRequestConnection';

@@ -1,4 +1,4 @@
-import { ObjectType } from 'type-graphql';
+import { ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export default class GithubPullrequests {}

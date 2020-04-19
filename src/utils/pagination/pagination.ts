@@ -1,4 +1,4 @@
-import { Field, ObjectType, ClassType, Int } from 'type-graphql';
+import { Field, ObjectType, ClassType, Int } from '@nestjs/graphql';
 
 export default function Paginated<TItem>(TItemClass: ClassType<TItem>) {
   // `isAbstract` decorator option is mandatory to prevent registering in schema

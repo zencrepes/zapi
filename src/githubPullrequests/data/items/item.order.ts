@@ -1,6 +1,6 @@
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import { Order } from '../../../utils/order/order';
-import { registerEnumType } from 'type-graphql';
+import { registerEnumType } from '@nestjs/graphql';
 
 export enum ItemOrderField {
   id = 'id',
@@ -17,6 +17,10 @@ registerEnumType(ItemOrderField, {
 
 @InputType()
 export default class ItemOrder extends Order {
-  @Field(type => ItemOrderField)
-  field: ItemOrderField;
+  @Field({
+    nullable: true,
+    description:
+      'Order field (see config aggregations node for a sample of possible values)',
+  })
+  field: string;
 }

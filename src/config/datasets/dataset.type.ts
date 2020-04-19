@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from 'type-graphql';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
 export default class Dataset {
@@ -16,6 +16,12 @@ export default class Dataset {
     description: 'Displayable name of the dataset',
   })
   name: string;
+
+  @Field({
+    nullable: true,
+    description: 'Platform of the source data (GitHub, CircleCi, Jira, ...)',
+  })
+  platform: string;
 
   @Field({
     nullable: true,

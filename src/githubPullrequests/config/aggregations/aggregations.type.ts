@@ -1,4 +1,4 @@
-import { Field, ObjectType, ClassType, Int } from 'type-graphql';
+import { Field, ObjectType, ClassType, Int } from '@nestjs/graphql';
 
 import ConfigAggregation from './aggregation.type';
 
