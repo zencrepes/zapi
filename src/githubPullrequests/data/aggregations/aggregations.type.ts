@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import Bucket from './bucket.type';
 
@@ -6,7 +6,7 @@ import Bucket from './bucket.type';
 export default class DataAggregations {
   @Field(type => String, {
     nullable: false,
-    description: 'The filed that was aggregated on',
+    description: 'The field that was aggregated on',
   })
   field: string;
 

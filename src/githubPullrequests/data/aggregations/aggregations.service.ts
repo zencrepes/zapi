@@ -14,7 +14,7 @@ export default class DataAggregationsService {
     aggType: string,
     aggOptions: string,
   ): Promise<any> {
-    let filterQuery = JSON.parse(query);
+    const filterQuery = JSON.parse(query);
     // let aggOptions = JSON.parse(options);
     const aggregationType = aggType === undefined ? 'term' : aggType;
     const aggregationOptions =

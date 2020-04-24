@@ -1,8 +1,12 @@
-FROM node:12-alpine
-WORKDIR /usr/src/app
+FROM node:alpine as builder
+WORKDIR /app
 
+COPY package.json .
+COPY yarn.lock .
+RUN yarn
 COPY . .
-RUN npm install
 
-EXPOSE 5000
-CMD [ "npm", "run", "start:prod"]
+RUN yarn run build
+
+# Start Nginx server
+CMD ["yarn", "run", "start:prod"]

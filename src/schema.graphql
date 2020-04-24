@@ -455,7 +455,7 @@ type Aggregation {
 }
 
 type DataAggregations {
-  """The filed that was aggregated on"""
+  """The field that was aggregated on"""
   field: String!
 
   """A list of aggregation buckets"""

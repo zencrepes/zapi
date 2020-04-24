@@ -1,7 +1,12 @@
-import { ObjectType } from '@nestjs/graphql';
-import PaginatedResponse from '../../../utils/pagination/pagination';
-//import Item from './item.type';
+import { Field, ObjectType, Int } from '@nestjs/graphql';
+
 import Pullrequest from '../../../utils/github/types/pullrequest';
 
 @ObjectType()
-export default class ItemConnection extends PaginatedResponse(Pullrequest) {}
+export default class ItemConnection {
+  @Field(type => [Pullrequest], { nullable: true })
+  nodes: Array<Pullrequest>;
+
+  @Field(type => Int)
+  totalCount: number;
+}
