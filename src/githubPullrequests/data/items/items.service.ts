@@ -20,8 +20,8 @@ export default class DataItemsService {
       customSort[orderBy.field] = { order: orderBy.direction };
       sort = [customSort, ...sort];
     }
-    console.log(orderBy);
-    console.log(sort);
+    // console.log(orderBy);
+    // console.log(sort);
     const prepQuery = {
       nestedFields,
       filters: queryObj,
@@ -34,9 +34,9 @@ export default class DataItemsService {
       };
     }
 
-    console.log('Query Transformation: ');
-    console.log(JSON.stringify(queryObj));
-    console.log(JSON.stringify(updatedQuery));
+    // console.log('Query Transformation: ');
+    // console.log(JSON.stringify(queryObj));
+    // console.log(JSON.stringify(updatedQuery));
 
     // const esClient = new Client({
     //   node: 'http://127.0.0.1:9200',
