@@ -1,13 +1,7 @@
-import { clearCurrentField, getNestedFields, convertSqonToEs } from '../query';
+import { clearCurrentField, convertSqonToEs } from '../query';
 import { ApiResponse } from '@elastic/elasticsearch';
 
-export const getTermAggregation = async (
-  esClient,
-  esIndex,
-  query,
-  field,
-  disjoint,
-) => {
+export const getTermAggregation = async (esClient, esIndex, query, field, disjoint) => {
   let filterQuery = { ...query };
   if (disjoint === true) {
     filterQuery = clearCurrentField(filterQuery, field);
