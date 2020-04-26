@@ -6,8 +6,7 @@ import { getNestedFields } from './';
   Convert a SQON query to a query that can be passed directly to Elasticsearch
 */
 const convertSqonToEs = async (query: any) => {
-  const nestedFields =
-    Object.keys(query).length > 0 ? getNestedFields(query) : [];
+  const nestedFields = Object.keys(query).length > 0 ? getNestedFields(query) : [];
   const prepQuery = {
     nestedFields,
     filters: query,
@@ -16,7 +15,7 @@ const convertSqonToEs = async (query: any) => {
   let updatedQuery = await buildQuery(prepQuery);
   if (Object.entries(updatedQuery).length === 0) {
     updatedQuery = {
-      match_all: {},
+      match_all: {}, // eslint-disable-line @typescript-eslint/camelcase
     };
   }
 

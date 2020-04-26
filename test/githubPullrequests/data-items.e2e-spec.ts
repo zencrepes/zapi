@@ -4,7 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ApolloServerTestClient, createTestClient } from 'apollo-server-testing';
 import gql from 'graphql-tag';
 import { AppModule } from '../../src/app.module';
-import { isConstructorDeclaration } from 'typescript';
 
 //https://github.com/nestjs/nest/issues/484
 /*

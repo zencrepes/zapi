@@ -47,6 +47,7 @@ describe('githubPullrequests/data/aggregations', () => {
       variables: { field: 'state', query: '{}' },
     });
 
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(2);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -60,7 +61,7 @@ describe('githubPullrequests/data/aggregations', () => {
           '{"op":"and","content":[{"op":"in","content":{"field":"labels.edges.node.name.keyword","value":["enhancement"]}}]}',
       },
     });
-
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(0);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -74,6 +75,7 @@ describe('githubPullrequests/data/aggregations', () => {
       },
     });
 
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(2);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -84,6 +86,7 @@ describe('githubPullrequests/data/aggregations', () => {
       variables: { field: 'labels.edges.node.name.keyword', query: '{}' },
     });
 
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(2);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -97,6 +100,7 @@ describe('githubPullrequests/data/aggregations', () => {
       },
     });
 
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(2);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -111,6 +115,7 @@ describe('githubPullrequests/data/aggregations', () => {
       },
     });
 
+    expect(result.data.githubPullrequests.data.aggregations.buckets.length).toBeGreaterThan(2);
     expect(result.data).toMatchSnapshot();
   });
 });

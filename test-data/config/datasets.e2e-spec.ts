@@ -43,6 +43,7 @@ describe('config/datasets', () => {
       variables: {},
     });
 
+    expect(result.data.config.datasets.totalCount).toBeGreaterThan(0);
     expect(result.data).toMatchSnapshot();
   });
 });

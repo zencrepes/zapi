@@ -47,6 +47,7 @@ describe('githubPullrequests/config', () => {
       variables: {},
     });
 
+    expect(result.data.githubPullrequests.config.aggregations.totalCount).toBeGreaterThan(5);
     expect(result.data).toMatchSnapshot();
   });
 });

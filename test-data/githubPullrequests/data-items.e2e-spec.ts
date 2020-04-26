@@ -116,6 +116,8 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'asc',
       },
     });
+
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(10);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -131,6 +133,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'desc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(10);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -146,6 +149,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'asc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(20);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -162,6 +166,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'asc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(10);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -178,6 +183,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'asc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(20);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -193,6 +199,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'desc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(10);
     expect(result.data).toMatchSnapshot();
   });
 
@@ -208,6 +215,7 @@ describe('githubPullrequests/data/items', () => {
         sortDirection: 'desc',
       },
     });
+    expect(result.data.githubPullrequests.data.items.nodes.length).toEqual(10);
     expect(result.data).toMatchSnapshot();
   });
 });

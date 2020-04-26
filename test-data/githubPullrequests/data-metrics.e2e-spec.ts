@@ -47,6 +47,11 @@ describe('githubPullrequests/data/metrics', () => {
       variables: { field: 'comments.totalCount', query: '{}' },
     });
 
+    expect(result.data.githubPullrequests.data.metrics.max).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.min).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.overallMax).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.overallMin).toEqual(expect.any(Number));
+
     expect(result.data).toMatchSnapshot();
   });
 
@@ -57,9 +62,14 @@ describe('githubPullrequests/data/metrics', () => {
       variables: {
         field: 'comments.totalCount',
         query:
-          '{"op":"and","content":[{"op":"in","content":{"field":"repository.name.keyword","value":["zencrepes"]}}]}',
+          '{"op":"and","content":[{"op":"in","content":{"field":"repository.name.keyword","value":["arranger"]}}]}',
       },
     });
+
+    expect(result.data.githubPullrequests.data.metrics.max).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.min).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.overallMax).toEqual(expect.any(Number));
+    expect(result.data.githubPullrequests.data.metrics.overallMin).toEqual(expect.any(Number));
 
     expect(result.data).toMatchSnapshot();
   });
