@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`githubPullrequests/data/items Get COMMENTS metrics => NO QUERY 1`] = `
+Object {
+  "assignees": Object {
+    "edges": Array [],
+    "totalCount": 0,
+  },
+  "author": Object {
+    "avatarUrl": "https://avatars1.githubusercontent.com/u/5667028?u=466c80cbfb8312090daa3bc70c84bd75597532ba&v=4",
+    "login": "Fgerthoffert",
+    "url": "https://github.com/Fgerthoffert",
+  },
+  "closedAt": "2018-09-09T23:54:35Z",
+  "createdAt": "2018-09-09T23:54:27Z",
+  "id": "MDExOlB1bGxSZXF1ZXN0MjE0MTcyMjc1",
+  "labels": Object {
+    "edges": Array [],
+    "totalCount": 0,
+  },
+  "milestone": null,
+  "repository": Object {
+    "name": "zencrepes",
+    "owner": Object {
+      "id": "MDEyOk9yZ2FuaXphdGlvbjQ3MzU2NzU1",
+      "login": "zencrepes",
+      "url": "https://github.com/zencrepes",
+    },
+    "url": "https://github.com/zencrepes/zencrepes",
+  },
+  "reviewRequests": Object {
+    "edges": Array [],
+    "totalCount": 0,
+  },
+  "reviews": Object {
+    "edges": Array [],
+    "totalCount": 0,
+  },
+  "state": "MERGED",
+  "title": "Develop",
+  "url": "https://github.com/zencrepes/zencrepes/pull/1",
+}
+`;

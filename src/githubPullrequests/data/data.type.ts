@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export default class GithubPullrequestsData {
@@ -10,8 +10,7 @@ export default class GithubPullrequestsData {
 
   @Field({
     nullable: false,
-    description:
-      'Transformation of the received query in an Elasticsearch query',
+    description: 'Transformation of the received query in an Elasticsearch query',
   })
   esQuery: string;
 }

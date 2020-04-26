@@ -1,11 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
+import { Args, Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 
 import GithubPullrequests from './githubPullrequests.type';
 import GithubPullrequestsData from './data/data.type';
@@ -27,6 +20,7 @@ const getEsQuery = async (query: string) => {
   let updatedQuery = await buildQuery(prepQuery);
   if (Object.entries(updatedQuery).length === 0) {
     updatedQuery = {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       match_all: {},
     };
   }
@@ -46,8 +40,7 @@ export default class GithubPullrequestsResolver {
 
   @ResolveProperty(() => GithubPullrequestsData, {
     name: 'data',
-    description:
-      'Access to the dataset as individual items, aggregations and more',
+    description: 'Access to the dataset as individual items, aggregations and more',
   })
   public async getData(
     @Args({
@@ -57,6 +50,7 @@ export default class GithubPullrequestsResolver {
       nullable: true,
     })
     query: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: GithubPullrequests,
   ): Promise<GithubPullrequestsData> {
     const data = new GithubPullrequestsData();
@@ -72,9 +66,8 @@ export default class GithubPullrequestsResolver {
     name: 'config',
     description: 'Access to configuration values and metadata',
   })
-  public async getConfig(
-    @Parent() parent: GithubPullrequests,
-  ): Promise<GithubPullrequestsConfig> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public async getConfig(@Parent() parent: GithubPullrequests): Promise<GithubPullrequestsConfig> {
     return new GithubPullrequestsConfig();
   }
 }

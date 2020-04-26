@@ -1,16 +1,8 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
+import { Args, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 
 import Config from '../config.type';
 import Dataset from './dataset.type';
 import Datasets from './datasets.type';
-// import { fetchItems, fetchItem } from './datasets.service';
 import DatasetsService from './datasets.service';
 
 // https://github.com/nestjs/graphql/issues/475
@@ -20,12 +12,11 @@ export default class DatasetsResolvers {
 
   @ResolveProperty(() => Datasets, {
     name: 'datasets',
-    description:
-      'Collection of supported types of dataset, for example github issues, jira projects, etc...',
+    description: 'Collection of supported types of dataset, for example github issues, jira projects, etc...',
   })
   public async getDatasets(
     @Parent()
-    parent: Config,
+    parent: Config, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
     return await this.datasetService.findAll();
   }
@@ -38,7 +29,7 @@ export default class DatasetsResolvers {
     @Args('id')
     id: string,
     @Parent()
-    parent: Config,
+    parent: Config, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
     return this.datasetService.findOneById(id);
   }

@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import BucketWeek from './week.type';
 
@@ -22,6 +22,7 @@ export default class ActivityBucket {
   })
   docCount: number;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Field(type => [BucketWeek], {
     nullable: false,
     description: 'Weeks of activity',

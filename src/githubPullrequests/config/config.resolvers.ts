@@ -1,11 +1,4 @@
-import { Field, ObjectType, ID, Int } from '@nestjs/graphql';
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
+import { Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 
 import Config from './config.type';
 import ConfigAggregationsService from './aggregations/aggregations.service';
@@ -15,9 +8,7 @@ import ConfigAggregations from './aggregations/aggregations.type';
 
 @Resolver(Config)
 export default class ConfigResolver {
-  constructor(
-    private readonly aggregationsService: ConfigAggregationsService,
-  ) {}
+  constructor(private readonly aggregationsService: ConfigAggregationsService) {}
 
   @ResolveProperty(() => ConfigAggregations, {
     name: 'aggregations',
@@ -25,7 +16,7 @@ export default class ConfigResolver {
   })
   public async getAggregations(
     @Parent()
-    parent: Config,
+    parent: Config, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
     const data = this.aggregationsService.findAll();
     return data;

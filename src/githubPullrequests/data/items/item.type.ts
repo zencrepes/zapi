@@ -2,6 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
 export default class Item {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Field(type => ID)
   id: string;
 
@@ -13,8 +14,7 @@ export default class Item {
 
   @Field({
     nullable: false,
-    description:
-      'Identifies the date and time when the object was last updated.',
+    description: 'Identifies the date and time when the object was last updated.',
   })
   updatedAt: string;
 
@@ -30,6 +30,7 @@ export default class Item {
   })
   title: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Field(type => String)
   state: string;
 }

@@ -1,22 +1,15 @@
-import { clearCurrentField, getNestedFields, convertSqonToEs } from '../query';
+import { convertSqonToEs } from '../query';
 import { ApiResponse } from '@elastic/elasticsearch';
 
-export const getDateHistogramAggregation = async (
-  esClient,
-  esIndex,
-  query,
-  field,
-  aggregationOptions,
-) => {
+export const getDateHistogramAggregation = async (esClient, esIndex, query, field, aggregationOptions) => {
   let filterQuery = { ...query };
   filterQuery = await convertSqonToEs(filterQuery);
 
   let results = { buckets: [] };
 
   const calendarInterval =
-    aggregationOptions.calendar_interval === undefined
-      ? 'week'
-      : aggregationOptions.calendar_interval;
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    aggregationOptions.calendar_interval === undefined ? 'week' : aggregationOptions.calendar_interval;
 
   const datasets: ApiResponse = await esClient.search({
     index: esIndex,
@@ -25,8 +18,10 @@ export const getDateHistogramAggregation = async (
       query: filterQuery,
       aggs: {
         aggregations: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           date_histogram: {
             field,
+            // eslint-disable-next-line @typescript-eslint/camelcase
             calendar_interval: calendarInterval,
             offset: '-1d',
           },

@@ -1,14 +1,7 @@
-import { Field, ObjectType, ID, Int } from '@nestjs/graphql';
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
+import { Int } from '@nestjs/graphql';
+import { Args, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 
 import Data from './data.type';
-import Item from './items/item.type';
 import PullRequest from '../../utils/github/types/pullrequest';
 import ItemConnection from './items/items.pagination';
 import ItemOrder from './items/item.order';
@@ -61,12 +54,7 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.itemsService.findAll(
-      first,
-      size,
-      parent.query,
-      orderBy,
-    );
+    const data = await this.itemsService.findAll(first, size, parent.query, orderBy);
     return data;
   }
 
@@ -82,6 +70,7 @@ export default class DataResolver {
       nullable: false,
     })
     id: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
   ): Promise<PullRequest> {
     const item = await this.itemsService.findOneById(id);
@@ -96,8 +85,7 @@ export default class DataResolver {
     @Args({
       name: 'field',
       type: () => String,
-      description:
-        'Field to aggregate on, using the node as the root object (examples: states, author.login)',
+      description: 'Field to aggregate on, using the node as the root object (examples: states, author.login)',
       nullable: false,
     })
     field: string,
@@ -111,20 +99,14 @@ export default class DataResolver {
     @Args({
       name: 'aggOptions',
       type: () => String,
-      description:
-        'Additional options as a stringified object (more details in the documentation)',
+      description: 'Additional options as a stringified object (more details in the documentation)',
       nullable: true,
     })
     options: string,
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(
-      field,
-      parent.query,
-      aggType,
-      options,
-    );
+    const data = await this.aggregationsService.findAll(field, parent.query, aggType, options);
     return data;
   }
 
@@ -156,27 +138,21 @@ export default class DataResolver {
     @Args({
       name: 'dateField',
       type: () => String,
-      description:
-        'Date field to be used for the aggregation (for example: ClosedAt)',
+      description: 'Date field to be used for the aggregation (for example: ClosedAt)',
       nullable: false,
     })
     dateField: string,
     @Args({
       name: 'field',
       type: () => String,
-      description:
-        'Field to be used for the aggregations (for example: repository.name)',
+      description: 'Field to be used for the aggregations (for example: repository.name)',
       nullable: false,
     })
     field: string,
     @Parent()
     parent: Data,
   ) {
-    const data = await this.activityService.getActivity(
-      dateField,
-      field,
-      parent.query,
-    );
+    const data = await this.activityService.getActivity(dateField, field, parent.query);
     return { ...data, field };
   }
 }
