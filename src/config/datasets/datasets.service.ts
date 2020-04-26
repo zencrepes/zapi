@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Client } from '@elastic/elasticsearch';
 import { ApiResponse } from '@elastic/elasticsearch';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
@@ -14,6 +13,7 @@ export default class DatasetsService {
         from: 0,
         size: 10000,
         query: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           match_all: {},
         },
       },
@@ -34,6 +34,7 @@ export default class DatasetsService {
         from: 0,
         size: 10000,
         query: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           match_all: {},
         },
       },

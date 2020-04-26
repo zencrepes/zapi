@@ -1,11 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
-import {
-  Args,
-  Query,
-  Resolver,
-  ResolveProperty,
-  Parent,
-} from '@nestjs/graphql';
+import { Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
 
 import Config from './config.type';
 import DatasetsConfig from './datasets/datasetsconfig.type';
@@ -23,10 +16,10 @@ export default class ConfigResolvers {
 
   @ResolveProperty(() => DatasetsConfig, {
     name: 'datasets',
-    description:
-      'Collection of supported types of dataset, for example github issues, jira projects, etc...',
+    description: 'Collection of supported types of dataset, for example github issues, jira projects, etc...',
   })
   public async getDatasetsConfig(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Config,
   ): Promise<DatasetsConfig> {
     return new DatasetsConfig();

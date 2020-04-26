@@ -14,6 +14,7 @@ export default class ConfigAggregationsService {
         size: 200,
         _source: ['facets'],
         query: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           match_phrase: { id: 'githubPullrequests' },
         },
       },
