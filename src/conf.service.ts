@@ -16,7 +16,7 @@ export class ConfService {
     // eslint-disable-next-line
     const untildify = require('untildify');
     const defaultEnv = {
-      CONFIG_DIR: '~/.config/jira-agile-velocity/',
+      CONFIG_DIR: '~/.config/zindexer/',
       AUTH0_DISABLED: false,
       AUTH0_DOMAIN: '',
       AUTH0_AUDIENCE: '',
@@ -26,25 +26,15 @@ export class ConfService {
 
     this.envConf = {};
     this.envConf.CONFIG_DIR =
-      process.env.CONFIG_PATH === undefined
-        ? untildify(defaultEnv.CONFIG_DIR)
-        : untildify(process.env.CONFIG_PATH);
+      process.env.CONFIG_PATH === undefined ? untildify(defaultEnv.CONFIG_DIR) : untildify(process.env.CONFIG_PATH);
     this.envConf.AUTH0_DISABLED =
-      process.env.AUTH0_DISABLED === undefined
-        ? defaultEnv.AUTH0_DISABLED
-        : JSON.parse(process.env.AUTH0_DISABLED); // Trick to convert string to boolean
+      process.env.AUTH0_DISABLED === undefined ? defaultEnv.AUTH0_DISABLED : JSON.parse(process.env.AUTH0_DISABLED); // Trick to convert string to boolean
     this.envConf.AUTH0_DOMAIN =
-      process.env.AUTH0_DOMAIN === undefined
-        ? defaultEnv.AUTH0_DOMAIN
-        : process.env.AUTH0_DOMAIN;
+      process.env.AUTH0_DOMAIN === undefined ? defaultEnv.AUTH0_DOMAIN : process.env.AUTH0_DOMAIN;
     this.envConf.AUTH0_AUDIENCE =
-      process.env.AUTH0_AUDIENCE === undefined
-        ? defaultEnv.AUTH0_AUDIENCE
-        : process.env.AUTH0_AUDIENCE;
+      process.env.AUTH0_AUDIENCE === undefined ? defaultEnv.AUTH0_AUDIENCE : process.env.AUTH0_AUDIENCE;
     this.envConf.ELASTICSEARCH_NODE =
-      process.env.ELASTICSEARCH_NODE === undefined
-        ? defaultEnv.ELASTICSEARCH_NODE
-        : process.env.ELASTICSEARCH_NODE;
+      process.env.ELASTICSEARCH_NODE === undefined ? defaultEnv.ELASTICSEARCH_NODE : process.env.ELASTICSEARCH_NODE;
     this.envConf.ELASTICSEARCH_MODULE_OPTIONS =
       process.env.ELASTICSEARCH_MODULE_OPTIONS === undefined
         ? defaultEnv.ELASTICSEARCH_MODULE_OPTIONS
