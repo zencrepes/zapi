@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import GithubPullrequests from './githubPullrequests.type';
 import GithubPullrequestsData from './data/data.type';
@@ -38,7 +38,7 @@ export default class GithubPullrequestsResolver {
     return new GithubPullrequests();
   }
 
-  @ResolveProperty(() => GithubPullrequestsData, {
+  @ResolveField(() => GithubPullrequestsData, {
     name: 'data',
     description: 'Access to the dataset as individual items, aggregations and more',
   })
@@ -62,7 +62,7 @@ export default class GithubPullrequestsResolver {
     return data;
   }
 
-  @ResolveProperty(() => GithubPullrequestsConfig, {
+  @ResolveField(() => GithubPullrequestsConfig, {
     name: 'config',
     description: 'Access to configuration values and metadata',
   })

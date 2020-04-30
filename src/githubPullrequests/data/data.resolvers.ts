@@ -1,5 +1,5 @@
 import { Int } from '@nestjs/graphql';
-import { Args, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import Data from './data.type';
 import PullRequest from '../../utils/github/types/pullrequest';
@@ -24,7 +24,7 @@ export default class DataResolver {
     private readonly activityService: DataActivityService,
   ) {}
 
-  @ResolveProperty(() => ItemConnection, {
+  @ResolveField(() => ItemConnection, {
     name: 'items',
     description: 'Returns a paginated list of items',
   })
@@ -58,7 +58,7 @@ export default class DataResolver {
     return data;
   }
 
-  @ResolveProperty(() => PullRequest, {
+  @ResolveField(() => PullRequest, {
     name: 'item',
     description: 'Returns a single item by providing its ID',
   })
@@ -77,7 +77,7 @@ export default class DataResolver {
     return item;
   }
 
-  @ResolveProperty(() => DataAggregations, {
+  @ResolveField(() => DataAggregations, {
     name: 'aggregations',
     description: 'Return aggregations (facets)',
   })
@@ -110,7 +110,7 @@ export default class DataResolver {
     return data;
   }
 
-  @ResolveProperty(() => DataMetrics, {
+  @ResolveField(() => DataMetrics, {
     name: 'metrics',
     description: 'Return aggregations (facets)',
   })
@@ -130,7 +130,7 @@ export default class DataResolver {
     return { ...data, field };
   }
 
-  @ResolveProperty(() => DataActivity, {
+  @ResolveField(() => DataActivity, {
     name: 'activity',
     description: 'Return a matrix aggregation per week and field',
   })

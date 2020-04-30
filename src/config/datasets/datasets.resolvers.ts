@@ -1,4 +1,4 @@
-import { Args, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import Config from '../config.type';
 import Dataset from './dataset.type';
@@ -10,7 +10,7 @@ import DatasetsService from './datasets.service';
 export default class DatasetsResolvers {
   constructor(private readonly datasetService: DatasetsService) {}
 
-  @ResolveProperty(() => Datasets, {
+  @ResolveField(() => Datasets, {
     name: 'datasets',
     description: 'Collection of supported types of dataset, for example github issues, jira projects, etc...',
   })
@@ -21,7 +21,7 @@ export default class DatasetsResolvers {
     return await this.datasetService.findAll();
   }
 
-  @ResolveProperty(() => Dataset, {
+  @ResolveField(() => Dataset, {
     name: 'dataset',
     description: 'A single dataset element',
   })

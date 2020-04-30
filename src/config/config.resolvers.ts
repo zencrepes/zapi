@@ -1,4 +1,4 @@
-import { Query, Resolver, ResolveProperty, Parent } from '@nestjs/graphql';
+import { Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import Config from './config.type';
 import DatasetsConfig from './datasets/datasetsconfig.type';
@@ -14,7 +14,7 @@ export default class ConfigResolvers {
     return new Config();
   }
 
-  @ResolveProperty(() => DatasetsConfig, {
+  @ResolveField(() => DatasetsConfig, {
     name: 'datasets',
     description: 'Collection of supported types of dataset, for example github issues, jira projects, etc...',
   })
