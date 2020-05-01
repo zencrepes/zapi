@@ -549,6 +549,22 @@ type GithubVulnerabilitiesData {
     """Return items starting from"""
     id: String!
   ): RepositoryVulnerabilityAlert!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): VulnerabilitiesAggregationConnection!
 }
 
 input Sortorder {
@@ -588,7 +604,7 @@ type SecurityAdvisory {
   ghsaId: String!
 
   """The permalink for the advisory"""
-  permalink: String!
+  permalink: String
 }
 
 """The severity of the advisory"""
@@ -676,6 +692,14 @@ type RepositoryVulnerabilityAlert {
 type VulnerabilityConnection {
   nodes: [RepositoryVulnerabilityAlert!]
   totalCount: Int!
+}
+
+type VulnerabilitiesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
 }
 
 type Query {

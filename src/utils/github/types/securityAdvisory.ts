@@ -1,10 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
-import { SecurityAdvisorySeverity } from './securityAdvisorySeverity'
+import { SecurityAdvisorySeverity } from './securityAdvisorySeverity';
 
 @ObjectType()
 export default class SecurityAdvisory {
-
   @Field(() => ID)
   id: string;
 
@@ -32,7 +31,7 @@ export default class SecurityAdvisory {
   })
   description: string;
 
-  @Field(() => SecurityAdvisorySeverity) 
+  @Field(() => SecurityAdvisorySeverity)
   severity: SecurityAdvisorySeverity;
 
   @Field(() => String, {
@@ -42,7 +41,7 @@ export default class SecurityAdvisory {
   ghsaId: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'The permalink for the advisory',
   })
   permalink: string;
