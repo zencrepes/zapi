@@ -18,7 +18,7 @@ export default class ConfigResolver {
     @Parent()
     parent: Config, // eslint-disable-line @typescript-eslint/no-unused-vars
   ) {
-    const data = this.aggregationsService.findAll('githubPullrequests');
+    const data = this.aggregationsService.findAll('githubVulnerabilities');
     return data;
   }
 }

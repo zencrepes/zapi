@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export default class Aggregation {
+export default class AggregationBucket {
   @Field({
     nullable: false,
     description: 'The Bucket key',

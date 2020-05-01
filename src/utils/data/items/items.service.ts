@@ -4,13 +4,13 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 import { buildQuery } from '@arranger/middleware';
 
-import { getNestedFields } from '../../../utils/query';
+import { getNestedFields } from '../../query';
 
 @Injectable()
 export default class DataItemsService {
   constructor(private readonly esClient: ElasticsearchService) {}
 
-  async findAll(from, size, query, orderBy): Promise<any> {
+  async findAll(from, size, query, orderBy, esIndex): Promise<any> {
     const queryObj = JSON.parse(query);
     const nestedFields = getNestedFields(queryObj);
 
@@ -43,7 +43,7 @@ export default class DataItemsService {
     //   node: 'http://127.0.0.1:9200',
     // });
     const datasets: ApiResponse = await this.esClient.search({
-      index: 'gh_prs_',
+      index: esIndex,
       body: {
         from: from === undefined ? 0 : from,
         size: from === undefined ? 10 : size,

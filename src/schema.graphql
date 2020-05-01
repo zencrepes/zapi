@@ -64,18 +64,18 @@ type GithubPullrequestsData {
 
   """Returns a paginated list of items"""
   items(
-    orderBy: ItemOrder
+    orderBy: ItemSortorder
 
     """Number if items to return """
     size: Int = 10
 
     """Return items starting from"""
     from: Int = 0
-  ): ItemConnection!
+  ): PullrequestsItemConnection!
 
   """Returns a single item by providing its ID"""
   item(
-    """Return items starting from"""
+    """ID fo an item"""
     id: String!
   ): PullRequest!
 
@@ -93,7 +93,7 @@ type GithubPullrequestsData {
     Field to aggregate on, using the node as the root object (examples: states, author.login)
     """
     field: String!
-  ): DataAggregations!
+  ): PullrequestsAggregationConnection!
 
   """Return aggregations (facets)"""
   metrics(
@@ -113,7 +113,7 @@ type GithubPullrequestsData {
   ): DataActivity!
 }
 
-input ItemOrder {
+input ItemSortorder {
   direction: OrderDirection!
 
   """
@@ -438,12 +438,12 @@ type PullRequest {
   url: String!
 }
 
-type ItemConnection {
+type PullrequestsItemConnection {
   nodes: [PullRequest!]
   totalCount: Int!
 }
 
-type Aggregation {
+type AggregationBucket {
   """The Bucket key"""
   key: String!
 
@@ -454,12 +454,12 @@ type Aggregation {
   docCount: Float!
 }
 
-type DataAggregations {
+type PullrequestsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
   """A list of aggregation buckets"""
-  buckets: [Aggregation!]!
+  buckets: [AggregationBucket!]!
 }
 
 type DataMetrics {
@@ -515,10 +515,176 @@ type DataActivity {
   toWeekStart: String!
 }
 
+type GithubVulnerabilities {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubVulnerabilitiesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubVulnerabilitiesConfig!
+}
+
+type GithubVulnerabilitiesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: Sortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): VulnerabilityConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): RepositoryVulnerabilityAlert!
+}
+
+input Sortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubVulnerabilitiesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+}
+
+type SecurityAdvisory {
+  id: ID!
+
+  """When the advisory was published"""
+  publishedAt: String!
+
+  """The organization that originated the advisory"""
+  origin: String!
+
+  """A short plaintext summary of the advisory"""
+  summary: String!
+
+  """This is a long plaintext description of the advisory"""
+  description: String!
+  severity: SecurityAdvisorySeverity!
+
+  """The GitHub Security Advisory ID"""
+  ghsaId: String!
+
+  """The permalink for the advisory"""
+  permalink: String!
+}
+
+"""The severity of the advisory"""
+enum SecurityAdvisorySeverity {
+  CRITICAL
+  HIGH
+  LOW
+  MODERATE
+}
+
+type SecurityAdvisoryPackageVersion {
+  """The package name or version"""
+  identifier: String!
+}
+
+type SecurityAdvisoryPackage {
+  """The ecosystem the package belongs to, e.g. RUBYGEMS, NPM"""
+  name: String!
+
+  """The organization that originated the advisory"""
+  ecosystem: SecurityAdvisoryEcosystem!
+}
+
+"""The possible ecosystems of a security vulnerability package."""
+enum SecurityAdvisoryEcosystem {
+  COMPOSER
+  MAVEN
+  NPM
+  NUGET
+  PIP
+  RUBYGEMS
+}
+
+type SecurityVulnerability {
+  """When the vulnerability was last updated"""
+  updatedAt: String!
+
+  """The Advisory associated with this Vulnerability"""
+  advisory: SecurityAdvisory!
+
+  """When was the alert dimissed?"""
+  firstPatchedVersion: SecurityAdvisoryPackageVersion!
+
+  """The user who dismissed the alert"""
+  package: SecurityAdvisoryPackage
+
+  """The severity of the vulnerability within this package"""
+  severity: SecurityAdvisorySeverity
+
+  """A string that describes the vulnerable package versions."""
+  vulnerableVersionRange: String!
+}
+
+type RepositoryVulnerabilityAlert {
+  id: ID!
+
+  """Identifies the date and time when the object was created"""
+  createdAt: String!
+
+  """The reason the alert was dismissed"""
+  dismissReason: String
+
+  """When was the alert dimissed?"""
+  dismissedAt: String
+
+  """The user who dismissed the alert"""
+  dismisser: User
+
+  """The repository where the alert is located"""
+  repository: Repository!
+
+  """The vulnerable manifest path"""
+  vulnerableManifestPath: String!
+
+  """The vulnerable manifest filename"""
+  vulnerableManifestFilename: String!
+
+  """The vulnerable requirements"""
+  vulnerableRequirements: String!
+
+  """The vulnerable requirements"""
+  securityVulnerability: SecurityVulnerability!
+}
+
+type VulnerabilityConnection {
+  nodes: [RepositoryVulnerabilityAlert!]
+  totalCount: Int!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
 
   """Fetch data (items, aggregatiosn) related to GitHub PRs"""
   githubPullrequests: GithubPullrequests!
+
+  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  githubVulnerabilities: GithubVulnerabilities!
 }

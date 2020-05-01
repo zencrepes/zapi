@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
-import GithubPullrequestsResolvers from './githubPullrequests.resolvers';
+import GithubVulnerabilitiesResolvers from './githubVulnerabilities.resolvers';
 
 import { ConfModule } from '../conf.module';
 import { ConfService } from '../conf.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 import ConfigResolver from './config/config.resolvers';
-import DataResolver from './data/data.resolvers';
 import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
-import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
+import DataResolver from './data/data.resolvers';
+// import DataAggregationsService from './data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
-import DataMetricsService from './data/metrics/metrics.service';
-import DataActivityService from './data/activity/activity.service';
+// import DataMetricsService from './data/metrics/metrics.service';
+// import DataActivityService from './data/activity/activity.service';
 
 @Module({
   imports: [
@@ -24,14 +24,14 @@ import DataActivityService from './data/activity/activity.service';
     }),
   ],
   providers: [
-    GithubPullrequestsResolvers,
+    GithubVulnerabilitiesResolvers,
     ConfigResolver,
     DataResolver,
     ConfigAggregationsService,
-    DataAggregationsService,
+    // DataAggregationsService,
     DataItemsService,
-    DataMetricsService,
-    DataActivityService,
+    // DataMetricsService,
+    // DataActivityService,
   ],
 })
-export class GithubPullrequestsModule {}
+export class GithubVulnerabilitiesModule {}

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
 
-import { getTermAggregation } from '../../../utils/es/getTermAggregation';
-import { getDateHistogramAggregation } from '../../../utils/es/getDateHistogramAggregation';
+import { getTermAggregation } from '../../es/getTermAggregation';
+import { getDateHistogramAggregation } from '../../es/getDateHistogramAggregation';
 
 @Injectable()
 export default class DataAggregationsService {
@@ -13,6 +13,7 @@ export default class DataAggregationsService {
     query: any,
     aggType: string,
     aggOptions: string,
+    esIndex: string
   ): Promise<any> {
     const filterQuery = JSON.parse(query);
     // let aggOptions = JSON.parse(options);
@@ -23,7 +24,7 @@ export default class DataAggregationsService {
     if (aggregationType === 'term') {
       return await getTermAggregation(
         this.esClient,
-        'gh_prs_',
+        esIndex,
         filterQuery,
         field,
         true,
@@ -33,7 +34,7 @@ export default class DataAggregationsService {
     if (aggregationType === 'date_histogram') {
       return await getDateHistogramAggregation(
         this.esClient,
-        'gh_prs_',
+        esIndex,
         filterQuery,
         field,
         aggregationOptions,

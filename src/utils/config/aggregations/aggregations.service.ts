@@ -6,7 +6,7 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 export default class ConfigAggregationsService {
   constructor(private readonly esClient: ElasticsearchService) {}
 
-  async findAll(): Promise<any> {
+  async findAll(datasetId: string): Promise<any> {
     const datasets: ApiResponse = await this.esClient.search({
       index: 'config',
       body: {
@@ -15,7 +15,7 @@ export default class ConfigAggregationsService {
         _source: ['facets'],
         query: {
           // eslint-disable-next-line @typescript-eslint/camelcase
-          match_phrase: { id: 'githubPullrequests' },
+          match_phrase: { id: datasetId },
         },
       },
     });
