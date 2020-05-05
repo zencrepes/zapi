@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
-import Pullrequest from '../../../utils/github/types/pullrequest';
+import Pullrequest from '../../../utils/github/types/pullRequest';
 
 @ObjectType()
 export default class PullrequestsItemConnection {

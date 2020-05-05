@@ -1,14 +1,14 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
-import LabelEdge from './labelEdge';
+import BranchProtectionRuleEdge from './branchProtectionRuleEdge';
 
 @ObjectType()
-export default class LabelConnection {
-  @Field(() => [LabelEdge], {
+export default class BranchProtectionRuleConnection {
+  @Field(() => [BranchProtectionRuleEdge], {
     nullable: false,
     description: 'A list of edges.',
   })
-  edges: LabelEdge[];
+  edges: BranchProtectionRuleEdge[];
 
   @Field(() => Int, {
     nullable: false,

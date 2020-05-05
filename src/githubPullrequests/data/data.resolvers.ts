@@ -2,7 +2,7 @@ import { Int } from '@nestjs/graphql';
 import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import Data from './data.type';
-import PullRequest from '../../utils/github/types/pullrequest';
+import PullRequest from '../../utils/github/types/pullRequest';
 import PullrequestsItemConnection from './items/pullrequestsItemConnection.type';
 import ItemSortorder from './items/itemSortorder.type';
 import DataItemsService from '../../utils/data/items/items.service';

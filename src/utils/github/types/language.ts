@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
-export default class Label {
+export default class Language {
   @Field(() => ID)
   id: string;
 
@@ -16,10 +16,4 @@ export default class Label {
     description: 'Identifies the label name.',
   })
   name: string;
-
-  @Field(() => String, {
-    nullable: true,
-    description: 'A brief description of this label.',
-  })
-  description: string;
 }

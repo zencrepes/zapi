@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import Label from './label';
+import Language from './language';
 
 @ObjectType()
-export default class LabelEdge {
-  @Field(() => Label, {
+export default class LanguageEdge {
+  @Field(() => Language, {
     nullable: false,
     description: 'The item at the end of the edge.',
   })
-  node: Label;
+  node: Language;
 }

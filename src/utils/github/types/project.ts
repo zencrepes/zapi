@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
-export default class Comments {
+export default class Project {
   @Field(() => ID)
   id: string;
 }

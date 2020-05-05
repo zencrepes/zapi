@@ -1,14 +1,14 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
-import LabelEdge from './labelEdge';
+import RepositoryTopicEdge from './repositoryTopicEdge';
 
 @ObjectType()
-export default class LabelConnection {
-  @Field(() => [LabelEdge], {
+export default class RepositoryTopicConnection {
+  @Field(() => [RepositoryTopicEdge], {
     nullable: false,
     description: 'A list of edges.',
   })
-  edges: LabelEdge[];
+  edges: RepositoryTopicEdge[];
 
   @Field(() => Int, {
     nullable: false,
