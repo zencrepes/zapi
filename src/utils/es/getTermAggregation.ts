@@ -1,4 +1,4 @@
-import { clearCurrentField, convertSqonToEs } from '../query';
+import { clearCurrentField, convertSqonToEs, addFilterToQuery, createTermFilter } from '../query';
 import { ApiResponse } from '@elastic/elasticsearch';
 
 export const getTermAggregation = async (esClient, esIndex, query, field, disjoint) => {
@@ -6,9 +6,9 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
   if (disjoint === true) {
     filterQuery = clearCurrentField(filterQuery, field);
   }
-  filterQuery = await convertSqonToEs(filterQuery);
+  const convertedQuery = await convertSqonToEs(filterQuery);
 
-  let results = { buckets: [] };
+  let resultsBuckets: any[] = [];
 
   if (field.includes('.edges.')) {
     const splitField = field.split('.edges.');
@@ -17,7 +17,7 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
       index: esIndex,
       size: 0,
       body: {
-        query: filterQuery,
+        query: convertedQuery,
         aggs: {
           nestedAgg: {
             nested: { path: nestedPath },
@@ -34,13 +34,29 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
         },
       },
     });
-    results = datasets.body.aggregations.nestedAgg.byTerm;
+
+    // Calculate how many elements have totalCount of 0 for the empty bucket
+    const newFilter = createTermFilter('<=', splitField[0] + '.totalCount', 0);
+    const emptyValueCountQuery = addFilterToQuery(newFilter, filterQuery);
+    const emptyValueEs = await convertSqonToEs(emptyValueCountQuery);
+    const emptuBucket: ApiResponse = await esClient.search({
+      index: esIndex,
+      size: 0,
+      body: {
+        query: emptyValueEs,
+      },
+    });
+    resultsBuckets = [
+      ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      ...[{ key: '_EMPTY_', doc_count: emptuBucket.body.hits.total.value }],
+    ];
   } else {
     const datasets: ApiResponse = await esClient.search({
       index: esIndex,
       size: 0,
       body: {
-        query: filterQuery,
+        query: convertedQuery,
         aggs: {
           aggregations: {
             terms: {
@@ -49,19 +65,32 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
               size: 1000,
             },
           },
+          emptyValues: {
+            missing: { field: field },
+          },
         },
       },
     });
-    results = datasets.body.aggregations.aggregations;
+    resultsBuckets = [
+      ...datasets.body.aggregations.aggregations.buckets,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      ...[{ key: '_EMPTY_', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
+    ];
   }
+
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  resultsBuckets = resultsBuckets.sort((a, b) => b.doc_count - a.doc_count);
+
   return {
-    buckets: results.buckets.map(bucket => {
-      return {
-        key: bucket.key,
-        keyAsString: bucket.key,
-        docCount: bucket.doc_count,
-      };
-    }),
+    buckets: resultsBuckets
+      .filter(bucket => bucket.doc_count > 0)
+      .map(bucket => {
+        return {
+          key: bucket.key,
+          keyAsString: bucket.key,
+          docCount: bucket.doc_count,
+        };
+      }),
     field,
   };
 };
