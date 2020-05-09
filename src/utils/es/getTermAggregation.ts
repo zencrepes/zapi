@@ -49,7 +49,7 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
     resultsBuckets = [
       ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      ...[{ key: '_EMPTY_', doc_count: emptuBucket.body.hits.total.value }],
+      ...[{ key: '__missing__', doc_count: emptuBucket.body.hits.total.value }],
     ];
   } else {
     const datasets: ApiResponse = await esClient.search({
@@ -74,7 +74,7 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
     resultsBuckets = [
       ...datasets.body.aggregations.aggregations.buckets,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      ...[{ key: '_EMPTY_', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
+      ...[{ key: '__missing__', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
     ];
   }
 

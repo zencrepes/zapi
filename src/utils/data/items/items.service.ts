@@ -28,6 +28,7 @@ export default class DataItemsService {
     };
 
     let updatedQuery = await buildQuery(prepQuery);
+
     if (Object.entries(updatedQuery).length === 0) {
       updatedQuery = {
         // eslint-disable-next-line @typescript-eslint/camelcase

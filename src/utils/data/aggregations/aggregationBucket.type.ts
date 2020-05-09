@@ -19,4 +19,10 @@ export default class AggregationBucket {
     description: 'The number of elements in the bucket',
   })
   docCount: number;
+
+  @Field({
+    nullable: true,
+    description: 'Moving average value',
+  })
+  docCountMovingAvg: number;
 }

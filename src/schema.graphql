@@ -148,8 +148,11 @@ type ConfigAggregation {
   """Displayable name for the aggregation"""
   name: String
 
-  """Value to display if field is null"""
+  """Value to display if field is null (or _EMPTY_)"""
   nullValue: String
+
+  """Stringified filter to be applied if user clicks on nullValue"""
+  nullFilter: String
 
   """Should the aggregation be displayed by default"""
   default: Boolean
@@ -919,6 +922,9 @@ type AggregationBucket {
 
   """The number of elements in the bucket"""
   docCount: Float!
+
+  """Moving average value"""
+  docCountMovingAvg: Float
 }
 
 type PullrequestsAggregationConnection {

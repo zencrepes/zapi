@@ -22,9 +22,15 @@ export default class ConfigAggregation {
 
   @Field({
     nullable: true,
-    description: 'Value to display if field is null',
+    description: 'Value to display if field is null (or _EMPTY_)',
   })
   nullValue: string;
+
+  @Field({
+    nullable: true,
+    description: 'Stringified filter to be applied if user clicks on nullValue',
+  })
+  nullFilter: string;
 
   @Field({
     nullable: true,
