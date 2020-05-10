@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import Pullrequest from './pullRequest';
+import PullRequest from './pullRequest';
 
 @ObjectType()
 export default class PullrequestEdge {
-  @Field(() => Pullrequest, {
+  @Field(() => PullRequest, {
     nullable: false,
     description: 'The item at the end of the edge.',
   })
-  node: Pullrequest;
+  node: PullRequest;
 }

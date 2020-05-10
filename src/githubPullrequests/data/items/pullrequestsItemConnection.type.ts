@@ -1,11 +1,11 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
-import Pullrequest from '../../../utils/github/types/pullRequest';
+import PullRequest from '../../../utils/github/types/pullRequest';
 
 @ObjectType()
 export default class PullrequestsItemConnection {
-  @Field(() => [Pullrequest], { nullable: true })
-  nodes: Pullrequest[];
+  @Field(() => [PullRequest], { nullable: true })
+  nodes: PullRequest[];
 
   @Field(() => Int)
   totalCount: number;
