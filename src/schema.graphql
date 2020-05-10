@@ -166,122 +166,6 @@ type ConfigAggregations {
   nodes: [ConfigAggregation!]!
 }
 
-type User {
-  """The username of the actor."""
-  login: String!
-
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The HTTP URL for this actor."""
-  url: String!
-
-  """The user public profile name."""
-  name: String
-}
-
-type UserEdge {
-  """The item at the end of the edge."""
-  node: User!
-}
-
-type UserConnection {
-  """A list of edges."""
-  edges: [UserEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type ReviewRequest {
-  """The actor."""
-  requestedReviewer: User!
-}
-
-type ReviewRequestEdge {
-  """The item at the end of the edge."""
-  node: ReviewRequest!
-}
-
-type ReviewRequestConnection {
-  """A list of edges."""
-  edges: [ReviewRequestEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Label {
-  id: ID!
-
-  """Identifies the label color."""
-  color: String!
-
-  """Identifies the label name."""
-  name: String!
-
-  """A brief description of this label."""
-  description: String
-}
-
-type LabelEdge {
-  """The item at the end of the edge."""
-  node: Label!
-}
-
-type LabelConnection {
-  """A list of edges."""
-  edges: [LabelEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Comments {
-  id: ID!
-}
-
-type CommentEdge {
-  """The item at the end of the edge."""
-  node: Comments!
-}
-
-type CommentConnection {
-  """A list of edges."""
-  edges: [CommentEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type ProjectCard {
-  id: ID!
-}
-
-type ProjectCardEdge {
-  """The item at the end of the edge."""
-  node: ProjectCard!
-}
-
-type ProjectCardConnection {
-  """A list of edges."""
-  edges: [ProjectCardEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Actor {
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The username of the actor."""
-  login: String!
-
-  """The HTTP URL for this actor."""
-  url: String!
-}
-
 type RepositoryOwner {
   id: ID!
 
@@ -385,6 +269,32 @@ type IssueEdge {
 type IssueConnection {
   """A list of edges."""
   edges: [IssueEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Label {
+  id: ID!
+
+  """Identifies the label color."""
+  color: String!
+
+  """Identifies the label name."""
+  name: String!
+
+  """A brief description of this label."""
+  description: String
+}
+
+type LabelEdge {
+  """The item at the end of the edge."""
+  node: Label!
+}
+
+type LabelConnection {
+  """A list of edges."""
+  edges: [LabelEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -722,6 +632,9 @@ type Repository {
   """Identifies the date and time when the object was created."""
   createdAt: String
 
+  """Identifies the date and time when the object was starred by a user."""
+  starredAt: String
+
   """The Ref associated with the repository default branch."""
   defaultBranchRef: Ref
 
@@ -826,6 +739,223 @@ type Repository {
   watchers: UserConnection
 }
 
+type Follower {
+  id: ID!
+}
+
+type FollowerEdge {
+  """The item at the end of the edge."""
+  node: Follower!
+}
+
+type FollowerConnection {
+  """A list of edges."""
+  edges: [FollowerEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type FollowingConnection {
+  """A list of edges."""
+  edges: [FollowerEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Organization {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """ The organization login name."""
+  login: String!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The HTTP URL for this actor."""
+  url: String!
+
+  """The organization public profile name."""
+  name: String
+
+  """The organization public profile name."""
+  email: String
+
+  """The organization public profile URL."""
+  websiteUrl: String
+}
+
+type OrganizationEdge {
+  """The item at the end of the edge."""
+  node: Organization!
+}
+
+type OrganizationConnection {
+  """A list of edges."""
+  edges: [OrganizationEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type RepositoryEdge {
+  """The item at the end of the edge."""
+  node: Repository!
+}
+
+type RepositoryConnection {
+  """A list of edges."""
+  edges: [RepositoryEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type User {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """The username of the actor."""
+  login: String!
+
+  """The user public profile company.."""
+  company: String
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The HTTP URL for this actor."""
+  url: String!
+
+  """The user public profile name."""
+  name: String
+
+  """If Watcher or Stargazer, the target repository"""
+  repository: Repository
+
+  """If Watcher or Stargazer, the data type (watchers or stargazers)"""
+  dataType: String
+
+  """If Stargazer, the date and time when an object was last starred."""
+  lastStarredAt: String
+
+  """Whether or not this user is a GitHub employee."""
+  isEmployee: Boolean
+
+  """Whether or not the user has marked themselves as for hire."""
+  isHireable: Boolean
+
+  """Whether or not this user is a GitHub Developer Program member."""
+  isDeveloperProgramMember: Boolean
+
+  """
+  Whether or not this user is a participant in the GitHub Campus Experts Program.
+  """
+  isCampusExpert: Boolean
+
+  """
+  Whether or not this user is a participant in the GitHub Security Bug Bounty.
+  """
+  isBountyHunter: Boolean
+
+  """A URL pointing to the user public website/ blog."""
+  websiteUrl: Boolean
+
+  """A list of users the given user is followed by."""
+  followers: FollowerConnection
+
+  """A list of users the given user is following."""
+  following: FollowingConnection
+
+  """A list of organizations the given user is a member of."""
+  organizations: OrganizationConnection
+
+  """A list of repositories watched or starred by the user"""
+  repositories: RepositoryConnection
+}
+
+type UserEdge {
+  """The item at the end of the edge."""
+  node: User!
+}
+
+type UserConnection {
+  """A list of edges."""
+  edges: [UserEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type ReviewRequest {
+  """The actor."""
+  requestedReviewer: User!
+}
+
+type ReviewRequestEdge {
+  """The item at the end of the edge."""
+  node: ReviewRequest!
+}
+
+type ReviewRequestConnection {
+  """A list of edges."""
+  edges: [ReviewRequestEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Comments {
+  id: ID!
+}
+
+type CommentEdge {
+  """The item at the end of the edge."""
+  node: Comments!
+}
+
+type CommentConnection {
+  """A list of edges."""
+  edges: [CommentEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type ProjectCard {
+  id: ID!
+}
+
+type ProjectCardEdge {
+  """The item at the end of the edge."""
+  node: ProjectCard!
+}
+
+type ProjectCardConnection {
+  """A list of edges."""
+  edges: [ProjectCardEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Actor {
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The username of the actor."""
+  login: String!
+
+  """The HTTP URL for this actor."""
+  url: String!
+}
+
 type PullRequestReview {
   """The actor."""
   author: Actor!
@@ -925,6 +1055,11 @@ type AggregationBucket {
 
   """Moving average value"""
   docCountMovingAvg: Float
+
+  """
+  Metadata returned based on the aggOptions parameter, it allows additional fields to be returned
+  """
+  metadata: String
 }
 
 type PullrequestsAggregationConnection {
@@ -1097,7 +1232,7 @@ type GithubRepositoriesData {
 
     """Return items starting from"""
     from: Int = 0
-  ): RepositoryConnection!
+  ): DataRepositoryConnection!
 
   """Returns a single item by providing its ID"""
   item(
@@ -1139,12 +1274,94 @@ type GithubRepositoriesConfig {
   aggregations: ConfigAggregations!
 }
 
-type RepositoryConnection {
+type DataRepositoryConnection {
   nodes: [Repository!]
   totalCount: Int!
 }
 
 type RepositoriesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubWatchers {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubWatchersData!
+
+  """Access to configuration values and metadata"""
+  config: GithubWatchersConfig!
+}
+
+type GithubWatchersData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: WatchersSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): WatcherConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): User!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): WatchersAggregationConnection!
+}
+
+input WatchersSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubWatchersConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+}
+
+type WatcherConnection {
+  nodes: [User!]
+  totalCount: Int!
+}
+
+type WatchersAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
@@ -1164,4 +1381,7 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to GitHub PRs"""
   githubRepositories: GithubRepositories!
+
+  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  githubWatchers: GithubWatchers!
 }

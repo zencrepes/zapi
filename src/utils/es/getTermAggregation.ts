@@ -1,12 +1,28 @@
 import { clearCurrentField, convertSqonToEs, addFilterToQuery, createTermFilter } from '../query';
 import { ApiResponse } from '@elastic/elasticsearch';
 
-export const getTermAggregation = async (esClient, esIndex, query, field, disjoint) => {
+const getObjectValue = (obj, path, defaultValue = undefined) => {
+  const travel = regexp =>
+    String.prototype.split
+      .call(path, regexp)
+      .filter(Boolean)
+      .reduce((res, key) => (res !== null && res !== undefined ? res[key] : res), obj);
+  const result = travel(/[,[\]]+?/) || travel(/[,[\].]+?/);
+  return result === undefined || result === obj ? defaultValue : result;
+};
+
+export const getTermAggregation = async (esClient, esIndex, query, field, aggOptions, disjoint) => {
   let filterQuery = { ...query };
-  if (disjoint === true) {
+  if (
+    (disjoint === true && aggOptions.disjoint === undefined) ||
+    (aggOptions.disjoint !== undefined && aggOptions.disjoint === true)
+  ) {
     filterQuery = clearCurrentField(filterQuery, field);
   }
+
   const convertedQuery = await convertSqonToEs(filterQuery);
+
+  const metadataFields = aggOptions.metadata === undefined ? [] : aggOptions.metadata;
 
   let resultsBuckets: any[] = [];
 
@@ -26,7 +42,15 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
                 terms: {
                   field,
                   order: { _count: 'desc' },
-                  size: 1000,
+                  size: 10000,
+                },
+                aggs: {
+                  metadata: {
+                    // eslint-disable-next-line @typescript-eslint/camelcase
+                    top_hits: {
+                      size: 1,
+                    },
+                  },
                 },
               },
             },
@@ -62,7 +86,15 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
             terms: {
               field,
               order: { _count: 'desc' },
-              size: 1000,
+              size: 10000,
+            },
+            aggs: {
+              metadata: {
+                // eslint-disable-next-line @typescript-eslint/camelcase
+                top_hits: {
+                  size: 1,
+                },
+              },
             },
           },
           emptyValues: {
@@ -85,10 +117,17 @@ export const getTermAggregation = async (esClient, esIndex, query, field, disjoi
     buckets: resultsBuckets
       .filter(bucket => bucket.doc_count > 0)
       .map(bucket => {
+        const metadata = {};
+        if (bucket.metadata !== undefined && bucket.metadata.hits.hits.length > 0) {
+          for (const m of metadataFields) {
+            metadata[m] = getObjectValue(bucket.metadata.hits.hits[0]._source.node, m);
+          }
+        }
         return {
           key: bucket.key,
           keyAsString: bucket.key,
           docCount: bucket.doc_count,
+          metadata: JSON.stringify(metadata),
         };
       }),
     field,

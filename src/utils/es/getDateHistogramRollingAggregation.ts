@@ -1,6 +1,5 @@
 import { convertSqonToEs } from '../query';
 import { ApiResponse } from '@elastic/elasticsearch';
-import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 
 export const getDateHistogramRollingAggregation = async (esClient, esIndex, query, field, aggregationOptions) => {
   let filterQuery = { ...query };
@@ -33,6 +32,7 @@ export const getDateHistogramRollingAggregation = async (esClient, esIndex, quer
             movingAvg: {
               // eslint-disable-next-line @typescript-eslint/camelcase
               moving_fn: {
+                // eslint-disable-next-line @typescript-eslint/camelcase
                 buckets_path: '_count',
                 window: movingWindow,
                 script: 'MovingFunctions.unweightedAvg(values)',

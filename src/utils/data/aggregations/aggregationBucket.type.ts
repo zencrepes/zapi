@@ -25,4 +25,10 @@ export default class AggregationBucket {
     description: 'Moving average value',
   })
   docCountMovingAvg: number;
+
+  @Field({
+    nullable: true,
+    description: 'Metadata returned based on the aggOptions parameter, it allows additional fields to be returned',
+  })
+  metadata: string;
 }

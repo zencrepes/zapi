@@ -16,7 +16,7 @@ export default class DataAggregationsService {
     const aggregationOptions = aggOptions === undefined ? {} : JSON.parse(aggOptions);
 
     if (aggregationType === 'term') {
-      return await getTermAggregation(this.esClient, esIndex, filterQuery, field, true);
+      return await getTermAggregation(this.esClient, esIndex, filterQuery, field, aggregationOptions, true);
     }
 
     if (aggregationType === 'date_histogram') {

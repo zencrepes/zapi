@@ -2,12 +2,12 @@ import { Int } from '@nestjs/graphql';
 import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
 import Data from './data.type';
-import RepositoryRepositoryAlert from '../../utils/github/types/repositoryVulneratbilityAlert';
-import DataRepositoryConnection from './items/repositoryConnection.type';
+import User from '../../utils/github/types/user';
+import WatcherConnection from './items/watcherConnection.type';
 import ItemSortorder from './items/itemSortorder.type';
 import DataItemsService from '../../utils/data/items/items.service';
 
-import RepositoriesAggregationConnection from './aggregations/repositoriesAggregationConnection.type';
+import WatchersAggregationConnection from './aggregations/watchersAggregationConnection.type';
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
 
 // import DataAggregations from './aggregations/aggregations.type';
@@ -26,7 +26,7 @@ export default class DataResolver {
     private readonly itemsService: DataItemsService, // private readonly metricsService: DataMetricsService, // private readonly activityService: DataActivityService,
   ) {}
 
-  @ResolveField(() => DataRepositoryConnection, {
+  @ResolveField(() => WatcherConnection, {
     name: 'items',
     description: 'Returns a paginated list of items',
   })
@@ -56,11 +56,11 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.itemsService.findAll(first, size, parent.query, orderBy, 'gh_repos');
+    const data = await this.itemsService.findAll(first, size, parent.query, orderBy, 'gh_stargazers_watchers_');
     return data;
   }
 
-  @ResolveField(() => RepositoryRepositoryAlert, {
+  @ResolveField(() => User, {
     name: 'item',
     description: 'Returns a single item by providing its ID',
   })
@@ -74,12 +74,12 @@ export default class DataResolver {
     id: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
-  ): Promise<RepositoryRepositoryAlert> {
+  ): Promise<User> {
     const item = await this.itemsService.findOneById(id);
     return item;
   }
 
-  @ResolveField(() => RepositoriesAggregationConnection, {
+  @ResolveField(() => WatchersAggregationConnection, {
     name: 'aggregations',
     description: 'Return aggregations (facets)',
   })
@@ -108,53 +108,13 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query, aggType, options, 'gh_repos');
+    const data = await this.aggregationsService.findAll(
+      field,
+      parent.query,
+      aggType,
+      options,
+      'gh_stargazers_watchers_',
+    );
     return data;
   }
-
-  // @ResolveField(() => DataMetrics, {
-  //   name: 'metrics',
-  //   description: 'Return aggregations (facets)',
-  // })
-  // public async getMetricsProperty(
-  //   @Args({
-  //     name: 'field',
-  //     type: () => String,
-  //     description:
-  //       'Numberic field to filter on, using the node as the root object (examples: labels.totalCount, comments.totalCount)',
-  //     nullable: false,
-  //   })
-  //   field: string,
-  //   @Parent()
-  //   parent: Data,
-  // ) {
-  //   const data = await this.metricsService.getMetrics(field, parent.query);
-  //   return { ...data, field };
-  // }
-
-  // @ResolveField(() => DataActivity, {
-  //   name: 'activity',
-  //   description: 'Return a matrix aggregation per week and field',
-  // })
-  // public async getActivityProperty(
-  //   @Args({
-  //     name: 'dateField',
-  //     type: () => String,
-  //     description: 'Date field to be used for the aggregation (for example: ClosedAt)',
-  //     nullable: false,
-  //   })
-  //   dateField: string,
-  //   @Args({
-  //     name: 'field',
-  //     type: () => String,
-  //     description: 'Field to be used for the aggregations (for example: repository.name)',
-  //     nullable: false,
-  //   })
-  //   field: string,
-  //   @Parent()
-  //   parent: Data,
-  // ) {
-  //   const data = await this.activityService.getActivity(dateField, field, parent.query);
-  //   return { ...data, field };
-  // }
 }

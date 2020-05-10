@@ -72,6 +72,12 @@ export default class Repository {
   })
   createdAt: string;
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Identifies the date and time when the object was starred by a user.',
+  })
+  starredAt?: string;
+
   @Field(() => Ref, {
     nullable: true,
     description: 'The Ref associated with the repository default branch.',

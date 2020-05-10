@@ -13,7 +13,7 @@ export default class DataActivityService {
   async getActivity(dateField: string, field: string, query: any): Promise<any> {
     const filterQuery = JSON.parse(query);
 
-    const results = await getTermAggregation(this.esClient, 'gh_prs_', filterQuery, field, false);
+    const results = await getTermAggregation(this.esClient, 'gh_prs_', filterQuery, field, {}, false);
     const bucketsResults = [];
     // let firstWeek = startOfWeek(new Date()).toISOString();
     // let lastWeek = startOfWeek(new Date()).toISOString();
