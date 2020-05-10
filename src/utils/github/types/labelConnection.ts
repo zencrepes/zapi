@@ -4,15 +4,13 @@ import LabelEdge from './labelEdge';
 
 @ObjectType()
 export default class LabelConnection {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Field(type => [LabelEdge], {
+  @Field(() => [LabelEdge], {
     nullable: false,
     description: 'A list of edges.',
   })
   edges: LabelEdge[];
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Field(type => Int, {
+  @Field(() => Int, {
     nullable: false,
     description: 'Identifies the total count of items in the connection.',
   })

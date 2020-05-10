@@ -64,18 +64,18 @@ type GithubPullrequestsData {
 
   """Returns a paginated list of items"""
   items(
-    orderBy: ItemOrder
+    orderBy: ItemSortorder
 
     """Number if items to return """
     size: Int = 10
 
     """Return items starting from"""
     from: Int = 0
-  ): ItemConnection!
+  ): PullrequestsItemConnection!
 
   """Returns a single item by providing its ID"""
   item(
-    """Return items starting from"""
+    """ID fo an item"""
     id: String!
   ): PullRequest!
 
@@ -93,7 +93,7 @@ type GithubPullrequestsData {
     Field to aggregate on, using the node as the root object (examples: states, author.login)
     """
     field: String!
-  ): DataAggregations!
+  ): PullrequestsAggregationConnection!
 
   """Return aggregations (facets)"""
   metrics(
@@ -113,7 +113,7 @@ type GithubPullrequestsData {
   ): DataActivity!
 }
 
-input ItemOrder {
+input ItemSortorder {
   direction: OrderDirection!
 
   """
@@ -148,8 +148,11 @@ type ConfigAggregation {
   """Displayable name for the aggregation"""
   name: String
 
-  """Value to display if field is null"""
+  """Value to display if field is null (or _EMPTY_)"""
   nullValue: String
+
+  """Stringified filter to be applied if user clicks on nullValue"""
+  nullFilter: String
 
   """Should the aggregation be displayed by default"""
   default: Boolean
@@ -163,9 +166,666 @@ type ConfigAggregations {
   nodes: [ConfigAggregation!]!
 }
 
-type User {
+type RepositoryOwner {
+  id: ID!
+
   """The username of the actor."""
   login: String!
+
+  """The HTTP URL for this repository."""
+  url: String!
+}
+
+type BranchProtectionRule {
+  id: ID!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """Can admins overwrite branch protection."""
+  isAdminEnforced: Boolean!
+
+  """Identifies the protection rule pattern."""
+  pattern: String
+
+  """Number of approving reviews required to update matching branches."""
+  requiredApprovingReviewCount: Float
+
+  """
+  List of required status check contexts that must pass for commits to be accepted to matching branches.
+  """
+  requiredStatusCheckContexts: String
+
+  """Are approving reviews required to update matching branches."""
+  requiresApprovingReviews: Boolean!
+
+  """Are reviews from code owners required to update matching branches."""
+  requiresCodeOwnerReviews: Boolean!
+
+  """Are commits required to be signed"""
+  requiresCommitSignatures: Boolean!
+
+  """Are status checks required to update matching branches."""
+  requiresStatusChecks: Boolean!
+
+  """Are branches required to be up to date before merging."""
+  requiresStrictStatusChecks: Boolean!
+
+  """Is pushing to matching branches restricted."""
+  restrictsPushes: Boolean!
+
+  """Is dismissal of pull request reviews restricted."""
+  restrictsReviewDismissals: Boolean!
+}
+
+type BranchProtectionRuleEdge {
+  """The item at the end of the edge."""
+  node: BranchProtectionRule!
+}
+
+type BranchProtectionRuleConnection {
+  """A list of edges."""
+  edges: [BranchProtectionRuleEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type CodeOfConduct {
+  id: ID!
+
+  """The key for the Code of Conduct"""
+  key: String
+
+  """The formal name of the Code of Conduct"""
+  name: String!
+
+  """The body of the Code of Conduct"""
+  body: String!
+
+  """The HTTP URL for this Code of Conduct"""
+  url: String!
+}
+
+type Ref {
+  id: ID!
+
+  """The ref name."""
+  name: String!
+
+  """The ref prefix, such as `refs/heads/` or`refs/tags/`."""
+  prefix: String
+}
+
+type Issue {
+  id: ID!
+}
+
+type IssueEdge {
+  """The item at the end of the edge."""
+  node: Issue!
+}
+
+type IssueConnection {
+  """A list of edges."""
+  edges: [IssueEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Label {
+  id: ID!
+
+  """Identifies the label color."""
+  color: String!
+
+  """Identifies the label name."""
+  name: String!
+
+  """A brief description of this label."""
+  description: String
+}
+
+type LabelEdge {
+  """The item at the end of the edge."""
+  node: Label!
+}
+
+type LabelConnection {
+  """A list of edges."""
+  edges: [LabelEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Language {
+  id: ID!
+
+  """Identifies the label color."""
+  color: String!
+
+  """Identifies the label name."""
+  name: String!
+}
+
+type LanguageEdge {
+  """The item at the end of the edge."""
+  node: Language!
+}
+
+type LanguageConnection {
+  """A list of edges."""
+  edges: [LanguageEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type License {
+  id: ID!
+
+  """The lowercased SPDX ID of the license"""
+  key: String!
+
+  """Identifies the label name."""
+  name: String!
+
+  """Customary short name if applicable (e.g, GPLv3)"""
+  nickname: String!
+
+  """Short identifier specified by <https://spdx.org/licenses>"""
+  spdxId: String
+
+  """URL to the license on <https://choosealicense.com>"""
+  url: String
+}
+
+type Milestone {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Description of the Milestone"""
+  description: String!
+
+  """When is the milestone due"""
+  dueOn: String
+
+  """When is the milestone due"""
+  issues: IssueConnection
+
+  """ Identifies the issue number."""
+  number: String!
+
+  """Identifies the state of the PR."""
+  state: String!
+
+  """Identifies the object title."""
+  title: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+}
+
+type MilestoneEdge {
+  """The item at the end of the edge."""
+  node: Milestone!
+}
+
+type MilestoneConnection {
+  """A list of edges."""
+  edges: [MilestoneEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Project {
+  id: ID!
+}
+
+type ProjectEdge {
+  """The item at the end of the edge."""
+  node: Project!
+}
+
+type ProjectConnection {
+  """A list of edges."""
+  edges: [ProjectEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type PullrequestEdge {
+  """The item at the end of the edge."""
+  node: PullRequest!
+}
+
+type PullRequestConnection {
+  """A list of edges."""
+  edges: [PullrequestEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type RefEdge {
+  """The item at the end of the edge."""
+  node: Ref!
+}
+
+type RefConnection {
+  """A list of edges."""
+  edges: [RefEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Release {
+  id: ID!
+}
+
+type ReleaseEdge {
+  """The item at the end of the edge."""
+  node: Release!
+}
+
+type ReleaseConnection {
+  """A list of edges."""
+  edges: [ReleaseEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Topic {
+  id: ID!
+
+  """Identifies the label name."""
+  name: String!
+}
+
+type RepositoryTopic {
+  id: ID!
+
+  """The topic."""
+  topic: Topic!
+
+  """The HTTP URL for this repository-topic."""
+  url: String!
+}
+
+type RepositoryTopicEdge {
+  """The item at the end of the edge."""
+  node: RepositoryTopic!
+}
+
+type RepositoryTopicConnection {
+  """A list of edges."""
+  edges: [RepositoryTopicEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type StargazerConnection {
+  """A list of edges."""
+  edges: [ReleaseEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type SecurityAdvisory {
+  id: ID!
+
+  """When the advisory was published"""
+  publishedAt: String!
+
+  """The organization that originated the advisory"""
+  origin: String!
+
+  """A short plaintext summary of the advisory"""
+  summary: String!
+
+  """This is a long plaintext description of the advisory"""
+  description: String!
+  severity: SecurityAdvisorySeverity!
+
+  """The GitHub Security Advisory ID"""
+  ghsaId: String!
+
+  """The permalink for the advisory"""
+  permalink: String
+}
+
+"""The severity of the advisory"""
+enum SecurityAdvisorySeverity {
+  CRITICAL
+  HIGH
+  LOW
+  MODERATE
+}
+
+type SecurityAdvisoryPackageVersion {
+  """The package name or version"""
+  identifier: String!
+}
+
+type SecurityAdvisoryPackage {
+  """The ecosystem the package belongs to, e.g. RUBYGEMS, NPM"""
+  name: String!
+
+  """The organization that originated the advisory"""
+  ecosystem: SecurityAdvisoryEcosystem!
+}
+
+"""The possible ecosystems of a security vulnerability package."""
+enum SecurityAdvisoryEcosystem {
+  COMPOSER
+  MAVEN
+  NPM
+  NUGET
+  PIP
+  RUBYGEMS
+}
+
+type SecurityVulnerability {
+  """When the vulnerability was last updated"""
+  updatedAt: String!
+
+  """The Advisory associated with this Vulnerability"""
+  advisory: SecurityAdvisory!
+
+  """When was the alert dimissed?"""
+  firstPatchedVersion: SecurityAdvisoryPackageVersion!
+
+  """The user who dismissed the alert"""
+  package: SecurityAdvisoryPackage
+
+  """The severity of the vulnerability within this package"""
+  severity: SecurityAdvisorySeverity
+
+  """A string that describes the vulnerable package versions."""
+  vulnerableVersionRange: String!
+}
+
+type RepositoryVulnerabilityAlert {
+  id: ID!
+
+  """Identifies the date and time when the object was created"""
+  createdAt: String!
+
+  """The reason the alert was dismissed"""
+  dismissReason: String
+
+  """When was the alert dimissed?"""
+  dismissedAt: String
+
+  """The user who dismissed the alert"""
+  dismisser: User
+
+  """The repository where the alert is located"""
+  repository: Repository!
+
+  """The vulnerable manifest path"""
+  vulnerableManifestPath: String!
+
+  """The vulnerable manifest filename"""
+  vulnerableManifestFilename: String!
+
+  """The vulnerable requirements"""
+  vulnerableRequirements: String!
+
+  """The vulnerable requirements"""
+  securityVulnerability: SecurityVulnerability!
+}
+
+type RepositoryVulnerabilityAlertEdge {
+  """The item at the end of the edge."""
+  node: RepositoryVulnerabilityAlert!
+}
+
+type RepositoryVulnerabilityAlertConnection {
+  """A list of edges."""
+  edges: [RepositoryVulnerabilityAlertEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Repository {
+  id: ID!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """The name of the repository."""
+  name: String
+
+  """The repository name with owner."""
+  nameWithOwner: String
+
+  """The HTTP URL for this repository."""
+  url: String!
+
+  """The User owner of the repository."""
+  owner: RepositoryOwner!
+
+  """The User owner of the repository."""
+  branchProtectionRules: BranchProtectionRuleConnection
+
+  """The User owner of the repository."""
+  codeOfConduct: CodeOfConduct
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """Identifies the date and time when the object was starred by a user."""
+  starredAt: String
+
+  """The Ref associated with the repository default branch."""
+  defaultBranchRef: Ref
+
+  """The description of the repository."""
+  description: String
+
+  """The number of kilobytes this repository occupies on disk."""
+  diskUsage: Int
+
+  """
+  Returns how many forks there are of this repository in the whole network.
+  """
+  forkCount: Int
+
+  """Indicates if the repository has issues feature enabled."""
+  hasIssuesEnabled: Boolean
+
+  """Indicates if the repository has projects feature enabled."""
+  hasProjectsEnabled: Boolean
+
+  """Indicates if the repository has wiki feature enabled."""
+  hasWikiEnabled: Boolean
+
+  """Indicates if the repository is unmaintained."""
+  isArchived: Boolean
+
+  """Returns whether or not this repository disabled."""
+  isDisabled: Boolean
+
+  """Identifies if the repository is a fork."""
+  isFork: Boolean
+
+  """Indicates if the repository has been locked or not."""
+  isLocked: Boolean
+
+  """Identifies if the repository is a mirror."""
+  isMirror: Boolean
+
+  """Identifies if the repository is private."""
+  isPrivate: Boolean
+
+  """
+  Identifies if the repository is a template that can be used to generate new repositories.
+  """
+  isTemplate: Boolean
+
+  """A list of issues that have been opened in the repository."""
+  issues: IssueConnection
+
+  """A list of labels associated with the repository."""
+  labels: LabelConnection
+
+  """A list of labels associated with the repository."""
+  languages: LanguageConnection
+
+  """The license associated with the repository"""
+  licenseInfo: License
+
+  """A list of milestones associated with the repository."""
+  milestones: MilestoneConnection
+
+  """A list of milestones associated with the repository."""
+  projects: ProjectConnection
+
+  """The primary language of the repository code."""
+  primaryLanguage: Language
+
+  """A list of pull requests that have been opened in the repository."""
+  pullRequests: PullRequestConnection
+
+  """Identifies when the repository was last pushed to."""
+  pushedAt: String
+
+  """Whether or not rebase-merging is enabled on this repository."""
+  rebaseMergeAllowed: Boolean
+
+  """Whether or not rebase-merging is enabled on this repository."""
+  refs: RefConnection
+
+  """A list of pull requests that have been opened in the repository."""
+  releases: ReleaseConnection
+
+  """A list of applied repository-topic associations for this repository."""
+  repositoryTopics: RepositoryTopicConnection
+
+  """Whether or not squash-merging is enabled on this repository."""
+  squashMergeAllowed: Boolean
+
+  """A list of users who have starred this starrable."""
+  stargazers: StargazerConnection
+
+  """The repository from which this repository was generated, if any."""
+  templateRepository: Repository
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String
+
+  """A list of vulnerability alerts that are on this repository."""
+  vulnerabilityAlerts: RepositoryVulnerabilityAlertConnection
+
+  """A list of vulnerability alerts that are on this repository."""
+  watchers: UserConnection
+}
+
+type Follower {
+  id: ID!
+}
+
+type FollowerEdge {
+  """The item at the end of the edge."""
+  node: Follower!
+}
+
+type FollowerConnection {
+  """A list of edges."""
+  edges: [FollowerEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type FollowingConnection {
+  """A list of edges."""
+  edges: [FollowerEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Organization {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """ The organization login name."""
+  login: String!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The HTTP URL for this actor."""
+  url: String!
+
+  """The organization public profile name."""
+  name: String
+
+  """The organization public profile name."""
+  email: String
+
+  """The organization public profile URL."""
+  websiteUrl: String
+}
+
+type OrganizationEdge {
+  """The item at the end of the edge."""
+  node: Organization!
+}
+
+type OrganizationConnection {
+  """A list of edges."""
+  edges: [OrganizationEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type RepositoryEdge {
+  """The item at the end of the edge."""
+  node: Repository!
+}
+
+type RepositoryConnection {
+  """A list of edges."""
+  edges: [RepositoryEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type User {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """The username of the actor."""
+  login: String!
+
+  """The user public profile company.."""
+  company: String
 
   """A URL pointing to the actor public avatar."""
   avatarUrl: String
@@ -175,6 +835,49 @@ type User {
 
   """The user public profile name."""
   name: String
+
+  """If Watcher or Stargazer, the target repository"""
+  repository: Repository
+
+  """If Watcher or Stargazer, the data type (watchers or stargazers)"""
+  dataType: String
+
+  """If Stargazer, the date and time when an object was last starred."""
+  lastStarredAt: String
+
+  """Whether or not this user is a GitHub employee."""
+  isEmployee: Boolean
+
+  """Whether or not the user has marked themselves as for hire."""
+  isHireable: Boolean
+
+  """Whether or not this user is a GitHub Developer Program member."""
+  isDeveloperProgramMember: Boolean
+
+  """
+  Whether or not this user is a participant in the GitHub Campus Experts Program.
+  """
+  isCampusExpert: Boolean
+
+  """
+  Whether or not this user is a participant in the GitHub Security Bug Bounty.
+  """
+  isBountyHunter: Boolean
+
+  """A URL pointing to the user public website/ blog."""
+  websiteUrl: Boolean
+
+  """A list of users the given user is followed by."""
+  followers: FollowerConnection
+
+  """A list of users the given user is following."""
+  following: FollowingConnection
+
+  """A list of organizations the given user is a member of."""
+  organizations: OrganizationConnection
+
+  """A list of repositories watched or starred by the user"""
+  repositories: RepositoryConnection
 }
 
 type UserEdge {
@@ -203,32 +906,6 @@ type ReviewRequestEdge {
 type ReviewRequestConnection {
   """A list of edges."""
   edges: [ReviewRequestEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Label {
-  id: ID!
-
-  """Identifies the label color."""
-  color: String!
-
-  """Identifies the label name."""
-  name: String!
-
-  """A brief description of this label."""
-  description: String
-}
-
-type LabelEdge {
-  """The item at the end of the edge."""
-  node: Label!
-}
-
-type LabelConnection {
-  """A list of edges."""
-  edges: [LabelEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -276,83 +953,6 @@ type Actor {
   login: String!
 
   """The HTTP URL for this actor."""
-  url: String!
-}
-
-type RepositoryOwner {
-  id: ID!
-
-  """The username of the actor."""
-  login: String!
-
-  """The HTTP URL for this repository."""
-  url: String!
-}
-
-type Repository {
-  id: ID!
-
-  """Identifies the primary key from the database."""
-  databaseId: Float!
-
-  """The name of the repository."""
-  name: String
-
-  """The HTTP URL for this repository."""
-  url: String!
-
-  """The User owner of the repository."""
-  owner: RepositoryOwner!
-}
-
-type Issue {
-  id: ID!
-}
-
-type IssueEdge {
-  """The item at the end of the edge."""
-  node: Issue!
-}
-
-type IssueConnection {
-  """A list of edges."""
-  edges: [IssueEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Milestone {
-  id: ID!
-
-  """Identifies the date and time when the object was created."""
-  closedAt: String
-
-  """Identifies the date and time when the object was created."""
-  createdAt: String!
-
-  """Description of the Milestone"""
-  description: String!
-
-  """When is the milestone due"""
-  dueOn: String
-
-  """When is the milestone due"""
-  issues: IssueConnection
-
-  """ Identifies the issue number."""
-  number: String!
-
-  """Identifies the state of the PR."""
-  state: String!
-
-  """Identifies the object title."""
-  title: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
-
-  """The HTTP URL for this PR."""
   url: String!
 }
 
@@ -438,12 +1038,12 @@ type PullRequest {
   url: String!
 }
 
-type ItemConnection {
+type PullrequestsItemConnection {
   nodes: [PullRequest!]
   totalCount: Int!
 }
 
-type Aggregation {
+type AggregationBucket {
   """The Bucket key"""
   key: String!
 
@@ -452,14 +1052,22 @@ type Aggregation {
 
   """The number of elements in the bucket"""
   docCount: Float!
+
+  """Moving average value"""
+  docCountMovingAvg: Float
+
+  """
+  Metadata returned based on the aggOptions parameter, it allows additional fields to be returned
+  """
+  metadata: String
 }
 
-type DataAggregations {
+type PullrequestsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
   """A list of aggregation buckets"""
-  buckets: [Aggregation!]!
+  buckets: [AggregationBucket!]!
 }
 
 type DataMetrics {
@@ -515,10 +1123,265 @@ type DataActivity {
   toWeekStart: String!
 }
 
+type GithubVulnerabilities {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubVulnerabilitiesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubVulnerabilitiesConfig!
+}
+
+type GithubVulnerabilitiesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: Sortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): VulnerabilityConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): RepositoryVulnerabilityAlert!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): VulnerabilitiesAggregationConnection!
+}
+
+input Sortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubVulnerabilitiesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+}
+
+type VulnerabilityConnection {
+  nodes: [RepositoryVulnerabilityAlert!]
+  totalCount: Int!
+}
+
+type VulnerabilitiesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubRepositories {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubRepositoriesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubRepositoriesConfig!
+}
+
+type GithubRepositoriesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: RepositoriesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataRepositoryConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): RepositoryVulnerabilityAlert!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): RepositoriesAggregationConnection!
+}
+
+input RepositoriesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubRepositoriesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+}
+
+type DataRepositoryConnection {
+  nodes: [Repository!]
+  totalCount: Int!
+}
+
+type RepositoriesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubWatchers {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubWatchersData!
+
+  """Access to configuration values and metadata"""
+  config: GithubWatchersConfig!
+}
+
+type GithubWatchersData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: WatchersSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): WatcherConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): User!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): WatchersAggregationConnection!
+}
+
+input WatchersSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubWatchersConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+}
+
+type WatcherConnection {
+  nodes: [User!]
+  totalCount: Int!
+}
+
+type WatchersAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
 
   """Fetch data (items, aggregatiosn) related to GitHub PRs"""
   githubPullrequests: GithubPullrequests!
+
+  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  githubVulnerabilities: GithubVulnerabilities!
+
+  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  githubRepositories: GithubRepositories!
+
+  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  githubWatchers: GithubWatchers!
 }

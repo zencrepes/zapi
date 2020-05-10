@@ -4,6 +4,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from './config/config.module';
 import { GithubPullrequestsModule } from './githubPullrequests/githubPullrequests.module';
+import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulnerabilities.module';
+import { GithubRepositoriesModule } from './githubRepositories/githubRepositories.module';
+import { GithubWatchersModule } from './githubWatchers/githubWatchers.module';
 import { join } from 'path';
 import { ConfModule } from './conf.module';
 
@@ -20,6 +23,9 @@ import { ConfModule } from './conf.module';
     }),
     ConfigModule,
     GithubPullrequestsModule,
+    GithubVulnerabilitiesModule,
+    GithubRepositoriesModule,
+    GithubWatchersModule,
     ConfModule,
   ],
   controllers: [AppController],
