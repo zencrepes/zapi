@@ -43,6 +43,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: yarn
-      - run: sudo npm install -g typescript@3.8.3
+      - run: npm install -g typescript@3.8.3
       - run: tsc --version
       - run: yarn run build
