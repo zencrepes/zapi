@@ -7,6 +7,7 @@ import GithubRepositoriesConfig from './config/config.type';
 import { buildQuery } from '@arranger/middleware';
 
 import { getNestedFields } from '../utils/query';
+import DataCountService from '../utils/data/count/count.service';
 
 const getEsQuery = async (query: string) => {
   const queryObj = JSON.parse(query);
@@ -30,6 +31,8 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(GithubRepositories)
 export default class GithubRepositoriesResolver {
+  constructor(private readonly countService: DataCountService) {}
+
   @Query(() => GithubRepositories, {
     name: 'githubRepositories',
     description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
@@ -59,6 +62,8 @@ export default class GithubRepositoriesResolver {
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
+    data.count = await this.countService.getCount(query, 'j_issues_');
+
     return data;
   }
 

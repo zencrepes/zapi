@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export default class GithubWatchersData {
+export default class JiraIssuesData {
   @Field({
     nullable: false,
     description: 'Query received as a parameter',

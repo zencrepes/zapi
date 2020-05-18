@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common';
-import GithubWatchersResolvers from './githubWatchers.resolvers';
+import JiraIssuesResolvers from './jiraIssues.resolvers';
 
 import { ConfModule } from '../conf.module';
 import { ConfService } from '../conf.service';
 import { ElasticsearchModule } from '@nestjs/elasticsearch';
 
 import ConfigResolver from './config/config.resolvers';
-import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
 import DataResolver from './data/data.resolvers';
+import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
+import ConfigTableService from '../utils/config/table/table.service';
 import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
 import DataCountService from '../utils/data/count/count.service';
-
-// import DataMetricsService from './data/metrics/metrics.service';
-// import DataActivityService from './data/activity/activity.service';
 
 @Module({
   imports: [
@@ -26,15 +24,14 @@ import DataCountService from '../utils/data/count/count.service';
     }),
   ],
   providers: [
-    GithubWatchersResolvers,
+    JiraIssuesResolvers,
     ConfigResolver,
     DataResolver,
     ConfigAggregationsService,
+    ConfigTableService,
     DataAggregationsService,
     DataItemsService,
     DataCountService,
-    // DataMetricsService,
-    // DataActivityService,
   ],
 })
-export class GithubWatchersModule {}
+export class JiraIssuesModule {}

@@ -49,6 +49,14 @@ export default class DataMetricsService {
     });
     const filteredRsults = filteredDatasets.body.aggregations;
 
+    const countDocuments: ApiResponse = await this.esClient.count({
+      index: esIndex,
+      body: {
+        query: updatedFilteredQuery,
+      },
+    });
+    const docCount = countDocuments.body.count;
+
     const unfilteredQuery = clearCurrentField(JSON.parse(query), field);
     const prepUnFilteredQuery = {
       nestedFields: [],
@@ -85,6 +93,7 @@ export default class DataMetricsService {
     const unfilteredRsults = unfilteredDatasets.body.aggregations;
 
     return {
+      count: docCount,
       max: filteredRsults.max.value,
       min: filteredRsults.min.value,
       overallMax: unfilteredRsults.max.value,

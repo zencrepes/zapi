@@ -12,6 +12,7 @@ import DataAggregationsService from '../utils/data/aggregations/aggregations.ser
 import DataItemsService from '../utils/data/items/items.service';
 import DataMetricsService from './data/metrics/metrics.service';
 import DataActivityService from './data/activity/activity.service';
+import DataCountService from '../utils/data/count/count.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import DataActivityService from './data/activity/activity.service';
     DataItemsService,
     DataMetricsService,
     DataActivityService,
+    DataCountService,
   ],
 })
 export class GithubPullrequestsModule {}

@@ -13,4 +13,10 @@ export default class GithubRepositoriesData {
     description: 'Transformation of the received query in an Elasticsearch query',
   })
   esQuery: string;
+
+  @Field({
+    nullable: false,
+    description: 'Total number of documents matching the query',
+  })
+  count: number;
 }

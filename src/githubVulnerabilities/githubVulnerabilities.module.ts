@@ -10,6 +10,8 @@ import ConfigAggregationsService from '../utils/config/aggregations/aggregations
 import DataResolver from './data/data.resolvers';
 import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
+import DataCountService from '../utils/data/count/count.service';
+
 // import DataMetricsService from './data/metrics/metrics.service';
 // import DataActivityService from './data/activity/activity.service';
 
@@ -30,6 +32,7 @@ import DataItemsService from '../utils/data/items/items.service';
     ConfigAggregationsService,
     DataAggregationsService,
     DataItemsService,
+    DataCountService,
     // DataMetricsService,
     // DataActivityService,
   ],

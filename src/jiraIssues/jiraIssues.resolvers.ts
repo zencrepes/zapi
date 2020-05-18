@@ -1,8 +1,8 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
-import GithubWatchers from './githubWatchers.type';
-import GithubWatchersData from './data/data.type';
-import GithubWatchersConfig from './config/config.type';
+import JiraIssues from './jiraIssues.type';
+import JiraIssuesData from './data/data.type';
+import JiraIssuesConfig from './config/config.type';
 
 import { buildQuery } from '@arranger/middleware';
 
@@ -29,19 +29,18 @@ const getEsQuery = async (query: string) => {
 };
 
 // https://github.com/nestjs/graphql/issues/475
-@Resolver(GithubWatchers)
-export default class GithubWatchersResolver {
+@Resolver(JiraIssues)
+export default class JiraIssuesResolver {
   constructor(private readonly countService: DataCountService) {}
-
-  @Query(() => GithubWatchers, {
-    name: 'githubWatchers',
+  @Query(() => JiraIssues, {
+    name: 'jiraIssues',
     description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
   })
-  public async geGithubWatchers(): Promise<GithubWatchers> {
-    return new GithubWatchers();
+  public async geJiraIssues(): Promise<JiraIssues> {
+    return new JiraIssues();
   }
 
-  @ResolveField(() => GithubWatchersData, {
+  @ResolveField(() => JiraIssuesData, {
     name: 'data',
     description: 'Access to the dataset as individual items, aggregations and more',
   })
@@ -54,9 +53,9 @@ export default class GithubWatchersResolver {
     })
     query: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Parent() parent: GithubWatchers,
-  ): Promise<GithubWatchersData> {
-    const data = new GithubWatchersData();
+    @Parent() parent: JiraIssues,
+  ): Promise<JiraIssuesData> {
+    const data = new JiraIssuesData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
@@ -66,12 +65,12 @@ export default class GithubWatchersResolver {
     return data;
   }
 
-  @ResolveField(() => GithubWatchersConfig, {
+  @ResolveField(() => JiraIssuesConfig, {
     name: 'config',
     description: 'Access to configuration values and metadata',
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async getConfig(@Parent() parent: GithubWatchers): Promise<GithubWatchersConfig> {
-    return new GithubWatchersConfig();
+  public async getConfig(@Parent() parent: JiraIssues): Promise<JiraIssuesConfig> {
+    return new JiraIssuesConfig();
   }
 }

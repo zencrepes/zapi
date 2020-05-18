@@ -7,6 +7,7 @@ import { GithubPullrequestsModule } from './githubPullrequests/githubPullrequest
 import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulnerabilities.module';
 import { GithubRepositoriesModule } from './githubRepositories/githubRepositories.module';
 import { GithubWatchersModule } from './githubWatchers/githubWatchers.module';
+import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
 import { join } from 'path';
 import { ConfModule } from './conf.module';
 
@@ -26,6 +27,7 @@ import { ConfModule } from './conf.module';
     GithubVulnerabilitiesModule,
     GithubRepositoriesModule,
     GithubWatchersModule,
+    JiraIssuesModule,
     ConfModule,
   ],
   controllers: [AppController],
