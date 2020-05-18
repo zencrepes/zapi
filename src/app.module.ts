@@ -9,6 +9,7 @@ import { GithubRepositoriesModule } from './githubRepositories/githubRepositorie
 import { GithubWatchersModule } from './githubWatchers/githubWatchers.module';
 import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
 import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module';
+import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.module';
 import { join } from 'path';
 import { ConfModule } from './conf.module';
 
@@ -30,6 +31,7 @@ import { ConfModule } from './conf.module';
     GithubWatchersModule,
     JiraIssuesModule,
     CircleciEnvvarsModule,
+    CircleciPipelinesModule,
     ConfModule,
   ],
   controllers: [AppController],

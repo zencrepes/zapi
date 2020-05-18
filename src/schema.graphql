@@ -1942,6 +1942,180 @@ type CircleciEnvvarsAggregationConnection {
   buckets: [AggregationBucket!]!
 }
 
+type CircleciPipelines {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): CircleciPipelinesData!
+
+  """Access to configuration values and metadata"""
+  config: CircleciPipelinesConfig!
+}
+
+type CircleciPipelinesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: CircleciPipelinesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): CircleciPipelineItemConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """ID fo an item"""
+    id: String!
+  ): JiraIssue!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): CircleciPipelinesAggregationConnection!
+}
+
+input CircleciPipelinesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type CircleciPipelinesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type PipelineError {
+  """Type of error"""
+  type: String!
+
+  """Message of the error"""
+  message: String!
+}
+
+type PipelineTriggerActor {
+  """Login of the user"""
+  login: String!
+
+  """Avatar URL of the user"""
+  avatar_url: String
+}
+
+type PipelineTrigger {
+  """Type of trigger"""
+  type: String!
+
+  """Actor who triggered the pipeline"""
+  actor: PipelineTriggerActor!
+}
+
+type VcsCommit {
+  """Body of the commit"""
+  body: String!
+
+  """Subject of the commit"""
+  subject: String!
+}
+
+type Vcs {
+  """Origin repository url"""
+  origin_repository_url: String!
+
+  """Target repository url"""
+  target_repository_url: String!
+
+  """Revision hash"""
+  revision: String!
+
+  """Provider Name"""
+  provider_name: String!
+
+  """Branch on the repository"""
+  branch: String
+
+  """Commit that triggered the pipeline"""
+  commit: VcsCommit
+}
+
+type Pipeline {
+  id: ID!
+
+  """Errors associated with the pipeline"""
+  errors: [PipelineError!]!
+
+  """The value of the environment variable"""
+  project_slug: String!
+
+  """Pipeline number"""
+  number: String!
+
+  """Pipeline state"""
+  state: String!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """The pipeline trigger"""
+  trigger: PipelineTrigger!
+
+  """Vcs details associated with the trigger"""
+  vcs: Vcs!
+
+  """Identifies the date and time when the object was updated."""
+  updatedAt: String!
+
+  """Identifies the date and time when the object was triggered."""
+  triggeredAt: String!
+
+  """The environment variable source"""
+  source: Source!
+}
+
+type CircleciPipelineItemConnection {
+  nodes: [Pipeline!]
+  totalCount: Int!
+}
+
+type CircleciPipelinesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
@@ -1963,4 +2137,7 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   circleciEnvvars: CircleciEnvvars!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  circleciPipelines: CircleciPipelines!
 }
