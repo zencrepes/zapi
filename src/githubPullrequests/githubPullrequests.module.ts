@@ -8,6 +8,7 @@ import { ElasticsearchModule } from '@nestjs/elasticsearch';
 import ConfigResolver from './config/config.resolvers';
 import DataResolver from './data/data.resolvers';
 import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
+import ConfigTableService from '../utils/config/table/table.service';
 import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
 import DataMetricsService from './data/metrics/metrics.service';
@@ -29,6 +30,7 @@ import DataCountService from '../utils/data/count/count.service';
     ConfigResolver,
     DataResolver,
     ConfigAggregationsService,
+    ConfigTableService,
     DataAggregationsService,
     DataItemsService,
     DataMetricsService,

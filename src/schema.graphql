@@ -139,6 +139,9 @@ type GithubPullrequestsConfig {
 
   """Returns a paginated list of available aggregations"""
   aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
 }
 
 type ConfigAggregation {
@@ -167,6 +170,28 @@ type ConfigAggregations {
 
   """A list of available datasets"""
   nodes: [ConfigAggregation!]!
+}
+
+type ConfigTableColumns {
+  """Displayable name for the column"""
+  name: String
+
+  """Field used to fetch the column content"""
+  field: String
+
+  """Field to sort upon for the column (could be different)"""
+  sortField: String
+
+  """Should the column be sortable"""
+  sortable: Boolean
+}
+
+type ConfigTable {
+  """The type of item available in the table"""
+  itemsType: String
+
+  """A list of available columns"""
+  columns: [ConfigTableColumns!]!
 }
 
 type RepositoryOwner {
@@ -1196,6 +1221,9 @@ type GithubVulnerabilitiesConfig {
 
   """Returns a paginated list of available aggregations"""
   aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
 }
 
 type VulnerabilityConnection {
@@ -1281,6 +1309,9 @@ type GithubRepositoriesConfig {
 
   """Returns a paginated list of available aggregations"""
   aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
 }
 
 type DataRepositoryConnection {
@@ -1366,6 +1397,9 @@ type GithubWatchersConfig {
 
   """Returns a paginated list of available aggregations"""
   aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
 }
 
 type WatcherConnection {
@@ -1454,28 +1488,6 @@ type JiraIssuesConfig {
 
   """Returns the table configuration for this datatype"""
   table: ConfigTable!
-}
-
-type ConfigTableColumns {
-  """Displayable name for the column"""
-  name: String
-
-  """Field used to fetch the column content"""
-  field: String
-
-  """Field to sort upon for the column (could be different)"""
-  sortField: String
-
-  """Should the column be sortable"""
-  sortable: Boolean
-}
-
-type ConfigTable {
-  """The type of item available in the table"""
-  itemsType: String
-
-  """A list of available columns"""
-  columns: [ConfigTableColumns!]!
 }
 
 type JiraAvatarUrls {
