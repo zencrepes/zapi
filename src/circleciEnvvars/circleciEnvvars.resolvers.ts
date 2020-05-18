@@ -1,8 +1,8 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
-import GithubPullrequests from './githubPullrequests.type';
-import GithubPullrequestsData from './data/data.type';
-import GithubPullrequestsConfig from './config/config.type';
+import CircleciEnvvars from './circleciEnvvars.type';
+import CircleciEnvvarsData from './data/data.type';
+import CircleciEnvvarsConfig from './config/config.type';
 
 import { buildQuery } from '@arranger/middleware';
 
@@ -29,19 +29,18 @@ const getEsQuery = async (query: string) => {
 };
 
 // https://github.com/nestjs/graphql/issues/475
-@Resolver(GithubPullrequests)
-export default class GithubPullrequestsResolver {
+@Resolver(CircleciEnvvars)
+export default class CircleciEnvvarsResolver {
   constructor(private readonly countService: DataCountService) {}
-
-  @Query(() => GithubPullrequests, {
-    name: 'githubPullrequests',
+  @Query(() => CircleciEnvvars, {
+    name: 'circleciEnvvars',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
-  public async geGithubPullrequests(): Promise<GithubPullrequests> {
-    return new GithubPullrequests();
+  public async geCircleciEnvvars(): Promise<CircleciEnvvars> {
+    return new CircleciEnvvars();
   }
 
-  @ResolveField(() => GithubPullrequestsData, {
+  @ResolveField(() => CircleciEnvvarsData, {
     name: 'data',
     description: 'Access to the dataset as individual items, aggregations and more',
   })
@@ -54,24 +53,24 @@ export default class GithubPullrequestsResolver {
     })
     query: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Parent() parent: GithubPullrequests,
-  ): Promise<GithubPullrequestsData> {
-    const data = new GithubPullrequestsData();
+    @Parent() parent: CircleciEnvvars,
+  ): Promise<CircleciEnvvarsData> {
+    const data = new CircleciEnvvarsData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'j_issues_');
+    data.count = await this.countService.getCount(query, 'cci_envvars_');
     return data;
   }
 
-  @ResolveField(() => GithubPullrequestsConfig, {
+  @ResolveField(() => CircleciEnvvarsConfig, {
     name: 'config',
     description: 'Access to configuration values and metadata',
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async getConfig(@Parent() parent: GithubPullrequests): Promise<GithubPullrequestsConfig> {
-    return new GithubPullrequestsConfig();
+  public async getConfig(@Parent() parent: CircleciEnvvars): Promise<CircleciEnvvarsConfig> {
+    return new CircleciEnvvarsConfig();
   }
 }

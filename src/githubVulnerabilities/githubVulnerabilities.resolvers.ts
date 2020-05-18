@@ -35,7 +35,7 @@ export default class GithubVulnerabilitiesResolver {
 
   @Query(() => GithubVulnerabilities, {
     name: 'githubVulnerabilities',
-    description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
+    description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
   public async geGithubVulnerabilities(): Promise<GithubVulnerabilities> {
     return new GithubVulnerabilities();

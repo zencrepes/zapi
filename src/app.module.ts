@@ -8,6 +8,7 @@ import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulne
 import { GithubRepositoriesModule } from './githubRepositories/githubRepositories.module';
 import { GithubWatchersModule } from './githubWatchers/githubWatchers.module';
 import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
+import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module';
 import { join } from 'path';
 import { ConfModule } from './conf.module';
 
@@ -28,6 +29,7 @@ import { ConfModule } from './conf.module';
     GithubRepositoriesModule,
     GithubWatchersModule,
     JiraIssuesModule,
+    CircleciEnvvarsModule,
     ConfModule,
   ],
   controllers: [AppController],

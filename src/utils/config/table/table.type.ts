@@ -10,6 +10,12 @@ export default class ConfigTable {
   })
   itemsType: string;
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'The default sort field',
+  })
+  defaultSortField: string;
+
   @Field(() => [ConfigTableColumns], {
     nullable: false,
     description: 'A list of available columns',

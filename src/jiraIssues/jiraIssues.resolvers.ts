@@ -34,7 +34,7 @@ export default class JiraIssuesResolver {
   constructor(private readonly countService: DataCountService) {}
   @Query(() => JiraIssues, {
     name: 'jiraIssues',
-    description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
+    description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
   public async geJiraIssues(): Promise<JiraIssues> {
     return new JiraIssues();

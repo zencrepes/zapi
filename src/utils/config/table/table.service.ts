@@ -24,6 +24,7 @@ export default class ConfigTableService {
       return {
         columns: results[0]._source.tableConfig.columns,
         itemsType: results[0]._source.tableConfig.itemsType,
+        defaultSortField: results[0]._source.tableConfig.defaultSortField,
       };
     }
     return { columns: [], itemsType: null };

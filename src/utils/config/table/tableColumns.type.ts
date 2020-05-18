@@ -25,4 +25,16 @@ export default class ConfigTableColumns {
     description: 'Should the column be sortable',
   })
   sortable: boolean;
+
+  @Field({
+    nullable: true,
+    description: 'Link attached to the field',
+  })
+  linkField: string;
+
+  @Field({
+    nullable: true,
+    description: 'Should the column be displayed by default',
+  })
+  default: boolean;
 }

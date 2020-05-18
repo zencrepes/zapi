@@ -184,11 +184,20 @@ type ConfigTableColumns {
 
   """Should the column be sortable"""
   sortable: Boolean
+
+  """Link attached to the field"""
+  linkField: String
+
+  """Should the column be displayed by default"""
+  default: Boolean
 }
 
 type ConfigTable {
   """The type of item available in the table"""
   itemsType: String
+
+  """The default sort field"""
+  defaultSortField: String
 
   """A list of available columns"""
   columns: [ConfigTableColumns!]!
@@ -1799,22 +1808,159 @@ type JiraIssuesAggregationConnection {
   buckets: [AggregationBucket!]!
 }
 
+type CircleciEnvvars {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): CircleciEnvvarsData!
+
+  """Access to configuration values and metadata"""
+  config: CircleciEnvvarsConfig!
+}
+
+type CircleciEnvvarsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: CircleciEnvvarsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): CircleciEnvvarItemConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """ID fo an item"""
+    id: String!
+  ): JiraIssue!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): CircleciEnvvarsAggregationConnection!
+}
+
+input CircleciEnvvarsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type CircleciEnvvarsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type EnvvarRepositoryOwner {
+  id: ID!
+
+  """The username of the actor."""
+  login: String!
+
+  """The HTTP URL for this repository."""
+  url: String!
+}
+
+type EnvvarRepository {
+  id: ID!
+
+  """The name of the repository."""
+  name: String
+
+  """The HTTP URL for this repository."""
+  url: String!
+
+  """The User owner of the repository."""
+  owner: EnvvarRepositoryOwner!
+}
+
+type Source {
+  id: ID!
+
+  """The source repository."""
+  repository: EnvvarRepository
+}
+
+type Envvar {
+  id: ID!
+
+  """The name of the environment variable"""
+  name: String!
+
+  """The value of the environment variable"""
+  value: String!
+
+  """Link to the configuration page for this environment variable"""
+  url: String!
+
+  """The environment variable source"""
+  source: Source!
+}
+
+type CircleciEnvvarItemConnection {
+  nodes: [Envvar!]
+  totalCount: Int!
+}
+
+type CircleciEnvvarsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
 
-  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   githubPullrequests: GithubPullrequests!
 
-  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   githubVulnerabilities: GithubVulnerabilities!
 
-  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   githubRepositories: GithubRepositories!
 
-  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   githubWatchers: GithubWatchers!
 
-  """Fetch data (items, aggregatiosn) related to GitHub PRs"""
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   jiraIssues: JiraIssues!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  circleciEnvvars: CircleciEnvvars!
 }

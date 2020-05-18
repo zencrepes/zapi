@@ -35,7 +35,7 @@ export default class GithubRepositoriesResolver {
 
   @Query(() => GithubRepositories, {
     name: 'githubRepositories',
-    description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
+    description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
   public async geGithubRepositories(): Promise<GithubRepositories> {
     return new GithubRepositories();

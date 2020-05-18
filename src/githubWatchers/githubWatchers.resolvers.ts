@@ -35,7 +35,7 @@ export default class GithubWatchersResolver {
 
   @Query(() => GithubWatchers, {
     name: 'githubWatchers',
-    description: 'Fetch data (items, aggregatiosn) related to GitHub PRs',
+    description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
   public async geGithubWatchers(): Promise<GithubWatchers> {
     return new GithubWatchers();
