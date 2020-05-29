@@ -1090,18 +1090,34 @@ type AggregationBucket {
   """The number of elements in the bucket"""
   docCount: Float!
 
-  """Moving average value"""
-  docCountMovingAvg: Float
-
   """
   Metadata returned based on the aggOptions parameter, it allows additional fields to be returned
   """
   metadata: String
+
+  """Sum value of all sumField in the date histogram"""
+  sum: Float
+
+  """Avg value of all avgField in the date histogram"""
+  avg: Float
+
+  """Count of documents within a moving aggregation"""
+  moving: Float
 }
 
 type PullrequestsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
 
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
@@ -1244,6 +1260,16 @@ type VulnerabilitiesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
 }
@@ -1332,6 +1358,16 @@ type RepositoriesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
 }
@@ -1419,6 +1455,16 @@ type WatcherConnection {
 type WatchersAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
 
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
@@ -1804,6 +1850,16 @@ type JiraIssuesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
 }
@@ -1937,6 +1993,16 @@ type CircleciEnvvarItemConnection {
 type CircleciEnvvarsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
 
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
@@ -2112,6 +2178,258 @@ type CircleciPipelinesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type CircleciInsights {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): CircleciInsightsData!
+
+  """Access to configuration values and metadata"""
+  config: CircleciInsightsConfig!
+}
+
+type CircleciInsightsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: CircleciInsightsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): CircleciJobsWorkflowRunItemConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """ID fo an item"""
+    id: String!
+  ): CircleciJobRun!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): CircleciInsightsAggregationConnection!
+
+  """
+  Compare multiple metrics for multiple aggregations (for example, credits spent per week and per job name)
+  """
+  matrixAggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """Maximum number of buckets to analyze"""
+    maxBuckets: String
+
+    """Field to be used for the comparison"""
+    compareField: String!
+
+    """Field to aggregate on"""
+    field: String!
+  ): CirclecInsightsMatrixAggregationsConnection!
+}
+
+input CircleciInsightsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type CircleciInsightsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type CircleciMetricsDuration {
+  """Max"""
+  min: Float
+
+  """Min"""
+  max: Float
+
+  """Median"""
+  median: Float
+
+  """Mean"""
+  mean: Float
+
+  """95th percentile"""
+  p95: Float
+
+  """Standard Deviation"""
+  standard_deviation: Float
+}
+
+type CircleciWorkflowMetrics {
+  """Success rate"""
+  success_rate: Float
+
+  """Total runs for the workflow"""
+  total_runs: Float
+
+  """Number of failed runs"""
+  failed_runs: Float
+
+  """Number of successful runs"""
+  successful_runs: Float
+
+  """Throughput"""
+  throughput: Float
+
+  """Total credits used"""
+  total_credits_used: Float
+
+  """Duration metrics for the runs"""
+  duration_metrics: CircleciMetricsDuration
+}
+
+type CircleciWorkflow {
+  id: ID!
+
+  """Name of the workflow"""
+  name: String
+
+  """Start of the metrics window"""
+  window_start: String!
+
+  """End of the metrics window"""
+  window_end: String!
+
+  """The source repository."""
+  source: Source
+}
+
+type CircleciJob {
+  """Name of the workflow"""
+  name: String
+
+  """Start of the metrics window"""
+  window_start: String!
+
+  """End of the metrics window"""
+  window_end: String!
+
+  """Job Metrics"""
+  metrics: CircleciWorkflowMetrics
+
+  """Job Workflow"""
+  workflow: CircleciWorkflow
+}
+
+type CircleciJobRun {
+  id: ID!
+
+  """Run started at"""
+  started_at: String!
+
+  """Run stopped at"""
+  stopped_at: String!
+
+  """Run duration"""
+  duration: Float!
+
+  """Run status"""
+  status: String!
+
+  """Credits used for the run"""
+  credits_used: Float!
+
+  """The job"""
+  job: CircleciJob
+}
+
+type CircleciJobsWorkflowRunItemConnection {
+  nodes: [CircleciJobRun!]
+  totalCount: Int!
+}
+
+type CirclecInsightsMatrixAggregationsConnection {
+  nodes: [AggregationConnection!]
+  compareField: String!
+  totalCount: Int!
+}
+
+type AggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type CircleciInsightsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
 }
@@ -2140,4 +2458,7 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   circleciPipelines: CircleciPipelines!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  circleciInsights: CircleciInsights!
 }

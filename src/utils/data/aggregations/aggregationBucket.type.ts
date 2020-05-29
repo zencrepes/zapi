@@ -22,13 +22,25 @@ export default class AggregationBucket {
 
   @Field({
     nullable: true,
-    description: 'Moving average value',
-  })
-  docCountMovingAvg: number;
-
-  @Field({
-    nullable: true,
     description: 'Metadata returned based on the aggOptions parameter, it allows additional fields to be returned',
   })
   metadata: string;
+
+  @Field({
+    nullable: true,
+    description: 'Sum value of all sumField in the date histogram',
+  })
+  sum: number;
+
+  @Field({
+    nullable: true,
+    description: 'Avg value of all avgField in the date histogram',
+  })
+  avg: number;
+
+  @Field({
+    nullable: true,
+    description: 'Count of documents within a moving aggregation',
+  })
+  moving: number;
 }

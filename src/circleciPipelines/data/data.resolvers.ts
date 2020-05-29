@@ -98,11 +98,11 @@ export default class DataResolver {
       description: 'Additional options as a stringified object (more details in the documentation)',
       nullable: true,
     })
-    options: string,
+    aggOptions: string,
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query, aggType, options, 'cci_pipelines_');
+    const data = await this.aggregationsService.findAll(field, parent.query, aggType, aggOptions, 'cci_pipelines_');
     return data;
   }
 }

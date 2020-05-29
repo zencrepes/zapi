@@ -3,7 +3,6 @@ import { ElasticsearchService } from '@nestjs/elasticsearch';
 
 import { getTermAggregation } from '../../es/getTermAggregation';
 import { getDateHistogramAggregation } from '../../es/getDateHistogramAggregation';
-import { getDateHistogramRollingAggregation } from '../../es/getDateHistogramRollingAggregation';
 
 @Injectable()
 export default class DataAggregationsService {
@@ -21,10 +20,6 @@ export default class DataAggregationsService {
 
     if (aggregationType === 'date_histogram') {
       return await getDateHistogramAggregation(this.esClient, esIndex, filterQuery, field, aggregationOptions);
-    }
-
-    if (aggregationType === 'date_histogram_rolling') {
-      return await getDateHistogramRollingAggregation(this.esClient, esIndex, filterQuery, field, aggregationOptions);
     }
   }
 }

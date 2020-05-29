@@ -28,7 +28,7 @@ export default class DataActivityService {
         updatedQuery,
         dateField,
         // eslint-disable-next-line @typescript-eslint/camelcase
-        JSON.stringify({ calendar_interval: 'week' }),
+        JSON.stringify({ calendarInterval: 'week' }),
       );
       // console.log(aggregationResult);
       bucketsResults.push({

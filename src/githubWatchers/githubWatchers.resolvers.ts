@@ -62,7 +62,7 @@ export default class GithubWatchersResolver {
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'j_issues_');
+    data.count = await this.countService.getCount(query, 'gh_stargazers_watchers_');
     return data;
   }
 

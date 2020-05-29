@@ -10,6 +10,18 @@ export default abstract class AggregationConnection {
   })
   field: string;
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'When running a matrix aggregation, the field that was used for the comparison',
+  })
+  compareField: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'When running a matrix aggregation, the value of the field that was used for the comparison',
+  })
+  compareValue: string;
+
   @Field(() => [AggregationBucket], {
     nullable: false,
     description: 'A list of aggregation buckets',

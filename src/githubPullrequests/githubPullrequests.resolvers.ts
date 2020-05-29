@@ -62,7 +62,7 @@ export default class GithubPullrequestsResolver {
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'j_issues_');
+    data.count = await this.countService.getCount(query, 'gh_prs_');
     return data;
   }
 

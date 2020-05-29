@@ -1,8 +1,8 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 
-import GithubVulnerabilities from './githubVulnerabilities.type';
-import GithubVulnerabilitiesData from './data/data.type';
-import GithubVulnerabilitiesConfig from './config/config.type';
+import CircleciInsights from './circleciInsights.type';
+import CircleciInsightsData from './data/data.type';
+import CircleciInsightsConfig from './config/config.type';
 
 import { buildQuery } from '@arranger/middleware';
 
@@ -29,19 +29,18 @@ const getEsQuery = async (query: string) => {
 };
 
 // https://github.com/nestjs/graphql/issues/475
-@Resolver(GithubVulnerabilities)
-export default class GithubVulnerabilitiesResolver {
+@Resolver(CircleciInsights)
+export default class CircleciInsightsResolver {
   constructor(private readonly countService: DataCountService) {}
-
-  @Query(() => GithubVulnerabilities, {
-    name: 'githubVulnerabilities',
+  @Query(() => CircleciInsights, {
+    name: 'circleciInsights',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
-  public async geGithubVulnerabilities(): Promise<GithubVulnerabilities> {
-    return new GithubVulnerabilities();
+  public async geCircleciInsights(): Promise<CircleciInsights> {
+    return new CircleciInsights();
   }
 
-  @ResolveField(() => GithubVulnerabilitiesData, {
+  @ResolveField(() => CircleciInsightsData, {
     name: 'data',
     description: 'Access to the dataset as individual items, aggregations and more',
   })
@@ -54,24 +53,24 @@ export default class GithubVulnerabilitiesResolver {
     })
     query: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Parent() parent: GithubVulnerabilities,
-  ): Promise<GithubVulnerabilitiesData> {
-    const data = new GithubVulnerabilitiesData();
+    @Parent() parent: CircleciInsights,
+  ): Promise<CircleciInsightsData> {
+    const data = new CircleciInsightsData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'gh_vulns_');
+    data.count = await this.countService.getCount(query, 'cci_insights_');
     return data;
   }
 
-  @ResolveField(() => GithubVulnerabilitiesConfig, {
+  @ResolveField(() => CircleciInsightsConfig, {
     name: 'config',
     description: 'Access to configuration values and metadata',
   })
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async getConfig(@Parent() parent: GithubVulnerabilities): Promise<GithubVulnerabilitiesConfig> {
-    return new GithubVulnerabilitiesConfig();
+  public async getConfig(@Parent() parent: CircleciInsights): Promise<CircleciInsightsConfig> {
+    return new CircleciInsightsConfig();
   }
 }
