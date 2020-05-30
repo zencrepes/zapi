@@ -13,7 +13,6 @@ export default class DataAggregationsService {
     // let aggOptions = JSON.parse(options);
     const aggregationType = aggType === undefined ? 'term' : aggType;
     const aggregationOptions = aggOptions === undefined ? {} : JSON.parse(aggOptions);
-
     if (aggregationType === 'term') {
       return await getTermAggregation(this.esClient, esIndex, filterQuery, field, aggregationOptions, true);
     }

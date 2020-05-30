@@ -16,6 +16,12 @@ export default class ConfigTableColumns {
 
   @Field({
     nullable: true,
+    description: 'Type of field being returned (date, string, boolean, url, ...)',
+  })
+  fieldType: string;
+
+  @Field({
+    nullable: true,
     description: 'Field to sort upon for the column (could be different)',
   })
   sortField: string;

@@ -11,6 +11,12 @@ export default abstract class AggregationConnection {
   field: string;
 
   @Field(() => String, {
+    nullable: false,
+    description: 'The ES Query executed to fetch the aggregation',
+  })
+  esQuery: string;
+
+  @Field(() => String, {
     nullable: true,
     description: 'When running a matrix aggregation, the field that was used for the comparison',
   })

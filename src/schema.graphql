@@ -179,6 +179,9 @@ type ConfigTableColumns {
   """Field used to fetch the column content"""
   field: String
 
+  """Type of field being returned (date, string, boolean, url, ...)"""
+  fieldType: String
+
   """Field to sort upon for the column (could be different)"""
   sortField: String
 
@@ -586,7 +589,7 @@ type SecurityVulnerability {
   advisory: SecurityAdvisory!
 
   """When was the alert dimissed?"""
-  firstPatchedVersion: SecurityAdvisoryPackageVersion!
+  firstPatchedVersion: SecurityAdvisoryPackageVersion
 
   """The user who dismissed the alert"""
   package: SecurityAdvisoryPackage
@@ -1109,6 +1112,9 @@ type PullrequestsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
   """
   When running a matrix aggregation, the field that was used for the comparison
   """
@@ -1260,6 +1266,9 @@ type VulnerabilitiesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
   """
   When running a matrix aggregation, the field that was used for the comparison
   """
@@ -1358,6 +1367,9 @@ type RepositoriesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
   """
   When running a matrix aggregation, the field that was used for the comparison
   """
@@ -1455,6 +1467,9 @@ type WatcherConnection {
 type WatchersAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
 
   """
   When running a matrix aggregation, the field that was used for the comparison
@@ -1850,6 +1865,9 @@ type JiraIssuesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
   """
   When running a matrix aggregation, the field that was used for the comparison
   """
@@ -1993,6 +2011,9 @@ type CircleciEnvvarItemConnection {
 type CircleciEnvvarsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
 
   """
   When running a matrix aggregation, the field that was used for the comparison
@@ -2177,6 +2198,9 @@ type CircleciPipelineItemConnection {
 type CircleciPipelinesAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
 
   """
   When running a matrix aggregation, the field that was used for the comparison
@@ -2402,6 +2426,9 @@ type AggregationConnection {
   """The field that was aggregated on"""
   field: String!
 
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
   """
   When running a matrix aggregation, the field that was used for the comparison
   """
@@ -2419,6 +2446,9 @@ type AggregationConnection {
 type CircleciInsightsAggregationConnection {
   """The field that was aggregated on"""
   field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
 
   """
   When running a matrix aggregation, the field that was used for the comparison

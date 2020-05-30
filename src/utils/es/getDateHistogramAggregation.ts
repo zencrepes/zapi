@@ -7,15 +7,11 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
 
   let results = { buckets: [] };
 
-  const calendarInterval =
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    aggOptions.calendarInterval === undefined ? 'week' : aggOptions.calendarInterval;
+  const calendarInterval = aggOptions.calendarInterval === undefined ? 'week' : aggOptions.calendarInterval;
 
   const additionalAggs = {};
   if (aggOptions.movingWindow !== undefined) {
-    const movingWindow =
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      aggOptions.movingWindow === undefined ? 4 : aggOptions.movingWindow;
+    const movingWindow = aggOptions.movingWindow === undefined ? 4 : aggOptions.movingWindow;
 
     additionalAggs['moving'] = {
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -42,7 +38,7 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
     };
   }
 
-  const datasets: ApiResponse = await esClient.search({
+  const esQuerySearch = {
     index: esIndex,
     size: 0,
     body: {
@@ -60,7 +56,9 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
         },
       },
     },
-  });
+  };
+
+  const datasets: ApiResponse = await esClient.search(esQuerySearch);
 
   results = datasets.body.aggregations.aggregations;
   return {
@@ -70,7 +68,6 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
         keyAsString: bucket.key_as_string,
         docCount: bucket.doc_count,
       };
-      // console.log(bucket);
       if (aggOptions.sumField !== undefined) {
         formattedBucket['sum'] = bucket.sum !== undefined ? bucket.sum.value : 0;
       }
@@ -80,10 +77,10 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
       if (aggOptions.movingWindow !== undefined) {
         formattedBucket['moving'] = bucket.moving !== undefined ? bucket.moving.value : 0;
       }
-      // console.log(formattedBucket);
       return formattedBucket;
     }),
     field,
+    esQuery: JSON.stringify(esQuerySearch),
   };
 };
 
