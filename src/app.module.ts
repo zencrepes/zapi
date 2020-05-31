@@ -7,6 +7,11 @@ import { GithubPullrequestsModule } from './githubPullrequests/githubPullrequest
 import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulnerabilities.module';
 import { GithubRepositoriesModule } from './githubRepositories/githubRepositories.module';
 import { GithubWatchersModule } from './githubWatchers/githubWatchers.module';
+import { GithubLabelsModule } from './githubLabels/githubLabels.module';
+import { GithubMilestonesModule } from './githubMilestones/githubMilestones.module';
+import { GithubProjectsModule } from './githubProjects/githubProjects.module';
+import { GithubReleasesModule } from './githubReleases/githubReleases.module';
+import { GithubIssuesModule } from './githubIssues/githubIssues.module';
 import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
 import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module';
 import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.module';
@@ -30,6 +35,11 @@ import { ConfModule } from './conf.module';
     GithubVulnerabilitiesModule,
     GithubRepositoriesModule,
     GithubWatchersModule,
+    GithubLabelsModule,
+    GithubMilestonesModule,
+    GithubProjectsModule,
+    GithubReleasesModule,
+    GithubIssuesModule,
     JiraIssuesModule,
     CircleciEnvvarsModule,
     CircleciPipelinesModule,

@@ -4,8 +4,7 @@ import ProjectCard from './projectCard';
 
 @ObjectType()
 export default class ProjectCardEdge {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Field(type => ProjectCard, {
+  @Field(() => ProjectCard, {
     nullable: false,
     description: 'The item at the end of the edge.',
   })

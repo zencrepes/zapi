@@ -16,6 +16,12 @@ export default class ConfigTableColumns {
 
   @Field({
     nullable: true,
+    description: 'If the field is an array, the object index to use to fetch content',
+  })
+  subfield: string;
+
+  @Field({
+    nullable: true,
     description: 'Type of field being returned (date, string, boolean, url, ...)',
   })
   fieldType: string;

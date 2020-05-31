@@ -179,6 +179,9 @@ type ConfigTableColumns {
   """Field used to fetch the column content"""
   field: String
 
+  """If the field is an array, the object index to use to fetch content"""
+  subfield: String
+
   """Type of field being returned (date, string, boolean, url, ...)"""
   fieldType: String
 
@@ -297,18 +300,32 @@ type Ref {
   prefix: String
 }
 
-type Issue {
-  id: ID!
+type ReviewRequest {
+  """The actor."""
+  requestedReviewer: User!
 }
 
-type IssueEdge {
+type ReviewRequestEdge {
   """The item at the end of the edge."""
-  node: Issue!
+  node: ReviewRequest!
 }
 
-type IssueConnection {
+type ReviewRequestConnection {
   """A list of edges."""
-  edges: [IssueEdge!]!
+  edges: [ReviewRequestEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type PullrequestEdge {
+  """The item at the end of the edge."""
+  node: PullRequest!
+}
+
+type PullRequestConnection {
+  """A list of edges."""
+  edges: [PullrequestEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -317,14 +334,35 @@ type IssueConnection {
 type Label {
   id: ID!
 
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
   """Identifies the label color."""
   color: String!
 
   """Identifies the label name."""
   name: String!
 
+  """Is this a default label"""
+  isDefault: Boolean
+
   """A brief description of this label."""
   description: String
+
+  """The repository where the PR is located"""
+  repository: Repository!
+
+  """A list of issues that have been opened in the repository."""
+  issues: IssueConnection
+
+  """A list of pull requests that have been opened in the repository."""
+  pullRequests: PullRequestConnection
+
+  """The HTTP URL for this PR."""
+  url: String
 }
 
 type LabelEdge {
@@ -335,6 +373,197 @@ type LabelEdge {
 type LabelConnection {
   """A list of edges."""
   edges: [LabelEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Comments {
+  id: ID!
+}
+
+type CommentEdge {
+  """The item at the end of the edge."""
+  node: Comments!
+}
+
+type CommentConnection {
+  """A list of edges."""
+  edges: [CommentEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type ProjectCard {
+  id: ID!
+}
+
+type ProjectCardEdge {
+  """The item at the end of the edge."""
+  node: ProjectCard!
+}
+
+type ProjectCardConnection {
+  """A list of edges."""
+  edges: [ProjectCardEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Actor {
+  id: ID!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The name of the actor."""
+  name: String
+
+  """The company of the actor."""
+  company: String
+
+  """The username of the actor."""
+  login: String!
+
+  """The HTTP URL for this actor."""
+  url: String!
+}
+
+type Milestone {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Description of the Milestone"""
+  description: String
+
+  """When is the milestone due"""
+  dueOn: String
+
+  """When is the milestone due"""
+  issues: IssueConnection
+
+  """A list of pull requests that have been opened in the repository."""
+  pullRequests: PullRequestConnection
+
+  """ Identifies the issue number."""
+  number: String!
+
+  """Identifies the state of the PR."""
+  state: String!
+
+  """Identifies the object title."""
+  title: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """The repository where the PR is located"""
+  repository: Repository!
+}
+
+type PullRequestReview {
+  """The actor."""
+  author: Actor!
+
+  """The review state"""
+  state: String!
+}
+
+type PullRequestReviewEdge {
+  """The item at the end of the edge."""
+  node: PullRequestReview!
+}
+
+type PullRequestReviewConnection {
+  """A list of edges."""
+  edges: [PullRequestReviewEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Issue {
+  id: ID!
+
+  """A list of Users assigned to this object."""
+  assignees: UserConnection
+
+  """A list of Review Requests assigned to this object."""
+  reviewRequests: ReviewRequestConnection
+
+  """A list of Reviews assigned to this object."""
+  reviews: PullRequestReviewConnection
+
+  """The actor who authored the comment.a"""
+  author: Actor!
+
+  """Identifies the body of the PR."""
+  body: String!
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """A list of comments"""
+  comments: CommentConnection!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """Story points assocaited with the issue"""
+  points: Float
+
+  """A list of labels associated with the object."""
+  labels: LabelConnection
+
+  """A list of labels associated with the object."""
+  milestone: Milestone
+
+  """ Identifies the issue number."""
+  number: String!
+
+  """A list of Users that are participating in the conversation."""
+  participants: UserConnection!
+
+  """List of associated project cards."""
+  projectCards: ProjectCardConnection!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """The repository where the PR is located"""
+  repository: Repository!
+
+  """Identifies the object title."""
+  title: String!
+
+  """Identifies the state of the PR."""
+  state: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+}
+
+type IssueEdge {
+  """The item at the end of the edge."""
+  node: Issue!
+}
+
+type IssueConnection {
+  """A list of edges."""
+  edges: [IssueEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -382,40 +611,6 @@ type License {
   url: String
 }
 
-type Milestone {
-  id: ID!
-
-  """Identifies the date and time when the object was created."""
-  closedAt: String
-
-  """Identifies the date and time when the object was created."""
-  createdAt: String!
-
-  """Description of the Milestone"""
-  description: String!
-
-  """When is the milestone due"""
-  dueOn: String
-
-  """When is the milestone due"""
-  issues: IssueConnection
-
-  """ Identifies the issue number."""
-  number: String!
-
-  """Identifies the state of the PR."""
-  state: String!
-
-  """Identifies the object title."""
-  title: String!
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
-
-  """The HTTP URL for this PR."""
-  url: String!
-}
-
 type MilestoneEdge {
   """The item at the end of the edge."""
   node: Milestone!
@@ -429,8 +624,101 @@ type MilestoneConnection {
   totalCount: Int!
 }
 
+type ProjectColumn {
+  id: ID!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """Identifies the object name."""
+  name: String!
+
+  """List of associated project cards."""
+  cards: ProjectCardConnection!
+}
+
+type ProjectColumnEdge {
+  """The item at the end of the edge."""
+  node: ProjectColumn!
+}
+
+type ProjectColumnConnection {
+  """A list of edges."""
+  edges: [ProjectColumnEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Organization {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """ The organization login name."""
+  login: String!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The HTTP URL for this actor."""
+  url: String!
+
+  """The organization public profile name."""
+  name: String
+
+  """The organization public profile name."""
+  email: String
+
+  """The organization public profile URL."""
+  websiteUrl: String
+}
+
 type Project {
   id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Is the project attached to an organization, a repository or a user"""
+  projectLevel: String!
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """ Identifies the project number."""
+  number: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Identifies the object name."""
+  name: String!
+
+  """Identifies the object state."""
+  state: String!
+
+  """Identifies the object body."""
+  body: String!
+
+  """List of associated project columns."""
+  columns: ProjectColumnConnection!
+
+  """List of pending project cards."""
+  pendingCards: ProjectCardConnection!
+
+  """The repository where the project is located"""
+  repository: Repository
+
+  """The organization where the project is located"""
+  organization: Organization!
 }
 
 type ProjectEdge {
@@ -441,19 +729,6 @@ type ProjectEdge {
 type ProjectConnection {
   """A list of edges."""
   edges: [ProjectEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type PullrequestEdge {
-  """The item at the end of the edge."""
-  node: PullRequest!
-}
-
-type PullRequestConnection {
-  """A list of edges."""
-  edges: [PullrequestEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -474,6 +749,39 @@ type RefConnection {
 
 type Release {
   id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """Identifies the date and time when the object was published."""
+  publishedAt: String!
+
+  """Name of the release"""
+  name: String
+
+  """Tag Name of the release"""
+  tagName: String!
+
+  """Description of the release"""
+  description: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Indicates if the release is a draft"""
+  isDraft: Boolean
+
+  """Indicates if the release is a pre-release"""
+  isPrerelease: Boolean
+
+  """The actor who authored the comment."""
+  author: Actor!
+
+  """The repository where the PR is located"""
+  repository: Repository!
 }
 
 type ReleaseEdge {
@@ -804,31 +1112,6 @@ type FollowingConnection {
   totalCount: Int!
 }
 
-type Organization {
-  id: ID!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: String
-
-  """ The organization login name."""
-  login: String!
-
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The HTTP URL for this actor."""
-  url: String!
-
-  """The organization public profile name."""
-  name: String
-
-  """The organization public profile name."""
-  email: String
-
-  """The organization public profile URL."""
-  websiteUrl: String
-}
-
 type OrganizationEdge {
   """The item at the end of the edge."""
   node: Organization!
@@ -928,90 +1211,6 @@ type UserEdge {
 type UserConnection {
   """A list of edges."""
   edges: [UserEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type ReviewRequest {
-  """The actor."""
-  requestedReviewer: User!
-}
-
-type ReviewRequestEdge {
-  """The item at the end of the edge."""
-  node: ReviewRequest!
-}
-
-type ReviewRequestConnection {
-  """A list of edges."""
-  edges: [ReviewRequestEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Comments {
-  id: ID!
-}
-
-type CommentEdge {
-  """The item at the end of the edge."""
-  node: Comments!
-}
-
-type CommentConnection {
-  """A list of edges."""
-  edges: [CommentEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type ProjectCard {
-  id: ID!
-}
-
-type ProjectCardEdge {
-  """The item at the end of the edge."""
-  node: ProjectCard!
-}
-
-type ProjectCardConnection {
-  """A list of edges."""
-  edges: [ProjectCardEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Actor {
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The username of the actor."""
-  login: String!
-
-  """The HTTP URL for this actor."""
-  url: String!
-}
-
-type PullRequestReview {
-  """The actor."""
-  author: Actor!
-
-  """The review state"""
-  state: String!
-}
-
-type PullRequestReviewEdge {
-  """The item at the end of the edge."""
-  node: PullRequestReview!
-}
-
-type PullRequestReviewConnection {
-  """A list of edges."""
-  edges: [PullRequestReviewEdge!]!
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
@@ -1483,6 +1682,581 @@ type WatchersAggregationConnection {
 
   """A list of aggregation buckets"""
   buckets: [AggregationBucket!]!
+}
+
+type GithubLabels {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubLabelsData!
+
+  """Access to configuration values and metadata"""
+  config: GithubLabelsConfig!
+}
+
+type GithubLabelsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: LabelsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataLabelConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): Label!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): LabelsAggregationConnection!
+}
+
+input LabelsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubLabelsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type DataLabelConnection {
+  nodes: [Label!]
+  totalCount: Int!
+}
+
+type LabelsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubMilestones {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubMilestonesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubMilestonesConfig!
+}
+
+type GithubMilestonesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: MilestonesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataMilestoneConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): Milestone!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): MilestonesAggregationConnection!
+}
+
+input MilestonesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubMilestonesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type DataMilestoneConnection {
+  nodes: [Milestone!]
+  totalCount: Int!
+}
+
+type MilestonesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubProjects {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubProjectsData!
+
+  """Access to configuration values and metadata"""
+  config: GithubProjectsConfig!
+}
+
+type GithubProjectsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: ProjectsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataProjectConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): Project!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): ProjectsAggregationConnection!
+}
+
+input ProjectsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubProjectsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type DataProjectConnection {
+  nodes: [Project!]
+  totalCount: Int!
+}
+
+type ProjectsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubReleases {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubReleasesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubReleasesConfig!
+}
+
+type GithubReleasesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: ReleasesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataReleaseConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): Release!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): ReleasesAggregationConnection!
+}
+
+input ReleasesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubReleasesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type DataReleaseConnection {
+  nodes: [Release!]
+  totalCount: Int!
+}
+
+type ReleasesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type GithubIssues {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubIssuesData!
+
+  """Access to configuration values and metadata"""
+  config: GithubIssuesConfig!
+}
+
+type GithubIssuesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: IssueSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): IssuesItemConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """ID fo an item"""
+    id: String!
+  ): Issue!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): IssuesAggregationConnection!
+
+  """Return aggregations (facets)"""
+  metrics(
+    """
+    Numberic field to filter on, using the node as the root object (examples: labels.totalCount, comments.totalCount)
+    """
+    field: String!
+  ): IssueMetrics!
+
+  """Return a matrix aggregation per week and field"""
+  activity(
+    """Field to be used for the aggregations (for example: repository.name)"""
+    field: String!
+
+    """Date field to be used for the aggregation (for example: ClosedAt)"""
+    dateField: String!
+  ): IssueDataActivity!
+}
+
+input IssueSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubIssuesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type IssuesItemConnection {
+  nodes: [Issue!]
+  totalCount: Int!
+}
+
+type IssuesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type IssueMetrics {
+  """The filed that was aggregated on"""
+  field: String!
+
+  """Minimum value for the current query"""
+  min: Float!
+
+  """Maximum value for the current query"""
+  max: Float!
+
+  """Overall minimum value (current query with field excluded)"""
+  overallMin: Float!
+
+  """Overall maximum value (current query with field excluded)"""
+  overallMax: Float!
+}
+
+type IssueBucketWeek {
+  """First day of the week"""
+  weekStart: String!
+
+  """The number of documents that week"""
+  docCount: Float!
+}
+
+type IssueActivityBucket {
+  """The Bucket key"""
+  key: String!
+
+  """Representation of the key as a string (useful for dates)"""
+  keyAsString: String
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+
+  """Weeks of activity"""
+  weeks: [IssueBucketWeek!]!
+}
+
+type IssueDataActivity {
+  """The filed that was aggregated on"""
+  field: String!
+
+  """A list of aggregation buckets"""
+  buckets: [IssueActivityBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromWeekStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toWeekStart: String!
 }
 
 type JiraIssues {
@@ -2479,6 +3253,21 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   githubWatchers: GithubWatchers!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubLabels: GithubLabels!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubMilestones: GithubMilestones!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubProjects: GithubProjects!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubReleases: GithubReleases!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubIssues: GithubIssues!
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   jiraIssues: JiraIssues!
