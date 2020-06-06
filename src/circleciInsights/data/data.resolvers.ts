@@ -1,5 +1,6 @@
 import { Int } from '@nestjs/graphql';
 import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { ConfService } from '../../conf.service';
 
 import Data from './data.type';
 import CircleciJobRun from '../../utils/circleci/types/jobRun';
@@ -19,6 +20,7 @@ import CircleciInsightsAggregationConnection from './aggregations/circleciInsigh
 @Resolver(Data)
 export default class DataResolver {
   constructor(
+    private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
   ) {}
@@ -53,7 +55,14 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.itemsService.findAll(first, size, parent.query, orderBy, 'cci_insights_');
+    const userConfig = this.confService.getUserConfig();
+    const data = await this.itemsService.findAll(
+      first,
+      size,
+      parent.query,
+      orderBy,
+      userConfig.elasticsearch.dataIndices.circleciInsights + '*',
+    );
     return data;
   }
 
@@ -105,7 +114,14 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query, aggType, aggOptions, 'cci_insights_');
+    const userConfig = this.confService.getUserConfig();
+    const data = await this.aggregationsService.findAll(
+      field,
+      parent.query,
+      aggType,
+      aggOptions,
+      userConfig.elasticsearch.dataIndices.circleciInsights + '*',
+    );
     return data;
   }
 
@@ -153,19 +169,27 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
+    const userConfig = this.confService.getUserConfig();
+
     const compareFields = await this.aggregationsService.findAll(
       compareField,
       parent.query,
       'term',
       JSON.stringify({ disjoint: false }),
-      'cci_insights_',
+      userConfig.elasticsearch.dataIndices.circleciInsights + '*',
     );
     const analyzedBuckets = [];
     for (const fieldBuckets of compareFields.buckets.slice(0, maxBuckets !== undefined ? maxBuckets : 10)) {
       const sourceQuery = JSON.parse(parent.query);
       const filter = createTermFilter('=', compareField, fieldBuckets.key);
       const updatedQuery = JSON.stringify(addFilterToQuery(filter, sourceQuery));
-      const data = await this.aggregationsService.findAll(field, updatedQuery, aggType, aggOptions, 'cci_insights_');
+      const data = await this.aggregationsService.findAll(
+        field,
+        updatedQuery,
+        aggType,
+        aggOptions,
+        userConfig.elasticsearch.dataIndices.circleciInsights + '*',
+      );
       analyzedBuckets.push({ ...data, compareField: compareField, compareValue: fieldBuckets.key });
     }
 

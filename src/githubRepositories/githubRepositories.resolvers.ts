@@ -1,10 +1,10 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { buildQuery } from '@arranger/middleware';
+import { ConfService } from '../conf.service';
 
 import GithubRepositories from './githubRepositories.type';
 import GithubRepositoriesData from './data/data.type';
 import GithubRepositoriesConfig from './config/config.type';
-
-import { buildQuery } from '@arranger/middleware';
 
 import { getNestedFields } from '../utils/query';
 import DataCountService from '../utils/data/count/count.service';
@@ -31,7 +31,7 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(GithubRepositories)
 export default class GithubRepositoriesResolver {
-  constructor(private readonly countService: DataCountService) {}
+  constructor(private readonly confService: ConfService, private readonly countService: DataCountService) {}
 
   @Query(() => GithubRepositories, {
     name: 'githubRepositories',
@@ -56,13 +56,15 @@ export default class GithubRepositoriesResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: GithubRepositories,
   ): Promise<GithubRepositoriesData> {
+    const userConfig = this.confService.getUserConfig();
+
     const data = new GithubRepositoriesData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'gh_repos');
+    data.count = await this.countService.getCount(query, userConfig.elasticsearch.dataIndices.githubRepos + '*');
 
     return data;
   }

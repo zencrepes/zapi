@@ -1,5 +1,6 @@
 import { Int } from '@nestjs/graphql';
 import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { ConfService } from '../../conf.service';
 
 import Data from './data.type';
 import Project from '../../utils/github/types/project';
@@ -22,6 +23,7 @@ import DataAggregationsService from '../../utils/data/aggregations/aggregations.
 @Resolver(Data)
 export default class DataResolver {
   constructor(
+    private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService, // private readonly metricsService: DataMetricsService, // private readonly activityService: DataActivityService,
   ) {}
@@ -56,7 +58,15 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.itemsService.findAll(first, size, parent.query, orderBy, 'gh_projects_');
+    const userConfig = this.confService.getUserConfig();
+
+    const data = await this.itemsService.findAll(
+      first,
+      size,
+      parent.query,
+      orderBy,
+      userConfig.elasticsearch.dataIndices.githubProjects + '*',
+    );
     return data;
   }
 
@@ -108,7 +118,15 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query, aggType, options, 'gh_projects_');
+    const userConfig = this.confService.getUserConfig();
+
+    const data = await this.aggregationsService.findAll(
+      field,
+      parent.query,
+      aggType,
+      options,
+      userConfig.elasticsearch.dataIndices.githubProjects + '*',
+    );
     return data;
   }
 }

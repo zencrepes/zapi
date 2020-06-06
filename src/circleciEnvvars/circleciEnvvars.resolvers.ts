@@ -1,4 +1,5 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { ConfService } from '../conf.service';
 
 import CircleciEnvvars from './circleciEnvvars.type';
 import CircleciEnvvarsData from './data/data.type';
@@ -31,7 +32,7 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(CircleciEnvvars)
 export default class CircleciEnvvarsResolver {
-  constructor(private readonly countService: DataCountService) {}
+  constructor(private readonly confService: ConfService, private readonly countService: DataCountService) {}
   @Query(() => CircleciEnvvars, {
     name: 'circleciEnvvars',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
@@ -55,13 +56,15 @@ export default class CircleciEnvvarsResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: CircleciEnvvars,
   ): Promise<CircleciEnvvarsData> {
+    const userConfig = this.confService.getUserConfig();
+
     const data = new CircleciEnvvarsData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'cci_envvars_');
+    data.count = await this.countService.getCount(query, userConfig.elasticsearch.dataIndices.circleciEnvvars + '*');
     return data;
   }
 

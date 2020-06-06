@@ -1,10 +1,10 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { buildQuery } from '@arranger/middleware';
+import { ConfService } from '../conf.service';
 
 import JiraIssues from './jiraIssues.type';
 import JiraIssuesData from './data/data.type';
 import JiraIssuesConfig from './config/config.type';
-
-import { buildQuery } from '@arranger/middleware';
 
 import { getNestedFields } from '../utils/query';
 import DataCountService from '../utils/data/count/count.service';
@@ -31,7 +31,7 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(JiraIssues)
 export default class JiraIssuesResolver {
-  constructor(private readonly countService: DataCountService) {}
+  constructor(private readonly confService: ConfService, private readonly countService: DataCountService) {}
   @Query(() => JiraIssues, {
     name: 'jiraIssues',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
@@ -55,13 +55,15 @@ export default class JiraIssuesResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: JiraIssues,
   ): Promise<JiraIssuesData> {
+    const userConfig = this.confService.getUserConfig();
+
     const data = new JiraIssuesData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'j_issues_');
+    data.count = await this.countService.getCount(query, userConfig.elasticsearch.dataIndices.jiraIssues + '*');
     return data;
   }
 

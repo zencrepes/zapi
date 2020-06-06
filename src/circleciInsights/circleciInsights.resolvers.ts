@@ -1,4 +1,5 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { ConfService } from '../conf.service';
 
 import CircleciInsights from './circleciInsights.type';
 import CircleciInsightsData from './data/data.type';
@@ -31,7 +32,7 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(CircleciInsights)
 export default class CircleciInsightsResolver {
-  constructor(private readonly countService: DataCountService) {}
+  constructor(private readonly confService: ConfService, private readonly countService: DataCountService) {}
   @Query(() => CircleciInsights, {
     name: 'circleciInsights',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
@@ -55,13 +56,15 @@ export default class CircleciInsightsResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: CircleciInsights,
   ): Promise<CircleciInsightsData> {
+    const userConfig = this.confService.getUserConfig();
+
     const data = new CircleciInsightsData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'cci_insights_');
+    data.count = await this.countService.getCount(query, userConfig.elasticsearch.dataIndices.circleciInsights + '*');
     return data;
   }
 

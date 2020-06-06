@@ -1,5 +1,6 @@
 import { Int } from '@nestjs/graphql';
 import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { ConfService } from '../../conf.service';
 
 import Data from './data.type';
 import JiraIssue from '../../utils/jira/types/issue';
@@ -16,6 +17,7 @@ import JiraIssuesAggregationConnection from './aggregations/jiraIssuesAggregatio
 @Resolver(Data)
 export default class DataResolver {
   constructor(
+    private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
   ) {}
@@ -50,7 +52,15 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.itemsService.findAll(first, size, parent.query, orderBy, 'j_issues_');
+    const userConfig = this.confService.getUserConfig();
+
+    const data = await this.itemsService.findAll(
+      first,
+      size,
+      parent.query,
+      orderBy,
+      userConfig.elasticsearch.dataIndices.jiraIssues + '*',
+    );
     return data;
   }
 
@@ -102,7 +112,15 @@ export default class DataResolver {
     @Parent()
     parent: Data,
   ) {
-    const data = await this.aggregationsService.findAll(field, parent.query, aggType, aggOptions, 'j_issues_');
+    const userConfig = this.confService.getUserConfig();
+
+    const data = await this.aggregationsService.findAll(
+      field,
+      parent.query,
+      aggType,
+      aggOptions,
+      userConfig.elasticsearch.dataIndices.jiraIssues + '*',
+    );
     return data;
   }
 }

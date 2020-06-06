@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
+import { ConfService } from '../../../conf.service';
+
 import { EsClientService } from '../../../esClient.service';
 
 import { buildQuery } from '@arranger/middleware';
@@ -8,13 +10,14 @@ import { clearCurrentField } from '../../../utils/query';
 
 @Injectable()
 export default class DataMetricsService {
-  constructor(private readonly esClientService: EsClientService) {}
+  constructor(private readonly confService: ConfService, private readonly esClientService: EsClientService) {}
 
   async getMetrics(field: string, query: any): Promise<any> {
     const esClient = this.esClientService.getEsClient();
+    const userConfig = this.confService.getUserConfig();
 
     // Run two query, to get min max for current, and min max without facet
-    const esIndex = 'gh_issues_';
+    const esIndex = userConfig.elasticsearch.dataIndices.githubIssues + '*';
 
     const filteredQuery = clearCurrentField(JSON.parse(query), field);
     const prepFilteredQuery = {

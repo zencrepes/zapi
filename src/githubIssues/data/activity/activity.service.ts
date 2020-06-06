@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EsClientService } from '../../../esClient.service';
+import { ConfService } from '../../../conf.service';
 
 import { addFilterToQuery } from '../../../utils/query';
 import { createTermFilter } from '../../../utils/query';
@@ -8,14 +9,23 @@ import { getDateHistogramAggregation } from '../../../utils/es/getDateHistogramA
 
 @Injectable()
 export default class DataActivityService {
-  constructor(private readonly esClientService: EsClientService) {}
+  constructor(private readonly confService: ConfService, private readonly esClientService: EsClientService) {}
 
   async getActivity(dateField: string, field: string, query: any): Promise<any> {
+    const userConfig = this.confService.getUserConfig();
+
     const esClient = this.esClientService.getEsClient();
 
     const filterQuery = JSON.parse(query);
 
-    const results = await getTermAggregation(esClient, 'gh_issues_', filterQuery, field, {}, false);
+    const results = await getTermAggregation(
+      esClient,
+      userConfig.elasticsearch.dataIndices.githubIssues + '*',
+      filterQuery,
+      field,
+      {},
+      false,
+    );
     const bucketsResults = [];
     // let firstWeek = startOfWeek(new Date()).toISOString();
     // let lastWeek = startOfWeek(new Date()).toISOString();
@@ -26,7 +36,7 @@ export default class DataActivityService {
       const updatedQuery = addFilterToQuery(filter, filterQuery);
       const aggregationResult = await getDateHistogramAggregation(
         esClient,
-        'gh_issues_',
+        userConfig.elasticsearch.dataIndices.githubIssues + '*',
         updatedQuery,
         dateField,
         // eslint-disable-next-line @typescript-eslint/camelcase

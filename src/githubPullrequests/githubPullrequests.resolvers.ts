@@ -1,10 +1,10 @@
 import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { buildQuery } from '@arranger/middleware';
+import { ConfService } from '../conf.service';
 
 import GithubPullrequests from './githubPullrequests.type';
 import GithubPullrequestsData from './data/data.type';
 import GithubPullrequestsConfig from './config/config.type';
-
-import { buildQuery } from '@arranger/middleware';
 
 import { getNestedFields } from '../utils/query';
 import DataCountService from '../utils/data/count/count.service';
@@ -31,7 +31,7 @@ const getEsQuery = async (query: string) => {
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(GithubPullrequests)
 export default class GithubPullrequestsResolver {
-  constructor(private readonly countService: DataCountService) {}
+  constructor(private readonly confService: ConfService, private readonly countService: DataCountService) {}
 
   @Query(() => GithubPullrequests, {
     name: 'githubPullrequests',
@@ -56,13 +56,15 @@ export default class GithubPullrequestsResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: GithubPullrequests,
   ): Promise<GithubPullrequestsData> {
+    const userConfig = this.confService.getUserConfig();
+
     const data = new GithubPullrequestsData();
     if (query === undefined || query === null) {
       query = JSON.stringify({});
     }
     data.query = query;
     data.esQuery = await getEsQuery(query);
-    data.count = await this.countService.getCount(query, 'gh_prs_');
+    data.count = await this.countService.getCount(query, userConfig.elasticsearch.dataIndices.githubPullrequests + '*');
     return data;
   }
 
