@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import CircleciPipelinesResolvers from './circleciPipelines.resolvers';
-
 import { ConfModule } from '../conf.module';
-import { ConfService } from '../conf.service';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { EsClientModule } from '../esClient.module';
+
+import CircleciPipelinesResolvers from './circleciPipelines.resolvers';
 
 import ConfigResolver from './config/config.resolvers';
 import DataResolver from './data/data.resolvers';
@@ -14,15 +13,7 @@ import DataItemsService from '../utils/data/items/items.service';
 import DataCountService from '../utils/data/count/count.service';
 
 @Module({
-  imports: [
-    ElasticsearchModule.registerAsync({
-      imports: [ConfModule],
-      useFactory: async (configService: ConfService) => ({
-        node: configService.get('ELASTICSEARCH_NODE'),
-      }),
-      inject: [ConfService],
-    }),
-  ],
+  imports: [ConfModule.register(), EsClientModule],
   providers: [
     CircleciPipelinesResolvers,
     ConfigResolver,

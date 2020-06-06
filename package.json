@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@arranger/middleware": "^2.1.1",
+    "@bit/zencrepes.zindexer.config": "^0.0.10",
     "@elastic/elasticsearch": "^7.5.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.4.0",
@@ -33,6 +34,7 @@
     "apollo-server-express": "^2.9.15",
     "graphql": "^15.0.0",
     "graphql-tools": "^5.0.0",
+    "load-yaml-file": "^0.2.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",

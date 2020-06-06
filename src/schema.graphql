@@ -395,8 +395,111 @@ type CommentConnection {
   totalCount: Int!
 }
 
+type ProjectColumn {
+  id: ID!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """Identifies the object name."""
+  name: String!
+
+  """List of associated project cards."""
+  cards: ProjectCardConnection!
+}
+
+type ProjectColumnEdge {
+  """The item at the end of the edge."""
+  node: ProjectColumn!
+}
+
+type ProjectColumnConnection {
+  """A list of edges."""
+  edges: [ProjectColumnEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Organization {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """ The organization login name."""
+  login: String!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The HTTP URL for this actor."""
+  url: String!
+
+  """The organization public profile name."""
+  name: String
+
+  """The organization public profile name."""
+  email: String
+
+  """The organization public profile URL."""
+  websiteUrl: String
+}
+
+type Project {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String!
+
+  """Is the project attached to an organization, a repository or a user"""
+  projectLevel: String!
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float!
+
+  """ Identifies the project number."""
+  number: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Identifies the object name."""
+  name: String!
+
+  """Identifies the object state."""
+  state: String!
+
+  """Identifies the object body."""
+  body: String!
+
+  """List of associated project columns."""
+  columns: ProjectColumnConnection!
+
+  """List of pending project cards."""
+  pendingCards: ProjectCardConnection!
+
+  """The repository where the project is located"""
+  repository: Repository
+
+  """The organization where the project is located"""
+  organization: Organization!
+}
+
 type ProjectCard {
   id: ID!
+
+  """The project attached to the card"""
+  project: Project
+
+  """The project attached to the card"""
+  column: ProjectColumn
 }
 
 type ProjectCardEdge {
@@ -538,7 +641,7 @@ type Issue {
   participants: UserConnection!
 
   """List of associated project cards."""
-  projectCards: ProjectCardConnection!
+  projectCards: ProjectCardConnection
 
   """Identifies the date and time when the object was last updated."""
   updatedAt: String!
@@ -622,103 +725,6 @@ type MilestoneConnection {
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
-}
-
-type ProjectColumn {
-  id: ID!
-
-  """Identifies the primary key from the database."""
-  databaseId: Float!
-
-  """Identifies the object name."""
-  name: String!
-
-  """List of associated project cards."""
-  cards: ProjectCardConnection!
-}
-
-type ProjectColumnEdge {
-  """The item at the end of the edge."""
-  node: ProjectColumn!
-}
-
-type ProjectColumnConnection {
-  """A list of edges."""
-  edges: [ProjectColumnEdge!]!
-
-  """Identifies the total count of items in the connection."""
-  totalCount: Int!
-}
-
-type Organization {
-  id: ID!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: String
-
-  """ The organization login name."""
-  login: String!
-
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The HTTP URL for this actor."""
-  url: String!
-
-  """The organization public profile name."""
-  name: String
-
-  """The organization public profile name."""
-  email: String
-
-  """The organization public profile URL."""
-  websiteUrl: String
-}
-
-type Project {
-  id: ID!
-
-  """Identifies the date and time when the object was created."""
-  createdAt: String!
-
-  """Is the project attached to an organization, a repository or a user"""
-  projectLevel: String!
-
-  """Identifies the date and time when the object was created."""
-  closedAt: String
-
-  """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
-
-  """Identifies the primary key from the database."""
-  databaseId: Float!
-
-  """ Identifies the project number."""
-  number: String!
-
-  """The HTTP URL for this PR."""
-  url: String!
-
-  """Identifies the object name."""
-  name: String!
-
-  """Identifies the object state."""
-  state: String!
-
-  """Identifies the object body."""
-  body: String!
-
-  """List of associated project columns."""
-  columns: ProjectColumnConnection!
-
-  """List of pending project cards."""
-  pendingCards: ProjectCardConnection!
-
-  """The repository where the project is located"""
-  repository: Repository
-
-  """The organization where the project is located"""
-  organization: Organization!
 }
 
 type ProjectEdge {

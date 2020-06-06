@@ -2,6 +2,10 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+
+import { ConfModule } from './conf.module';
+import { EsClientModule } from './esClient.module';
+
 import { ConfigModule } from './config/config.module';
 import { GithubPullrequestsModule } from './githubPullrequests/githubPullrequests.module';
 import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulnerabilities.module';
@@ -17,7 +21,6 @@ import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module'
 import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.module';
 import { CircleciInsightsModule } from './circleciInsights/circleciInsights.module';
 import { join } from 'path';
-import { ConfModule } from './conf.module';
 
 @Module({
   imports: [
@@ -30,6 +33,9 @@ import { ConfModule } from './conf.module';
         context: ({ req }) => ({ req }),
       }),
     }),
+    ConfModule.register(),
+    EsClientModule,
+
     ConfigModule,
     GithubPullrequestsModule,
     GithubVulnerabilitiesModule,
@@ -44,7 +50,6 @@ import { ConfModule } from './conf.module';
     CircleciEnvvarsModule,
     CircleciPipelinesModule,
     CircleciInsightsModule,
-    ConfModule,
   ],
   controllers: [AppController],
   providers: [AppService],

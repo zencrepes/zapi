@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { EsClientService } from '../../../esClient.service';
 
 import { addFilterToQuery } from '../../../utils/query';
 import { createTermFilter } from '../../../utils/query';
@@ -8,12 +8,14 @@ import { getDateHistogramAggregation } from '../../../utils/es/getDateHistogramA
 
 @Injectable()
 export default class DataActivityService {
-  constructor(private readonly esClient: ElasticsearchService) {}
+  constructor(private readonly esClientService: EsClientService) {}
 
   async getActivity(dateField: string, field: string, query: any): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+
     const filterQuery = JSON.parse(query);
 
-    const results = await getTermAggregation(this.esClient, 'gh_issues_', filterQuery, field, {}, false);
+    const results = await getTermAggregation(esClient, 'gh_issues_', filterQuery, field, {}, false);
     const bucketsResults = [];
     // let firstWeek = startOfWeek(new Date()).toISOString();
     // let lastWeek = startOfWeek(new Date()).toISOString();
@@ -23,7 +25,7 @@ export default class DataActivityService {
       const filter = createTermFilter('=', field, bucket.key);
       const updatedQuery = addFilterToQuery(filter, filterQuery);
       const aggregationResult = await getDateHistogramAggregation(
-        this.esClient,
+        esClient,
         'gh_issues_',
         updatedQuery,
         dateField,

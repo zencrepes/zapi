@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import GithubLabelsResolvers from './githubLabels.resolvers';
-
 import { ConfModule } from '../conf.module';
-import { ConfService } from '../conf.service';
-import { ElasticsearchModule } from '@nestjs/elasticsearch';
+import { EsClientModule } from '../esClient.module';
+
+import GithubLabelsResolvers from './githubLabels.resolvers';
 
 import ConfigResolver from './config/config.resolvers';
 import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
@@ -13,19 +12,9 @@ import DataAggregationsService from '../utils/data/aggregations/aggregations.ser
 import DataItemsService from '../utils/data/items/items.service';
 import DataCountService from '../utils/data/count/count.service';
 
-// import DataMetricsService from './data/metrics/metrics.service';
-// import DataActivityService from './data/activity/activity.service';
-
 @Module({
-  imports: [
-    ElasticsearchModule.registerAsync({
-      imports: [ConfModule],
-      useFactory: async (configService: ConfService) => ({
-        node: configService.get('ELASTICSEARCH_NODE'),
-      }),
-      inject: [ConfService],
-    }),
-  ],
+  imports: [ConfModule.register(), EsClientModule],
+
   providers: [
     GithubLabelsResolvers,
     ConfigResolver,
@@ -35,8 +24,6 @@ import DataCountService from '../utils/data/count/count.service';
     DataAggregationsService,
     DataItemsService,
     DataCountService,
-    // DataMetricsService,
-    // DataActivityService,
   ],
 })
 export class GithubLabelsModule {}

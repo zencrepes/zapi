@@ -1,16 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
-
 import { buildQuery } from '@arranger/middleware';
 
+import { EsClientService } from '../../../esClient.service';
 import { getNestedFields } from '../../query';
 
 @Injectable()
 export default class DataCountService {
-  constructor(private readonly esClient: ElasticsearchService) {}
+  constructor(private readonly esClientService: EsClientService) {}
 
   async getCount(query, esIndex): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+
     const queryObj = JSON.parse(query);
     const nestedFields = getNestedFields(queryObj);
 
@@ -28,7 +29,7 @@ export default class DataCountService {
       };
     }
 
-    const countDocuments: ApiResponse = await this.esClient.count({
+    const countDocuments: ApiResponse = await esClient.count({
       index: esIndex,
       body: {
         query: updatedQuery,

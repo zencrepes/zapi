@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { EsClientService } from '../../../esClient.service';
 
 import { buildQuery } from '@arranger/middleware';
 
@@ -8,9 +8,11 @@ import { clearCurrentField } from '../../../utils/query';
 
 @Injectable()
 export default class DataMetricsService {
-  constructor(private readonly esClient: ElasticsearchService) {}
+  constructor(private readonly esClientService: EsClientService) {}
 
   async getMetrics(field: string, query: any): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+
     // Run two query, to get min max for current, and min max without facet
     const esIndex = 'gh_issues_';
 
@@ -28,7 +30,7 @@ export default class DataMetricsService {
       };
     }
 
-    const filteredDatasets: ApiResponse = await this.esClient.search({
+    const filteredDatasets: ApiResponse = await esClient.search({
       index: esIndex,
       size: 0,
       body: {
@@ -49,7 +51,7 @@ export default class DataMetricsService {
     });
     const filteredRsults = filteredDatasets.body.aggregations;
 
-    const countDocuments: ApiResponse = await this.esClient.count({
+    const countDocuments: ApiResponse = await esClient.count({
       index: esIndex,
       body: {
         query: updatedFilteredQuery,
@@ -71,7 +73,7 @@ export default class DataMetricsService {
       };
     }
 
-    const unfilteredDatasets: ApiResponse = await this.esClient.search({
+    const unfilteredDatasets: ApiResponse = await esClient.search({
       index: esIndex,
       size: 0,
       body: {

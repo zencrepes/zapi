@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { EsClientService } from '../../../esClient.service';
 
 @Injectable()
 export default class ConfigAggregationsService {
-  constructor(private readonly esClient: ElasticsearchService) {}
+  constructor(private readonly esClientService: EsClientService) {}
 
   async findAll(datasetId: string): Promise<any> {
-    const datasets: ApiResponse = await this.esClient.search({
+    const esClient = this.esClientService.getEsClient();
+
+    const datasets: ApiResponse = await esClient.search({
       index: 'config',
       body: {
         from: 0,

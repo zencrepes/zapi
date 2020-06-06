@@ -1,8 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
 import { ConfService } from './conf.service';
 
-@Module({
-  providers: [ConfService],
-  exports: [ConfService],
-})
-export class ConfModule {}
+@Module({})
+export class ConfModule {
+  static register(): DynamicModule {
+    return {
+      module: ConfModule,
+      providers: [ConfService],
+      exports: [ConfService],
+    };
+  }
+}
