@@ -100,7 +100,7 @@ export default class Issue {
   participants: UserConnection;
 
   @Field(() => ProjectCardConnection, {
-    nullable: false,
+    nullable: true,
     description: 'List of associated project cards.',
   })
   projectCards: ProjectCardConnection;
