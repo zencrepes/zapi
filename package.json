@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@arranger/middleware": "^2.1.1",
-    "@bit/zencrepes.zindexer.config": "^0.0.10",
+    "@bit/zencrepes.zindexer.config": "^0.0.13",
     "@elastic/elasticsearch": "^7.5.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.4.0",
