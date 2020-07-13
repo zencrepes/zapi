@@ -1,17 +1,17 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
-import RefEdge from './refEdge';
+import CommitEdge from './commitEdge';
 
 @ObjectType()
-export default class RefConnection {
-  @Field(() => [RefEdge], {
-    nullable: true,
+export default class CommitHistoryConnection {
+  @Field(() => [CommitEdge], {
+    nullable: false,
     description: 'A list of edges.',
   })
-  edges: RefEdge[];
+  edges: CommitEdge[];
 
   @Field(() => Int, {
-    nullable: true,
+    nullable: false,
     description: 'Identifies the total count of items in the connection.',
   })
   totalCount: string;

@@ -228,6 +228,12 @@ export default class Repository {
   })
   refs: RefConnection;
 
+  @Field(() => Ref, {
+    nullable: true,
+    description: 'Link to the ref containing recent commits to master',
+  })
+  recentCommitsMaster: Ref;
+
   @Field(() => ReleaseConnection, {
     nullable: true,
     description: 'A list of pull requests that have been opened in the repository.',
@@ -245,6 +251,12 @@ export default class Repository {
     description: 'Whether or not squash-merging is enabled on this repository.',
   })
   squashMergeAllowed: boolean;
+
+  @Field(() => Number, {
+    nullable: true,
+    description: 'Number of commits pushed to master during the current year (up to 10)',
+  })
+  currentYearMasterCommits: boolean;
 
   @Field(() => StargazerConnection, {
     nullable: true,
