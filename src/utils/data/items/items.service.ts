@@ -45,7 +45,7 @@ export default class DataItemsService {
     // const esClient = new Client({
     //   node: 'http://127.0.0.1:9200',
     // });
-    const datasets: ApiResponse = await esClient.search({
+    const esQuery = {
       index: esIndex,
       body: {
         from: from === undefined ? 0 : from,
@@ -53,7 +53,8 @@ export default class DataItemsService {
         query: updatedQuery,
         sort,
       },
-    });
+    };
+    const datasets: ApiResponse = await esClient.search(esQuery);
     const results = datasets.body.hits;
     return {
       nodes: results.hits.map(hit => hit._source),

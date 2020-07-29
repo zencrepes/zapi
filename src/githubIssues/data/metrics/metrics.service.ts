@@ -6,7 +6,7 @@ import { EsClientService } from '../../../esClient.service';
 
 import { buildQuery } from '@arranger/middleware';
 
-import { clearCurrentField } from '../../../utils/query';
+import { clearCurrentField, getNestedFields } from '../../../utils/query';
 
 @Injectable()
 export default class DataMetricsService {
@@ -19,9 +19,12 @@ export default class DataMetricsService {
     // Run two query, to get min max for current, and min max without facet
     const esIndex = userConfig.elasticsearch.dataIndices.githubIssues + '*';
 
+    const queryObj = JSON.parse(query);
+    const nestedFields = getNestedFields(queryObj);
+
     const filteredQuery = clearCurrentField(JSON.parse(query), field);
     const prepFilteredQuery = {
-      nestedFields: [],
+      nestedFields: nestedFields,
       filters: filteredQuery,
     };
 
@@ -33,7 +36,7 @@ export default class DataMetricsService {
       };
     }
 
-    const filteredDatasets: ApiResponse = await esClient.search({
+    const filteredEsQuery = {
       index: esIndex,
       size: 0,
       body: {
@@ -49,9 +52,15 @@ export default class DataMetricsService {
               field,
             },
           },
+          sum: {
+            sum: {
+              field,
+            },
+          },
         },
       },
-    });
+    };
+    const filteredDatasets: ApiResponse = await esClient.search(filteredEsQuery);
     const filteredRsults = filteredDatasets.body.aggregations;
 
     const countDocuments: ApiResponse = await esClient.count({
@@ -64,7 +73,7 @@ export default class DataMetricsService {
 
     const unfilteredQuery = clearCurrentField(JSON.parse(query), field);
     const prepUnFilteredQuery = {
-      nestedFields: [],
+      nestedFields: nestedFields,
       filters: unfilteredQuery,
     };
 
@@ -101,6 +110,7 @@ export default class DataMetricsService {
       count: docCount,
       max: filteredRsults.max.value,
       min: filteredRsults.min.value,
+      sum: filteredRsults.sum.value,
       overallMax: unfilteredRsults.max.value,
       overallMin: unfilteredRsults.min.value,
     };
