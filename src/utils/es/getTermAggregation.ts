@@ -29,7 +29,19 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
   if (field.includes('.edges.')) {
     const splitField = field.split('.edges.');
     const nestedPath = splitField[0] + '.edges';
-    const datasets: ApiResponse = await esClient.search({
+
+    const pointsAgg =
+      aggOptions.points === true
+        ? {
+            points: {
+              sum: {
+                field: nestedPath + '.points',
+              },
+            },
+          }
+        : {};
+
+    const searchQuery = {
       index: esIndex,
       size: 0,
       body: {
@@ -51,31 +63,71 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
                       size: 1,
                     },
                   },
+                  ...pointsAgg,
                 },
               },
             },
           },
         },
       },
-    });
+    };
+    const datasets: ApiResponse = await esClient.search(searchQuery);
 
     // Calculate how many elements have totalCount of 0 for the empty bucket
     const newFilter = createTermFilter('<=', splitField[0] + '.totalCount', 0);
     const emptyValueCountQuery = addFilterToQuery(newFilter, filterQuery);
     const emptyValueEs = await convertSqonToEs(emptyValueCountQuery);
-    const emptuBucket: ApiResponse = await esClient.search({
-      index: esIndex,
-      size: 0,
-      body: {
-        query: emptyValueEs,
-      },
-    });
-    resultsBuckets = [
-      ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      ...[{ key: '__missing__', doc_count: emptuBucket.body.hits.total.value }],
-    ];
+    if (aggOptions.points === true) {
+      const emptyBucket: ApiResponse = await esClient.search({
+        index: esIndex,
+        size: 0,
+        body: {
+          query: emptyValueEs,
+          aggs: {
+            points: {
+              sum: {
+                field: 'points',
+              },
+            },
+          },
+        },
+      });
+      resultsBuckets = [
+        ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
+        ...[
+          {
+            key: '__missing__',
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            doc_count: emptyBucket.body.hits.total.value,
+            points: emptyBucket.body.aggregations.points,
+          },
+        ],
+      ];
+    } else {
+      const emptyBucket: ApiResponse = await esClient.search({
+        index: esIndex,
+        size: 0,
+        body: {
+          query: emptyValueEs,
+        },
+      });
+      resultsBuckets = [
+        ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ...[{ key: '__missing__', doc_count: emptyBucket.body.hits.total.value }],
+      ];
+    }
   } else {
+    const pointsAgg =
+      aggOptions.points === true
+        ? {
+            points: {
+              sum: {
+                field: 'points',
+              },
+            },
+          }
+        : {};
     const datasets: ApiResponse = await esClient.search({
       index: esIndex,
       size: 0,
@@ -95,19 +147,37 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
                   size: 1,
                 },
               },
+              ...pointsAgg,
             },
           },
           emptyValues: {
             missing: { field: field },
+            aggs: {
+              ...pointsAgg,
+            },
           },
         },
       },
     });
-    resultsBuckets = [
-      ...datasets.body.aggregations.aggregations.buckets,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      ...[{ key: '__missing__', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
-    ];
+    if (aggOptions.points === true) {
+      resultsBuckets = [
+        ...datasets.body.aggregations.aggregations.buckets,
+        ...[
+          {
+            key: '__missing__',
+            points: datasets.body.aggregations.emptyValues.points,
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            doc_count: datasets.body.aggregations.emptyValues.doc_count,
+          },
+        ],
+      ];
+    } else {
+      resultsBuckets = [
+        ...datasets.body.aggregations.aggregations.buckets,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        ...[{ key: '__missing__', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
+      ];
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/camelcase
@@ -123,10 +193,12 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
             metadata[m] = getObjectValue(bucket.metadata.hits.hits[0]._source.node, m);
           }
         }
+        const count = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
         return {
           key: bucket.key,
           keyAsString: bucket.key,
           docCount: bucket.doc_count,
+          count,
           metadata: JSON.stringify(metadata),
         };
       }),

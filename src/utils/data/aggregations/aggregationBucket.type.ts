@@ -21,6 +21,12 @@ export default class AggregationBucket {
   docCount: number;
 
   @Field({
+    nullable: false,
+    description: 'The count associated with the bucket',
+  })
+  count: number;
+
+  @Field({
     nullable: true,
     description: 'Metadata returned based on the aggOptions parameter, it allows additional fields to be returned',
   })
