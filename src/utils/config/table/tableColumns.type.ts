@@ -22,9 +22,15 @@ export default class ConfigTableColumns {
 
   @Field({
     nullable: true,
-    description: 'Type of field being returned (date, string, boolean, url, ...)',
+    description: 'Type of field being returned (date, string, boolean, url, array, ...)',
   })
   fieldType: string;
+
+  @Field({
+    nullable: true,
+    description: 'If the field is an array of objects, path to the node to be used',
+  })
+  fieldNode: string;
 
   @Field({
     nullable: true,
