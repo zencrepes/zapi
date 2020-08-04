@@ -6,6 +6,7 @@ import JiraStatus from './status';
 import JiraProject from './project';
 import JiraResolution from './resolution';
 import JiraVersionConnection from './versionConnection';
+import JiraIssueRemoteLinkConnection from './issueRemoteLinkConnection';
 import JiraIssueLinkConnection from './issueLinkConnection';
 import JiraIssueConnection from './issueConnection';
 import JiraPriority from './priority';
@@ -36,6 +37,12 @@ export default class JiraIssue {
 
   @Field(() => String, {
     nullable: true,
+    description: 'Date for the end of Support (useful with JIRA Service Desk)',
+  })
+  endOfSupport: string;
+
+  @Field(() => String, {
+    nullable: true,
     description: 'URL of the issue to the source Jira instance',
   })
   url: string;
@@ -53,7 +60,7 @@ export default class JiraIssue {
   creator: JiraUser;
 
   @Field(() => JiraUser, {
-    nullable: false,
+    nullable: true,
     description: 'The issue reporter',
   })
   reporter: JiraUser;
@@ -107,16 +114,22 @@ export default class JiraIssue {
   resolution: JiraResolution;
 
   @Field(() => JiraVersionConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of fixVersions',
   })
   fixVersions: JiraVersionConnection;
 
   @Field(() => JiraVersionConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of Versions',
   })
   versions: JiraVersionConnection;
+
+  @Field(() => JiraIssueRemoteLinkConnection, {
+    nullable: true,
+    description: 'A list of remote links',
+  })
+  remoteLinks: JiraIssueRemoteLinkConnection;
 
   @Field(() => JiraIssueLinkConnection, {
     nullable: false,
