@@ -59,13 +59,13 @@ export default class Project {
   name: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the object state.',
   })
   state: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the object body.',
   })
   body: string;

@@ -14,6 +14,12 @@ import DataMetrics from './metrics/metrics.type';
 import DataMetricsService from './metrics/metrics.service';
 import DataActivity from './activity/activity.type';
 import DataActivityService from './activity/activity.service';
+import DataMilestones from './milestones/milestones.type';
+import DataMilestonesService from './milestones/milestones.service';
+import DataProjects from './projects/projects.type';
+import DataProjectsService from './projects/projects.service';
+import DataVelocity from './velocity/velocity.type';
+import DataVelocityService from './velocity/velocity.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -25,6 +31,9 @@ export default class DataResolver {
     private readonly itemsService: DataItemsService,
     private readonly metricsService: DataMetricsService,
     private readonly activityService: DataActivityService,
+    private readonly projectsService: DataProjectsService,
+    private readonly milestonesService: DataMilestonesService,
+    private readonly velocityService: DataVelocityService,
   ) {}
 
   @ResolveField(() => IssuesItemConnection, {
@@ -171,5 +180,66 @@ export default class DataResolver {
   ) {
     const data = await this.activityService.getActivity(dateField, field, parent.query);
     return { ...data, field };
+  }
+
+  @ResolveField(() => DataProjects, {
+    name: 'projects',
+    description: 'Return a list of projects matching the query',
+  })
+  public async getProjectsProperty(
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.projectsService.getProjects(parent.query);
+    return { ...data };
+  }
+
+  @ResolveField(() => DataMilestones, {
+    name: 'milestones',
+    description: 'Return a list of milestones matching the query',
+  })
+  public async getMilestonesProperty(
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.milestonesService.getMilestones(parent.query);
+    return { ...data };
+  }
+
+  @ResolveField(() => DataVelocity, {
+    name: 'velocity',
+    description: 'Return velocity metrics',
+  })
+  public async getVelocityProperty(
+    @Args({
+      name: 'interval',
+      type: () => String,
+      description:
+        'Interval to run the aggregation on (week, day, ...). See: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html',
+      nullable: true,
+      defaultValue: 'week',
+    })
+    interval: string,
+    @Args({
+      name: 'moving',
+      type: () => Number,
+      description: 'Number of elements to be used for calculating the moving average, default is 4',
+      nullable: true,
+      defaultValue: 4,
+    })
+    moving: number,
+    @Args({
+      name: 'window',
+      type: () => Number,
+      description: 'The dataset window to use for calculations',
+      nullable: true,
+      defaultValue: 53,
+    })
+    window: number,
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.velocityService.getVelocity(interval, moving, window, parent.query);
+    return { ...data };
   }
 }

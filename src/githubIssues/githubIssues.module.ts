@@ -13,6 +13,9 @@ import DataItemsService from '../utils/data/items/items.service';
 import DataMetricsService from './data/metrics/metrics.service';
 import DataActivityService from './data/activity/activity.service';
 import DataCountService from '../utils/data/count/count.service';
+import DataMilestonesService from './data/milestones/milestones.service';
+import DataProjectsService from './data/projects/projects.service';
+import DataVelocityService from './data/velocity/velocity.service';
 
 @Module({
   imports: [ConfModule.register(), EsClientModule],
@@ -27,6 +30,9 @@ import DataCountService from '../utils/data/count/count.service';
     DataMetricsService,
     DataActivityService,
     DataCountService,
+    DataMilestonesService,
+    DataProjectsService,
+    DataVelocityService,
   ],
 })
 export class GithubIssuesModule {}

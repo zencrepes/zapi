@@ -17,7 +17,7 @@ export default class User {
   createdAt?: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'The username of the actor.',
   })
   login: string;

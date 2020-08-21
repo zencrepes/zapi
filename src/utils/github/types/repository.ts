@@ -25,7 +25,7 @@ export default class Repository {
   id: string;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Identifies the primary key from the database.',
   })
   databaseId: number;

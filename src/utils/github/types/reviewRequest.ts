@@ -4,9 +4,8 @@ import User from './user';
 
 @ObjectType()
 export default class ReviewRequest {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Field(type => User, {
-    nullable: false,
+  @Field(() => User, {
+    nullable: true,
     description: 'The actor.',
   })
   requestedReviewer: User;
