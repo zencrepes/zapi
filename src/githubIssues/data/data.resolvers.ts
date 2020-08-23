@@ -12,14 +12,14 @@ import IssuesAggregationConnection from './aggregations/issuesAggregationConnect
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
 import DataMetrics from './metrics/metrics.type';
 import DataMetricsService from './metrics/metrics.service';
-import DataActivity from './activity/activity.type';
-import DataActivityService from './activity/activity.service';
 import DataMilestones from './milestones/milestones.type';
 import DataMilestonesService from './milestones/milestones.service';
 import DataProjects from './projects/projects.type';
 import DataProjectsService from './projects/projects.service';
 import DataVelocity from './velocity/velocity.type';
 import DataVelocityService from './velocity/velocity.service';
+import DataMatrix from './matrix/matrix.type';
+import DataMatrixService from './matrix/matrix.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -30,10 +30,10 @@ export default class DataResolver {
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
     private readonly metricsService: DataMetricsService,
-    private readonly activityService: DataActivityService,
     private readonly projectsService: DataProjectsService,
     private readonly milestonesService: DataMilestonesService,
     private readonly velocityService: DataVelocityService,
+    private readonly matrixService: DataMatrixService,
   ) {}
 
   @ResolveField(() => IssuesItemConnection, {
@@ -156,32 +156,6 @@ export default class DataResolver {
     return { ...data, field };
   }
 
-  @ResolveField(() => DataActivity, {
-    name: 'activity',
-    description: 'Return a matrix aggregation per week and field',
-  })
-  public async getActivityProperty(
-    @Args({
-      name: 'dateField',
-      type: () => String,
-      description: 'Date field to be used for the aggregation (for example: ClosedAt)',
-      nullable: false,
-    })
-    dateField: string,
-    @Args({
-      name: 'field',
-      type: () => String,
-      description: 'Field to be used for the aggregations (for example: repository.name)',
-      nullable: false,
-    })
-    field: string,
-    @Parent()
-    parent: Data,
-  ) {
-    const data = await this.activityService.getActivity(dateField, field, parent.query);
-    return { ...data, field };
-  }
-
   @ResolveField(() => DataProjects, {
     name: 'projects',
     description: 'Return a list of projects matching the query',
@@ -241,5 +215,38 @@ export default class DataResolver {
   ) {
     const data = await this.velocityService.getVelocity(interval, moving, window, parent.query);
     return { ...data };
+  }
+
+  @ResolveField(() => DataMatrix, {
+    name: 'matrix',
+    description: 'Return a matrix aggregation per week and field',
+  })
+  public async getSomeFucntion(
+    @Args({
+      name: 'dateField',
+      type: () => String,
+      description: 'Date field to be used for the aggregation (for example: ClosedAt)',
+      nullable: false,
+    })
+    dateField: string,
+    @Args({
+      name: 'field',
+      type: () => String,
+      description: 'Field to be used for the aggregations (for example: repository.name)',
+      nullable: false,
+    })
+    field: string,
+    @Args({
+      name: 'aggOptions',
+      type: () => String,
+      description: 'Additional options as a stringified object (more details in the documentation)',
+      nullable: true,
+    })
+    aggOptions: string,
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.matrixService.getMatrix(dateField, field, parent.query, aggOptions);
+    return { ...data, field };
   }
 }

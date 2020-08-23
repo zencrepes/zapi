@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import Bucket from './bucket.type';
 
 @ObjectType()
-export default class DataActivity {
+export default class DataPrActivity {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Field(type => String, {
     nullable: false,

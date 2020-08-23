@@ -13,4 +13,10 @@ export default class IssueBucketWeek {
     description: 'The number of documents that week',
   })
   docCount: number;
+
+  @Field({
+    nullable: true,
+    description: 'The number of points that week',
+  })
+  sum: number;
 }

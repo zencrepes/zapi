@@ -34,7 +34,7 @@ const clearCurrentField = (query: any, field: string, tag: string | undefined) =
     content: query.content.filter(
       (filter: any) =>
         filter.content.field !== field ||
-        (filter.content.field === field && (filter.tag === undefined || filter.tag !== tag)),
+        (filter.content.field === field && (filter.tag !== undefined || filter.tag !== tag)),
     ),
   };
 };

@@ -12,8 +12,8 @@ import PullrequestsAggregationConnection from './aggregations/pullrequestsAggreg
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
 import DataMetrics from './metrics/metrics.type';
 import DataMetricsService from './metrics/metrics.service';
-import DataActivity from './activity/activity.type';
-import DataActivityService from './activity/activity.service';
+import DataPrActivity from './activity/activity.type';
+import DataPrActivityService from './activity/activity.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -24,7 +24,7 @@ export default class DataResolver {
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
     private readonly metricsService: DataMetricsService,
-    private readonly activityService: DataActivityService,
+    private readonly activityService: DataPrActivityService,
   ) {}
 
   @ResolveField(() => PullrequestsItemConnection, {
@@ -147,7 +147,7 @@ export default class DataResolver {
     return { ...data, field };
   }
 
-  @ResolveField(() => DataActivity, {
+  @ResolveField(() => DataPrActivity, {
     name: 'activity',
     description: 'Return a matrix aggregation per week and field',
   })

@@ -194,11 +194,13 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
           }
         }
         const count = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
+        const sum = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
         return {
           key: bucket.key,
           keyAsString: bucket.key,
           docCount: bucket.doc_count,
           count,
+          sum,
           metadata: JSON.stringify(metadata),
         };
       }),

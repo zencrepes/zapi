@@ -22,6 +22,12 @@ export default class IssueActivityBucket {
   })
   docCount: number;
 
+  @Field({
+    nullable: true,
+    description: 'The number of points in the bucket',
+  })
+  sum: number;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   @Field(type => [BucketWeek], {
     nullable: false,

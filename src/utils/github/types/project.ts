@@ -4,6 +4,7 @@ import ProjectColumnConnection from './projectColumnConnection';
 import ProjectCardConnection from './projectCardConnection';
 import Repository from './repository';
 import Organization from './organization';
+import Actor from './actor';
 
 @ObjectType()
 export default class Project {
@@ -15,6 +16,12 @@ export default class Project {
     description: 'Identifies the date and time when the object was created.',
   })
   createdAt: string;
+
+  @Field(() => Actor, {
+    nullable: false,
+    description: 'The actor who authored the comment.a',
+  })
+  creator: Actor;
 
   @Field(() => String, {
     nullable: false,

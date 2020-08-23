@@ -11,7 +11,7 @@ import ConfigTableService from '../utils/config/table/table.service';
 import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
 import DataMetricsService from './data/metrics/metrics.service';
-import DataActivityService from './data/activity/activity.service';
+import DataPrActivityService from './data/activity/activity.service';
 import DataCountService from '../utils/data/count/count.service';
 
 @Module({
@@ -25,7 +25,7 @@ import DataCountService from '../utils/data/count/count.service';
     DataAggregationsService,
     DataItemsService,
     DataMetricsService,
-    DataActivityService,
+    DataPrActivityService,
     DataCountService,
   ],
 })
