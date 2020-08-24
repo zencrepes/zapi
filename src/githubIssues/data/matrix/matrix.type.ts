@@ -8,7 +8,7 @@ export default abstract class MatrixConnection {
     nullable: true,
     description: 'Current Velocity data',
   })
-  field: String;
+  field: string;
 
   @Field(() => [Bucket], {
     nullable: false,
