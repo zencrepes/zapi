@@ -1,7 +1,7 @@
 /*
   Remove the current field from query, allowing for disjointive facets
 */
-const clearCurrentField = (query: any, field: string, tag: string | undefined) => {
+const clearCurrentField = (query: any, field: string, tag?: string | undefined) => {
   if (Object.keys(query).length === 0) {
     return query;
   }
