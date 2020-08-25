@@ -8,22 +8,24 @@ import { getTermAggregation } from '../../../utils/es/getTermAggregation';
 import { getDateHistogramAggregation } from '../../../utils/es/getDateHistogramAggregation';
 
 @Injectable()
-export default class DataActivityService {
+export default class DataMatrixService {
   constructor(private readonly confService: ConfService, private readonly esClientService: EsClientService) {}
 
-  async getActivity(dateField: string, field: string, query: any): Promise<any> {
+  async getMatrix(dateField: string, field: string, query: any, aggOptions: any): Promise<any> {
     const userConfig = this.confService.getUserConfig();
 
     const esClient = this.esClientService.getEsClient();
 
     const filterQuery = JSON.parse(query);
 
+    const aggregationOptions = aggOptions === undefined ? {} : JSON.parse(aggOptions);
+
     const results = await getTermAggregation(
       esClient,
       userConfig.elasticsearch.dataIndices.githubIssues + '*',
       filterQuery,
       field,
-      {},
+      aggregationOptions,
       false,
     );
     const bucketsResults = [];
@@ -39,10 +41,8 @@ export default class DataActivityService {
         userConfig.elasticsearch.dataIndices.githubIssues + '*',
         updatedQuery,
         dateField,
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        JSON.stringify({ calendarInterval: 'week' }),
+        { calendarInterval: 'week', sumField: 'points' },
       );
-      // console.log(aggregationResult);
       bucketsResults.push({
         ...bucket,
         weeks: aggregationResult.buckets
@@ -58,7 +58,7 @@ export default class DataActivityService {
             } else if (new Date(toWeekStart) < new Date(w.keyAsString)) {
               toWeekStart = w.keyAsString;
             }
-            return { weekStart: w.keyAsString, docCount: w.docCount };
+            return { weekStart: w.keyAsString, docCount: w.docCount, sum: w.sum };
           }),
       });
     }

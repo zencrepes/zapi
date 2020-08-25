@@ -18,7 +18,7 @@ export default class DataMetricsService {
     // Run two query, to get min max for current, and min max without facet
     const esIndex = userConfig.elasticsearch.dataIndices.githubPullrequests + '*';
 
-    const filteredQuery = clearCurrentField(JSON.parse(query), field);
+    const filteredQuery = clearCurrentField(JSON.parse(query), field, undefined);
     const prepFilteredQuery = {
       nestedFields: [],
       filters: filteredQuery,
@@ -61,7 +61,7 @@ export default class DataMetricsService {
     });
     const docCount = countDocuments.body.count;
 
-    const unfilteredQuery = clearCurrentField(JSON.parse(query), field);
+    const unfilteredQuery = clearCurrentField(JSON.parse(query), field, undefined);
     const prepUnFilteredQuery = {
       nestedFields: [],
       filters: unfilteredQuery,

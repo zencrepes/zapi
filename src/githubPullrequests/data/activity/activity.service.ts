@@ -8,7 +8,7 @@ import { getTermAggregation } from '../../../utils/es/getTermAggregation';
 import { getDateHistogramAggregation } from '../../../utils/es/getDateHistogramAggregation';
 
 @Injectable()
-export default class DataActivityService {
+export default class DataPrActivityService {
   constructor(private readonly confService: ConfService, private readonly esClientService: EsClientService) {}
 
   async getActivity(dateField: string, field: string, query: any): Promise<any> {

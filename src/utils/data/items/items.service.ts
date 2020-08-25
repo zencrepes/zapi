@@ -22,8 +22,6 @@ export default class DataItemsService {
       customSort[orderBy.field] = { order: orderBy.direction };
       sort = [customSort, ...sort];
     }
-    // console.log(orderBy);
-    // console.log(sort);
     const prepQuery = {
       nestedFields,
       filters: queryObj,
@@ -42,24 +40,42 @@ export default class DataItemsService {
     // console.log(JSON.stringify(queryObj));
     // console.log(JSON.stringify(updatedQuery));
 
-    // const esClient = new Client({
-    //   node: 'http://127.0.0.1:9200',
-    // });
-    const esQuery = {
-      index: esIndex,
-      body: {
-        from: from === undefined ? 0 : from,
-        size: from === undefined ? 10 : size,
-        query: updatedQuery,
-        sort,
-      },
-    };
-    const datasets: ApiResponse = await esClient.search(esQuery);
-    const results = datasets.body.hits;
-    return {
-      nodes: results.hits.map(hit => hit._source),
-      totalCount: results.total.value,
-    };
+    // If size === 0 or very large, we use the scroll API to return all results.
+    // This is useful for features such as TSV export
+    // OTherwise, use the regular search
+    if (size === 0 || size > 5000) {
+      let issues: any[] = [];
+      const scrollSearch = esClient.helpers.scrollSearch({
+        index: esIndex,
+        body: {
+          query: updatedQuery,
+          sort,
+        },
+      });
+      for await (const result of scrollSearch) {
+        issues = [...issues, ...result.documents];
+      }
+      return {
+        nodes: issues,
+        totalCount: issues.length,
+      };
+    } else {
+      const esQuery = {
+        index: esIndex,
+        body: {
+          from: from === undefined ? 0 : from,
+          size: from === undefined ? 10 : size,
+          query: updatedQuery,
+          sort,
+        },
+      };
+      const datasets: ApiResponse = await esClient.search(esQuery);
+      const results = datasets.body.hits;
+      return {
+        nodes: results.hits.map(hit => hit._source),
+        totalCount: results.total.value,
+      };
+    }
   }
 
   async findOneById(id: string): Promise<any> {

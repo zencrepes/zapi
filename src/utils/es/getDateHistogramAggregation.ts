@@ -13,15 +13,33 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
   if (aggOptions.movingWindow !== undefined) {
     const movingWindow = aggOptions.movingWindow === undefined ? 4 : aggOptions.movingWindow;
 
+    //https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline-movfn-aggregation.html
+    //https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html#buckets-path-syntax
+
     additionalAggs['moving'] = {
       // eslint-disable-next-line @typescript-eslint/camelcase
       moving_fn: {
         // eslint-disable-next-line @typescript-eslint/camelcase
         buckets_path: '_count',
         window: movingWindow,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        gap_policy: 'insert_zeros',
         script: 'MovingFunctions.unweightedAvg(values)',
       },
     };
+    if (aggOptions.sumField !== undefined) {
+      additionalAggs['movingPts'] = {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        moving_fn: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          buckets_path: 'sum',
+          window: movingWindow,
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          gap_policy: 'insert_zeros',
+          script: 'MovingFunctions.unweightedAvg(values)',
+        },
+      };
+    }
   }
   if (aggOptions.sumField !== undefined) {
     additionalAggs['sum'] = {
@@ -76,6 +94,7 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
       }
       if (aggOptions.movingWindow !== undefined) {
         formattedBucket['moving'] = bucket.moving !== undefined ? bucket.moving.value : 0;
+        formattedBucket['movingPts'] = bucket.movingPts !== undefined ? bucket.movingPts.value : 0;
       }
       return formattedBucket;
     }),

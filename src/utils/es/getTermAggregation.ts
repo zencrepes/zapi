@@ -17,11 +17,11 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
     (disjoint === true && aggOptions.disjoint === undefined) ||
     (aggOptions.disjoint !== undefined && aggOptions.disjoint === true)
   ) {
-    filterQuery = clearCurrentField(filterQuery, field);
+    // Note that we only run disjonctive facets if the query doesn't contain that field with the subfilter tag
+    filterQuery = clearCurrentField(filterQuery, field, aggOptions.tag);
   }
 
   const convertedQuery = await convertSqonToEs(filterQuery);
-
   const metadataFields = aggOptions.metadata === undefined ? [] : aggOptions.metadata;
 
   let resultsBuckets: any[] = [];
@@ -194,11 +194,13 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
           }
         }
         const count = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
+        const sum = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
         return {
           key: bucket.key,
           keyAsString: bucket.key,
           docCount: bucket.doc_count,
           count,
+          sum,
           metadata: JSON.stringify(metadata),
         };
       }),

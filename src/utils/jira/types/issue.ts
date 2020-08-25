@@ -168,7 +168,7 @@ export default class JiraIssue {
   originalPoints: number;
 
   @Field(() => JiraPriority, {
-    nullable: false,
+    nullable: true,
     description: 'Issue priority',
   })
   priority: JiraPriority;

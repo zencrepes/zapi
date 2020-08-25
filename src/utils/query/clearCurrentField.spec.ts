@@ -40,9 +40,7 @@ test('clearCurrentField - Receive a query that does containg the field to be rem
   const response = clearCurrentField(sourceQuery, 'myA.field');
   const expectedResponse = {
     op: 'and',
-    content: [
-      { op: 'in', content: { field: 'myB.field', value: ['anotherkey'] } },
-    ],
+    content: [{ op: 'in', content: { field: 'myB.field', value: ['anotherkey'] } }],
   };
   expect(JSON.stringify(response)).toEqual(JSON.stringify(expectedResponse));
 });
