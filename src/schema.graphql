@@ -113,7 +113,7 @@ type GithubPullrequestsData {
 
     """Date field to be used for the aggregation (for example: ClosedAt)"""
     dateField: String!
-  ): DataActivity!
+  ): DataPrActivity!
 }
 
 input ItemSortorder {
@@ -182,8 +182,11 @@ type ConfigTableColumns {
   """If the field is an array, the object index to use to fetch content"""
   subfield: String
 
-  """Type of field being returned (date, string, boolean, url, ...)"""
+  """Type of field being returned (date, string, boolean, url, array, ...)"""
   fieldType: String
+
+  """If the field is an array of objects, path to the node to be used"""
+  fieldNode: String
 
   """Field to sort upon for the column (could be different)"""
   sortField: String
@@ -290,19 +293,72 @@ type CodeOfConduct {
   url: String!
 }
 
+type CommitEdge {
+  """The item at the end of the edge."""
+  node: Commit!
+}
+
+type CommitHistoryConnection {
+  """A list of edges."""
+  edges: [CommitEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type GitActor {
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The timestamp of the Git action (authoring or committing)"""
+  date: String
+
+  """The email in the Git commit."""
+  email: String
+
+  """The name in the Git commit."""
+  name: String
+
+  """
+  The GitHub user corresponding to the email field. Null if no such user exists.
+  """
+  user: User
+}
+
+type Commit {
+  id: ID!
+
+  """The datetime when this commit was pushed."""
+  pushedDate: String
+
+  """The Git commit message headline"""
+  messageHeadline: String
+
+  """
+  The linear commit history starting from (and including) this commit, in the same order as `git log`
+  """
+  history: CommitHistoryConnection
+
+  """Authorship details of the commit."""
+  author: GitActor
+}
+
 type Ref {
   id: ID!
 
   """The ref name."""
-  name: String!
+  name: String
 
   """The ref prefix, such as `refs/heads/` or`refs/tags/`."""
   prefix: String
+
+  """The commit the ref points to"""
+  target: Commit
 }
 
 type ReviewRequest {
   """The actor."""
-  requestedReviewer: User!
+  requestedReviewer: User
 }
 
 type ReviewRequestEdge {
@@ -446,11 +502,33 @@ type Organization {
   websiteUrl: String
 }
 
+type Actor {
+  id: ID!
+
+  """A URL pointing to the actor public avatar."""
+  avatarUrl: String
+
+  """The name of the actor."""
+  name: String
+
+  """The company of the actor."""
+  company: String
+
+  """The username of the actor."""
+  login: String!
+
+  """The HTTP URL for this actor."""
+  url: String!
+}
+
 type Project {
   id: ID!
 
   """Identifies the date and time when the object was created."""
   createdAt: String!
+
+  """The actor who authored the comment.a"""
+  creator: Actor!
 
   """Is the project attached to an organization, a repository or a user"""
   projectLevel: String!
@@ -474,10 +552,10 @@ type Project {
   name: String!
 
   """Identifies the object state."""
-  state: String!
+  state: String
 
   """Identifies the object body."""
-  body: String!
+  body: String
 
   """List of associated project columns."""
   columns: ProjectColumnConnection!
@@ -513,25 +591,6 @@ type ProjectCardConnection {
 
   """Identifies the total count of items in the connection."""
   totalCount: Int!
-}
-
-type Actor {
-  id: ID!
-
-  """A URL pointing to the actor public avatar."""
-  avatarUrl: String
-
-  """The name of the actor."""
-  name: String
-
-  """The company of the actor."""
-  company: String
-
-  """The username of the actor."""
-  login: String!
-
-  """The HTTP URL for this actor."""
-  url: String!
 }
 
 type Milestone {
@@ -747,10 +806,10 @@ type RefEdge {
 
 type RefConnection {
   """A list of edges."""
-  edges: [RefEdge!]!
+  edges: [RefEdge!]
 
   """Identifies the total count of items in the connection."""
-  totalCount: Int!
+  totalCount: Int
 }
 
 type Release {
@@ -963,7 +1022,7 @@ type Repository {
   id: ID!
 
   """Identifies the primary key from the database."""
-  databaseId: Float!
+  databaseId: Float
 
   """The name of the repository."""
   name: String
@@ -1068,6 +1127,9 @@ type Repository {
   """Whether or not rebase-merging is enabled on this repository."""
   refs: RefConnection
 
+  """Link to the ref containing recent commits to master"""
+  recentCommitsMaster: Ref
+
   """A list of pull requests that have been opened in the repository."""
   releases: ReleaseConnection
 
@@ -1076,6 +1138,9 @@ type Repository {
 
   """Whether or not squash-merging is enabled on this repository."""
   squashMergeAllowed: Boolean
+
+  """Number of commits pushed to master during the current year (up to 10)"""
+  currentYearMasterCommits: Float
 
   """A list of users who have starred this starrable."""
   stargazers: StargazerConnection
@@ -1151,7 +1216,7 @@ type User {
   createdAt: String
 
   """The username of the actor."""
-  login: String!
+  login: String
 
   """The user public profile company.."""
   company: String
@@ -1298,6 +1363,9 @@ type AggregationBucket {
   """The number of elements in the bucket"""
   docCount: Float!
 
+  """The count associated with the bucket"""
+  count: Float!
+
   """
   Metadata returned based on the aggOptions parameter, it allows additional fields to be returned
   """
@@ -1373,7 +1441,7 @@ type ActivityBucket {
   weeks: [BucketWeek!]!
 }
 
-type DataActivity {
+type DataPrActivity {
   """The filed that was aggregated on"""
   field: String!
 
@@ -2156,14 +2224,41 @@ type GithubIssuesData {
     field: String!
   ): IssueMetrics!
 
+  """Return a list of projects matching the query"""
+  projects: IssueProjects!
+
+  """Return a list of milestones matching the query"""
+  milestones: IssueMilestones!
+
+  """Return velocity metrics"""
+  velocity(
+    """The dataset window to use for calculations"""
+    window: Float = 53
+
+    """
+    Number of elements to be used for calculating the moving average, default is 4
+    """
+    moving: Float = 4
+
+    """
+    Interval to run the aggregation on (week, day, ...). See: https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html
+    """
+    interval: String = "week"
+  ): VelocityConnection!
+
   """Return a matrix aggregation per week and field"""
-  activity(
+  matrix(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
     """Field to be used for the aggregations (for example: repository.name)"""
     field: String!
 
     """Date field to be used for the aggregation (for example: ClosedAt)"""
     dateField: String!
-  ): IssueDataActivity!
+  ): MatrixConnection!
 }
 
 input IssueSortorder {
@@ -2173,6 +2268,50 @@ input IssueSortorder {
   Order field (see config aggregations node for a sample of possible values)
   """
   field: String
+}
+
+type VelocityConnection {
+  """Assignees used to calculate velocity"""
+  assignees: [User!]!
+
+  """Veloticy Weeks"""
+  items: [VelocityItem!]!
+
+  """Current Velocity data"""
+  current: VelocityItem
+}
+
+type VelocityItem {
+  """Start"""
+  date: String!
+
+  """Velocity data calculated using document counts"""
+  issues: VelocityMetric!
+
+  """Velocity data calculated using document points"""
+  points: VelocityMetric!
+}
+
+type VelocityMetric {
+  """Sum of elements"""
+  sum: Float
+
+  """Moving average"""
+  moving: Float
+}
+
+type MatrixConnection {
+  """Current Velocity data"""
+  field: String
+
+  """A list of aggregation buckets"""
+  buckets: [IssueActivityBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromWeekStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toWeekStart: String!
 }
 
 type GithubIssuesConfig {
@@ -2217,16 +2356,29 @@ type IssueMetrics {
   field: String!
 
   """Minimum value for the current query"""
-  min: Float!
+  min: Float
 
   """Maximum value for the current query"""
-  max: Float!
+  max: Float
+
+  """Sum of all fields in the current query"""
+  sum: Float!
 
   """Overall minimum value (current query with field excluded)"""
-  overallMin: Float!
+  overallMin: Float
 
   """Overall maximum value (current query with field excluded)"""
-  overallMax: Float!
+  overallMax: Float
+}
+
+type IssueMilestones {
+  nodes: [Milestone!]
+  totalCount: Int!
+}
+
+type IssueProjects {
+  nodes: [Project!]
+  totalCount: Int!
 }
 
 type IssueBucketWeek {
@@ -2235,6 +2387,9 @@ type IssueBucketWeek {
 
   """The number of documents that week"""
   docCount: Float!
+
+  """The number of points that week"""
+  sum: Float
 }
 
 type IssueActivityBucket {
@@ -2247,22 +2402,11 @@ type IssueActivityBucket {
   """The number of elements in the bucket"""
   docCount: Float!
 
+  """The number of points in the bucket"""
+  sum: Float
+
   """Weeks of activity"""
   weeks: [IssueBucketWeek!]!
-}
-
-type IssueDataActivity {
-  """The filed that was aggregated on"""
-  field: String!
-
-  """A list of aggregation buckets"""
-  buckets: [IssueActivityBucket!]!
-
-  """Overall first week (first day of the week) in the aggregated buckets"""
-  fromWeekStart: String!
-
-  """Overall last week (first day of the week) in the aggregated buckets"""
-  toWeekStart: String!
 }
 
 type JiraIssues {
@@ -2482,6 +2626,19 @@ type JiraVersionConnection {
   totalCount: Int!
 }
 
+type JiraIssueRemoteLinkEdge {
+  """The item at the end of the edge."""
+  node: JiraIssue!
+}
+
+type JiraIssueRemoteLinkConnection {
+  """A list of edges."""
+  edges: [JiraIssueRemoteLinkEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
 type JiraIssueLinkType {
   id: ID!
 
@@ -2572,6 +2729,9 @@ type JiraIssue {
   """Identifies the date and time when the object was last updated"""
   updatedAt: String
 
+  """Date for the end of Support (useful with JIRA Service Desk)"""
+  endOfSupport: String
+
   """URL of the issue to the source Jira instance"""
   url: String
 
@@ -2582,7 +2742,7 @@ type JiraIssue {
   creator: JiraUser!
 
   """The issue reporter"""
-  reporter: JiraUser!
+  reporter: JiraUser
 
   """Issue Key"""
   key: String
@@ -2609,10 +2769,13 @@ type JiraIssue {
   resolution: JiraResolution
 
   """A list of fixVersions"""
-  fixVersions: JiraVersionConnection!
+  fixVersions: JiraVersionConnection
 
   """A list of Versions"""
-  versions: JiraVersionConnection!
+  versions: JiraVersionConnection
+
+  """A list of remote links"""
+  remoteLinks: JiraIssueRemoteLinkConnection
 
   """A list of link to other issues"""
   links: JiraIssueLinkConnection!
@@ -2633,7 +2796,7 @@ type JiraIssue {
   originalPoints: Float
 
   """Issue priority"""
-  priority: JiraPriority!
+  priority: JiraPriority
 }
 
 type JiraIssueItemConnection {

@@ -22,7 +22,7 @@ export default class DataMetricsService {
     const queryObj = JSON.parse(query);
     const nestedFields = getNestedFields(queryObj);
 
-    const filteredQuery = clearCurrentField(JSON.parse(query), field);
+    const filteredQuery = clearCurrentField(JSON.parse(query), field, undefined);
     const prepFilteredQuery = {
       nestedFields: nestedFields,
       filters: filteredQuery,
@@ -71,7 +71,7 @@ export default class DataMetricsService {
     });
     const docCount = countDocuments.body.count;
 
-    const unfilteredQuery = clearCurrentField(JSON.parse(query), field);
+    const unfilteredQuery = clearCurrentField(JSON.parse(query), field, undefined);
     const prepUnFilteredQuery = {
       nestedFields: nestedFields,
       filters: unfilteredQuery,
