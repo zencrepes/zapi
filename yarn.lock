@@ -391,10 +391,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bit/zencrepes.zindexer.config@^0.0.15":
-  version "0.0.15"
-  resolved "https://node.bit.dev/zencrepes.zindexer.config/-/zencrepes.zindexer.config-0.0.15.tgz#e9cd49b71a3755240829bc5ca035a60989337a41"
-  integrity sha1-6c1Jtxo3VSQIKbxcoDWmCYkzekE=
+"@bit/zencrepes.zindexer.config@^0.0.16":
+  version "0.0.16"
+  resolved "https://node.bit.dev/zencrepes.zindexer.config/-/zencrepes.zindexer.config-0.0.16.tgz#aea65e5cb5e4b7e92fb4d5dcd752dc530bb583fd"
+  integrity sha1-rqZeXLXkt+kvtNXc11LcUwu1g/0=
 
 "@cnakazawa/watch@^1.0.3":
   version "1.0.4"
