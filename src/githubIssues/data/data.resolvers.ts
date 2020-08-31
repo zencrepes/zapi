@@ -20,6 +20,8 @@ import DataVelocity from './velocity/velocity.type';
 import DataVelocityService from './velocity/velocity.service';
 import DataMatrix from './matrix/matrix.type';
 import DataMatrixService from './matrix/matrix.service';
+import DataNetwork from './network/network.type';
+import DataNetworkService from './network/network.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -34,6 +36,7 @@ export default class DataResolver {
     private readonly milestonesService: DataMilestonesService,
     private readonly velocityService: DataVelocityService,
     private readonly matrixService: DataMatrixService,
+    private readonly networkService: DataNetworkService,
   ) {}
 
   @ResolveField(() => IssuesItemConnection, {
@@ -79,6 +82,7 @@ export default class DataResolver {
 
   @ResolveField(() => Issue, {
     name: 'item',
+    nullable: true,
     description: 'Returns a single item by providing its ID',
   })
   public async getItem(
@@ -92,7 +96,9 @@ export default class DataResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
   ): Promise<Issue> {
-    const item = await this.itemsService.findOneById(id);
+    const userConfig = this.confService.getUserConfig();
+
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.githubIssues);
     return item;
   }
 
@@ -248,5 +254,22 @@ export default class DataResolver {
   ) {
     const data = await this.matrixService.getMatrix(dateField, field, parent.query, aggOptions);
     return { ...data, field };
+  }
+
+  @ResolveField(() => DataNetwork, {
+    name: 'network',
+    description: 'Return the networked view from a starting set of nodes',
+  })
+  public async getNetworksProperty(
+    @Args({
+      name: 'rootNodes',
+      type: () => [String],
+      description: 'Root nodes to be used as starting point for the network graph',
+      nullable: false,
+    })
+    rootNodes: string[],
+  ) {
+    const data = await this.networkService.getNetwork(rootNodes);
+    return { ...data };
   }
 }

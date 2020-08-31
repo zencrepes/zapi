@@ -16,6 +16,7 @@ import DataMilestonesService from './data/milestones/milestones.service';
 import DataProjectsService from './data/projects/projects.service';
 import DataVelocityService from './data/velocity/velocity.service';
 import DataMatrixService from './data/matrix/matrix.service';
+import DataNetworkService from './data/network/network.service';
 
 @Module({
   imports: [ConfModule.register(), EsClientModule],
@@ -33,6 +34,7 @@ import DataMatrixService from './data/matrix/matrix.service';
     DataProjectsService,
     DataVelocityService,
     DataMatrixService,
+    DataNetworkService,
   ],
 })
 export class GithubIssuesModule {}

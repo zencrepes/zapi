@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ApiResponse } from '@elastic/elasticsearch';
 import { buildQuery } from '@arranger/middleware';
 
@@ -8,6 +8,7 @@ import { getNestedFields } from '../../query';
 
 @Injectable()
 export default class DataItemsService {
+  private readonly logger = new Logger(DataItemsService.name);
   constructor(private readonly esClientService: EsClientService) {}
 
   async findAll(from, size, query, orderBy, esIndex): Promise<any> {
@@ -78,9 +79,19 @@ export default class DataItemsService {
     }
   }
 
-  async findOneById(id: string): Promise<any> {
-    return {
-      id: 'One single item, provided: ' + id,
-    };
+  async findOneById(id: string, esIndex: string): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+
+    let nodesSearch: any = null;
+    try {
+      nodesSearch = await esClient.get({ id: id, index: esIndex });
+    } catch (e) {
+      this.logger.warn('findOneById: Node: ' + id + ' does not exist');
+    }
+
+    if (nodesSearch !== null) {
+      return nodesSearch.body._source;
+    }
+    return nodesSearch;
   }
 }
