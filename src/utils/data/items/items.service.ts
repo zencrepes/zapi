@@ -23,6 +23,7 @@ export default class DataItemsService {
       customSort[orderBy.field] = { order: orderBy.direction };
       sort = [customSort, ...sort];
     }
+
     const prepQuery = {
       nestedFields,
       filters: queryObj,
@@ -39,6 +40,7 @@ export default class DataItemsService {
 
     // console.log('Query Transformation: ');
     // console.log(JSON.stringify(queryObj));
+    // console.log(JSON.stringify(prepQuery));
     // console.log(JSON.stringify(updatedQuery));
 
     // If size === 0 or very large, we use the scroll API to return all results.

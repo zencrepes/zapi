@@ -4,7 +4,9 @@ import NetworkNodeData from './networkNodeData.type';
 
 @ObjectType()
 export default class IssueNetworkNode {
-  @Field(() => ID)
+  @Field(() => ID, {
+    nullable: true,
+  })
   id: string;
 
   @Field(() => String, {

@@ -15,4 +15,10 @@ export default class IssueNetwork {
     description: 'Time it took for ZenCrepes API to process the request (in ms)',
   })
   processTime: number;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Source used for the root nodes (query or selected Ids)',
+  })
+  source: string;
 }

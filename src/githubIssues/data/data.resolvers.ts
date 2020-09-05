@@ -268,8 +268,10 @@ export default class DataResolver {
       nullable: false,
     })
     rootNodes: string[],
+    @Parent()
+    parent: Data,
   ) {
-    const data = await this.networkService.getNetwork(rootNodes);
+    const data = await this.networkService.getNetwork(rootNodes, parent.query);
     return { ...data };
   }
 }

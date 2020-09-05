@@ -70,6 +70,7 @@ export default class DataResolver {
 
   @ResolveField(() => PullRequest, {
     name: 'item',
+    nullable: true,
     description: 'Returns a single item by providing its ID',
   })
   public async getItem(
