@@ -34,13 +34,13 @@ export default class Issue {
   reviews: PullRequestReviewConnection;
 
   @Field(() => Actor, {
-    nullable: false,
+    nullable: true,
     description: 'The actor who authored the comment.a',
   })
   author: Actor;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the body of the PR.',
   })
   body: string;
@@ -52,19 +52,19 @@ export default class Issue {
   closedAt?: string;
 
   @Field(() => CommentConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of comments',
   })
   comments: CommentConnection;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the date and time when the object was created.',
   })
   createdAt: string;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Identifies the primary key from the database.',
   })
   databaseId: number;
@@ -88,13 +88,13 @@ export default class Issue {
   milestone: Milestone;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: ' Identifies the issue number.',
   })
   number: number;
 
   @Field(() => UserConnection, {
-    nullable: false,
+    nullable: true,
     description: 'A list of Users that are participating in the conversation.',
   })
   participants: UserConnection;
@@ -106,31 +106,31 @@ export default class Issue {
   projectCards: ProjectCardConnection;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the date and time when the object was last updated.',
   })
   updatedAt: string;
 
   @Field(() => Repository, {
-    nullable: false,
+    nullable: true,
     description: 'The repository where the PR is located',
   })
   repository: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the object title.',
   })
   title: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Identifies the state of the PR.',
   })
   state: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'The HTTP URL for this PR.',
   })
   url: string;

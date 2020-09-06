@@ -80,7 +80,7 @@ type GithubPullrequestsData {
   item(
     """ID fo an item"""
     id: String!
-  ): PullRequest!
+  ): PullRequest
 
   """Return aggregations (facets)"""
   aggregations(
@@ -667,22 +667,22 @@ type Issue {
   reviews: PullRequestReviewConnection
 
   """The actor who authored the comment.a"""
-  author: Actor!
+  author: Actor
 
   """Identifies the body of the PR."""
-  body: String!
+  body: String
 
   """Identifies the date and time when the object was created."""
   closedAt: String
 
   """A list of comments"""
-  comments: CommentConnection!
+  comments: CommentConnection
 
   """Identifies the date and time when the object was created."""
-  createdAt: String!
+  createdAt: String
 
   """Identifies the primary key from the database."""
-  databaseId: Float!
+  databaseId: Float
 
   """Story points assocaited with the issue"""
   points: Float
@@ -694,28 +694,28 @@ type Issue {
   milestone: Milestone
 
   """ Identifies the issue number."""
-  number: String!
+  number: String
 
   """A list of Users that are participating in the conversation."""
-  participants: UserConnection!
+  participants: UserConnection
 
   """List of associated project cards."""
   projectCards: ProjectCardConnection
 
   """Identifies the date and time when the object was last updated."""
-  updatedAt: String!
+  updatedAt: String
 
   """The repository where the PR is located"""
-  repository: Repository!
+  repository: Repository
 
   """Identifies the object title."""
-  title: String!
+  title: String
 
   """Identifies the state of the PR."""
-  state: String!
+  state: String
 
   """The HTTP URL for this PR."""
-  url: String!
+  url: String
 }
 
 type IssueEdge {
@@ -1225,7 +1225,7 @@ type User {
   avatarUrl: String
 
   """The HTTP URL for this actor."""
-  url: String!
+  url: String
 
   """The user public profile name."""
   name: String
@@ -2198,7 +2198,7 @@ type GithubIssuesData {
   item(
     """ID fo an item"""
     id: String!
-  ): Issue!
+  ): Issue
 
   """Return aggregations (facets)"""
   aggregations(
@@ -2259,6 +2259,12 @@ type GithubIssuesData {
     """Date field to be used for the aggregation (for example: ClosedAt)"""
     dateField: String!
   ): MatrixConnection!
+
+  """Return the networked view from a starting set of nodes"""
+  network(
+    """Root nodes to be used as starting point for the network graph"""
+    rootNodes: [String!]!
+  ): IssueNetwork!
 }
 
 input IssueSortorder {
@@ -2407,6 +2413,109 @@ type IssueActivityBucket {
 
   """Weeks of activity"""
   weeks: [IssueBucketWeek!]!
+}
+
+type IssueNetworkNodeData {
+  id: ID!
+
+  """A list of Users assigned to this object."""
+  assignees: UserConnection
+
+  """A list of Review Requests assigned to this object."""
+  reviewRequests: ReviewRequestConnection
+
+  """A list of Reviews assigned to this object."""
+  reviews: PullRequestReviewConnection
+
+  """The actor who authored the comment.a"""
+  author: Actor
+
+  """Identifies the body of the PR."""
+  body: String
+
+  """Identifies the date and time when the object was created."""
+  closedAt: String
+
+  """A list of comments"""
+  comments: CommentConnection
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """Identifies the primary key from the database."""
+  databaseId: Float
+
+  """Story points assocaited with the issue"""
+  points: Float
+
+  """A list of labels associated with the object."""
+  labels: LabelConnection
+
+  """A list of labels associated with the object."""
+  milestone: Milestone
+
+  """Issue or PR number"""
+  number: Int
+
+  """A list of Users that are participating in the conversation."""
+  participants: UserConnection
+
+  """List of associated project cards."""
+  projectCards: ProjectCardConnection
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String
+
+  """The repository where the PR is located"""
+  repository: Repository
+
+  """Title of the node"""
+  title: String
+
+  """State of the node"""
+  state: String
+
+  """The HTTP URL for this PR."""
+  url: String
+
+  """If the node is an edge, target is the target id of the edge element"""
+  target: String
+
+  """If the node is an edge, source is the source id of the edge element"""
+  source: String
+
+  """Distance in the tree"""
+  distance: Int
+
+  """Is this node data partial?"""
+  partial: Boolean
+
+  """Type of the node (Issue or PR)"""
+  typename: String
+}
+
+type IssueNetworkNode {
+  id: ID
+
+  """Cytoscape group (either nodes or edges"""
+  group: String
+
+  """Cytoscape node label"""
+  label: String
+
+  """Cytoscape node data"""
+  data: IssueNetworkNodeData
+}
+
+type IssueNetwork {
+  nodes: [IssueNetworkNode!]
+  totalCount: Int!
+
+  """Time it took for ZenCrepes API to process the request (in ms)"""
+  processTime: Int
+
+  """Source used for the root nodes (query or selected Ids)"""
+  source: String
 }
 
 type JiraIssues {

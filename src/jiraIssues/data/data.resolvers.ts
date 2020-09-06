@@ -79,7 +79,9 @@ export default class DataResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
   ): Promise<JiraIssue> {
-    const item = await this.itemsService.findOneById(id);
+    const userConfig = this.confService.getUserConfig();
+
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.jiraIssues);
     return item;
   }
 

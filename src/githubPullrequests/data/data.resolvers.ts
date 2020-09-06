@@ -70,6 +70,7 @@ export default class DataResolver {
 
   @ResolveField(() => PullRequest, {
     name: 'item',
+    nullable: true,
     description: 'Returns a single item by providing its ID',
   })
   public async getItem(
@@ -83,7 +84,8 @@ export default class DataResolver {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
   ): Promise<PullRequest> {
-    const item = await this.itemsService.findOneById(id);
+    const userConfig = this.confService.getUserConfig();
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.githubPullrequests);
     return item;
   }
 

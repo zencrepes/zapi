@@ -35,7 +35,7 @@ export default class User {
   avatarUrl: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'The HTTP URL for this actor.',
   })
   url: string;

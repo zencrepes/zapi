@@ -8,12 +8,10 @@ const getNestedFields = (query: any) => {
   }
   const availableFields = query.content
     .map((filter: any) => filter.content.field)
-    .filter((field: string) => field.includes('.edges.'));
+    .filter((field: string) => field !== undefined && field.includes('.edges.'));
   if (availableFields.length === 0) {
     return [];
   }
-  return availableFields.map(
-    (field: string) => field.split('.edges.')[0] + '.edges',
-  );
+  return availableFields.map((field: string) => field.split('.edges.')[0] + '.edges');
 };
 export default getNestedFields;
