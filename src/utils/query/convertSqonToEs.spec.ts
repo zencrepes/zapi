@@ -3,7 +3,7 @@ import { convertSqonToEs } from './index';
 test('Receive an empty query', async () => {
   const sourceQuery = {};
   const response = await convertSqonToEs(sourceQuery);
-  const expectedResponse = { match_all: {} }; // eslint-disable-line @typescript-eslint/camelcase
+  const expectedResponse = { match_all: {} };
   expect(JSON.stringify(response)).toEqual(JSON.stringify(expectedResponse));
 });
 

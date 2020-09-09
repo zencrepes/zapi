@@ -15,7 +15,7 @@ const convertSqonToEs = async (query: any) => {
   let updatedQuery = await buildQuery(prepQuery);
   if (Object.entries(updatedQuery).length === 0) {
     updatedQuery = {
-      match_all: {}, // eslint-disable-line @typescript-eslint/camelcase
+      match_all: {},
     };
   }
 

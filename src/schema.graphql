@@ -145,6 +145,8 @@ type GithubPullrequestsConfig {
 }
 
 type ConfigAggregation {
+  id: ID!
+
   """Actual field that can be aggregated upon"""
   field: String!
 
@@ -173,6 +175,8 @@ type ConfigAggregations {
 }
 
 type ConfigTableColumns {
+  id: ID!
+
   """Displayable name for the column"""
   name: String
 

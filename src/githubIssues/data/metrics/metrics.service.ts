@@ -31,7 +31,6 @@ export default class DataMetricsService {
     let updatedFilteredQuery = await buildQuery(prepFilteredQuery);
     if (Object.entries(updatedFilteredQuery).length === 0) {
       updatedFilteredQuery = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         match_all: {},
       };
     }
@@ -80,7 +79,7 @@ export default class DataMetricsService {
     let updatedUnFilteredQuery = await buildQuery(prepUnFilteredQuery);
     if (Object.entries(updatedUnFilteredQuery).length === 0) {
       updatedUnFilteredQuery = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
+        //
         match_all: {},
       };
     }

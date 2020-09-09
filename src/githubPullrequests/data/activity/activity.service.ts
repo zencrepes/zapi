@@ -38,7 +38,6 @@ export default class DataPrActivityService {
         userConfig.elasticsearch.dataIndices.githubPullrequests + '*',
         updatedQuery,
         dateField,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         JSON.stringify({ calendarInterval: 'week' }),
       );
       // console.log(aggregationResult);

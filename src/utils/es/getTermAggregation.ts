@@ -2,7 +2,7 @@ import { clearCurrentField, convertSqonToEs, addFilterToQuery, createTermFilter 
 import { ApiResponse } from '@elastic/elasticsearch';
 
 const getObjectValue = (obj, path, defaultValue = undefined) => {
-  const travel = regexp =>
+  const travel = (regexp) =>
     String.prototype.split
       .call(path, regexp)
       .filter(Boolean)
@@ -58,7 +58,6 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
                 },
                 aggs: {
                   metadata: {
-                    // eslint-disable-next-line @typescript-eslint/camelcase
                     top_hits: {
                       size: 1,
                     },
@@ -97,7 +96,6 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
         ...[
           {
             key: '__missing__',
-            // eslint-disable-next-line @typescript-eslint/camelcase
             doc_count: emptyBucket.body.hits.total.value,
             points: emptyBucket.body.aggregations.points,
           },
@@ -113,7 +111,6 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
       });
       resultsBuckets = [
         ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         ...[{ key: '__missing__', doc_count: emptyBucket.body.hits.total.value }],
       ];
     }
@@ -142,7 +139,6 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
             },
             aggs: {
               metadata: {
-                // eslint-disable-next-line @typescript-eslint/camelcase
                 top_hits: {
                   size: 1,
                 },
@@ -166,7 +162,6 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
           {
             key: '__missing__',
             points: datasets.body.aggregations.emptyValues.points,
-            // eslint-disable-next-line @typescript-eslint/camelcase
             doc_count: datasets.body.aggregations.emptyValues.doc_count,
           },
         ],
@@ -174,19 +169,17 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
     } else {
       resultsBuckets = [
         ...datasets.body.aggregations.aggregations.buckets,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         ...[{ key: '__missing__', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
       ];
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/camelcase
   resultsBuckets = resultsBuckets.sort((a, b) => b.doc_count - a.doc_count);
 
   return {
     buckets: resultsBuckets
-      .filter(bucket => bucket.doc_count > 0)
-      .map(bucket => {
+      .filter((bucket) => bucket.doc_count > 0)
+      .map((bucket) => {
         const metadata = {};
         if (bucket.metadata !== undefined && bucket.metadata.hits.hits.length > 0) {
           for (const m of metadataFields) {

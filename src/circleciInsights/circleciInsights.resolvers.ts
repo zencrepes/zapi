@@ -22,7 +22,6 @@ const getEsQuery = async (query: string) => {
   let updatedQuery = await buildQuery(prepQuery);
   if (Object.entries(updatedQuery).length === 0) {
     updatedQuery = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       match_all: {},
     };
   }

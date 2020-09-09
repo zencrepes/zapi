@@ -21,7 +21,6 @@ const getEsQuery = async (query: string) => {
   let updatedQuery = await buildQuery(prepQuery);
   if (Object.entries(updatedQuery).length === 0) {
     updatedQuery = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       match_all: {},
     };
   }
@@ -37,7 +36,7 @@ export default class GithubRepositoriesResolver {
     name: 'githubRepositories',
     description: 'Fetch data (items, aggregatiosn) related to the dataset',
   })
-  public async geGithubRepositories(): Promise<GithubRepositories> {
+  public async getGithubRepositories(): Promise<GithubRepositories> {
     return new GithubRepositories();
   }
 

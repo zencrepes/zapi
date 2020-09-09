@@ -1,7 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ID, Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export default class ConfigAggregation {
+  @Field(() => ID)
+  id: string;
+
   @Field({
     nullable: false,
     description: 'Actual field that can be aggregated upon',

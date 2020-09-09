@@ -16,7 +16,6 @@ export default class ConfigTableService {
         size: 200,
         _source: ['tableConfig'],
         query: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           match_phrase: { id: datasetId },
         },
       },
@@ -24,7 +23,9 @@ export default class ConfigTableService {
     const results = datasets.body.hits.hits;
     if (results.length > 0) {
       return {
-        columns: results[0]._source.tableConfig.columns,
+        columns: results[0]._source.tableConfig.columns.map((c: any) => {
+          return { ...c, id: c.name };
+        }),
         itemsType: results[0]._source.tableConfig.itemsType,
         defaultSortField: results[0]._source.tableConfig.defaultSortField,
       };

@@ -17,24 +17,18 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
     //https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html#buckets-path-syntax
 
     additionalAggs['moving'] = {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       moving_fn: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         buckets_path: '_count',
         window: movingWindow,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         gap_policy: 'insert_zeros',
         script: 'MovingFunctions.unweightedAvg(values)',
       },
     };
     if (aggOptions.sumField !== undefined) {
       additionalAggs['movingPts'] = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         moving_fn: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           buckets_path: 'sum',
           window: movingWindow,
-          // eslint-disable-next-line @typescript-eslint/camelcase
           gap_policy: 'insert_zeros',
           script: 'MovingFunctions.unweightedAvg(values)',
         },
@@ -63,10 +57,8 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
       query: filterQuery,
       aggs: {
         aggregations: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           date_histogram: {
             field,
-            // eslint-disable-next-line @typescript-eslint/camelcase
             calendar_interval: calendarInterval,
             offset: '-1d',
           },
@@ -80,7 +72,7 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
 
   results = datasets.body.aggregations.aggregations;
   return {
-    buckets: results.buckets.map(bucket => {
+    buckets: results.buckets.map((bucket) => {
       const formattedBucket = {
         key: bucket.key,
         keyAsString: bucket.key_as_string,
