@@ -1,7 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ID, Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export default class ConfigTableColumns {
+  @Field(() => ID)
+  id: string;
+
   @Field({
     nullable: true,
     description: 'Displayable name for the column',

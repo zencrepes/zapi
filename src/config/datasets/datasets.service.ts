@@ -15,14 +15,13 @@ export default class DatasetsService {
         from: 0,
         size: 10000,
         query: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           match_all: {},
         },
       },
     });
     const results = datasets.body.hits;
     return {
-      nodes: results.hits.map(hit => {
+      nodes: results.hits.map((hit) => {
         return { ...hit._source, id: hit._id };
       }),
       totalCount: results.total.value,
@@ -38,13 +37,12 @@ export default class DatasetsService {
         from: 0,
         size: 10000,
         query: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           match_all: {},
         },
       },
     });
     const results = datasets.body.hits;
 
-    return results.find(hit => hit.id === id);
+    return results.find((hit) => hit.id === id);
   }
 }

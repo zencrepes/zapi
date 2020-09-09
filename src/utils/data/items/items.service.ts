@@ -33,7 +33,6 @@ export default class DataItemsService {
 
     if (Object.entries(updatedQuery).length === 0) {
       updatedQuery = {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         match_all: {},
       };
     }
@@ -75,7 +74,7 @@ export default class DataItemsService {
       const datasets: ApiResponse = await esClient.search(esQuery);
       const results = datasets.body.hits;
       return {
-        nodes: results.hits.map(hit => hit._source),
+        nodes: results.hits.map((hit) => hit._source),
         totalCount: results.total.value,
       };
     }

@@ -16,7 +16,6 @@ export default class ConfigAggregationsService {
         size: 200,
         _source: ['facets'],
         query: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           match_phrase: { id: datasetId },
         },
       },
@@ -24,7 +23,9 @@ export default class ConfigAggregationsService {
     const results = datasets.body.hits.hits;
     if (results.length > 0) {
       return {
-        nodes: results[0]._source.facets,
+        nodes: results[0]._source.facets.map((d: any) => {
+          return { ...d, id: d.name };
+        }),
         totalCount: results[0]._source.facets.length,
       };
     }

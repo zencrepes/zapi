@@ -1,5 +1,5 @@
 import { NestMiddleware, Injectable } from '@nestjs/common';
-import * as jwt from 'express-jwt';
+import jwt from 'express-jwt';
 import { expressJwtSecret } from 'jwks-rsa';
 import { ConfService } from '../conf.service';
 import { zencrepesConfig } from '@bit/zencrepes.zindexer.config';
@@ -28,11 +28,12 @@ export class AuthenticationMiddleware implements NestMiddleware {
         jwksRequestsPerMinute: 5,
         jwksUri: this.keycloakAuthServerUrl + 'realms/' + this.keycloakRealm + '/protocol/openid-connect/certs',
       }),
+      algorithms: ['RS256'],
 
       audience: this.keycloakAudience,
       issuer: this.keycloakAuthServerUrl + 'realms/' + this.keycloakRealm,
       algorithm: 'RS256',
-    })(req, res, err => {
+    })(req, res, (err) => {
       if (err) {
         const status = err.status || 500;
         const message = err.message || 'Sorry, we were unable to process your request.';
