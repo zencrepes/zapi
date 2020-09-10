@@ -216,10 +216,18 @@ export default class DataResolver {
       defaultValue: 53,
     })
     window: number,
+    @Args({
+      name: 'team',
+      type: () => String,
+      description: 'ID of an issue to be used to gather assignees and build team.',
+      nullable: true,
+      defaultValue: 'default',
+    })
+    team: string,
     @Parent()
     parent: Data,
   ) {
-    const data = await this.velocityService.getVelocity(interval, moving, window, parent.query);
+    const data = await this.velocityService.getVelocity(interval, moving, window, team, parent.query);
     return { ...data };
   }
 
