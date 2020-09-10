@@ -16,7 +16,7 @@ import getDateHistogramAggregation from '../../../utils/es/getDateHistogramAggre
 export default class DataVelocityService {
   constructor(private readonly confService: ConfService, private readonly esClientService: EsClientService) {}
 
-  async getVelocity(interval: string, moving: number, window: number, query: any): Promise<any> {
+  async getVelocity(interval: string, moving: number, window: number, team: string, query: any): Promise<any> {
     const esClient = this.esClientService.getEsClient();
     const userConfig = this.confService.getUserConfig();
 
@@ -41,12 +41,34 @@ export default class DataVelocityService {
     // If assigneesQuery is not provided, using query
 
     // 1- Get list of all assignees
-    const aggAssignees = await getTermAggregation(esClient, esIndex, queryObj, 'assignees.edges.node.login', {}, false);
-    const assignees = aggAssignees.buckets
-      .filter((a: any) => a.key !== '__missing__')
-      .map((a: any) => {
-        return { login: a.key };
+    let assignees = [];
+    if (team === 'default') {
+      const aggAssignees = await getTermAggregation(
+        esClient,
+        esIndex,
+        queryObj,
+        'assignees.edges.node.login',
+        {},
+        false,
+      );
+      assignees = aggAssignees.buckets
+        .filter((a: any) => a.key !== '__missing__')
+        .map((a: any) => {
+          return { login: a.key };
+        });
+    } else {
+      // Get a single issue
+      const assigneesIssue = await esClient.get({
+        id: team,
+        index: userConfig.elasticsearch.dataIndices.githubIssues,
+        _source: 'assignees',
       });
+      if (assigneesIssue.body._source.assignees.totalCount > 0) {
+        assignees = assigneesIssue.body._source.assignees.edges.map((a: any) => {
+          return { login: a.node.login };
+        });
+      }
+    }
 
     // 2- Construct a SQON query filtering on those assignees across the entire dataset
     // We're intersted in the past 52 months, so filtering on 52 + moving
