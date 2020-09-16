@@ -8,6 +8,7 @@ import { ConfService } from './conf.service';
 import { EsClientModule } from './esClient.module';
 
 import { ConfigModule } from './config/config.module';
+import { VersionModule } from './version/version.module';
 import { GithubPullrequestsModule } from './githubPullrequests/githubPullrequests.module';
 import { GithubVulnerabilitiesModule } from './githubVulnerabilities/githubVulnerabilities.module';
 import { GithubRepositoriesModule } from './githubRepositories/githubRepositories.module';
@@ -40,6 +41,7 @@ import { AuthenticationMiddleware } from './auth/authentication.middleware';
     EsClientModule,
 
     ConfigModule,
+    VersionModule,
     GithubPullrequestsModule,
     GithubVulnerabilitiesModule,
     GithubRepositoriesModule,
