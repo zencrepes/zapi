@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { ConfModule } from '../conf.module';
-import { EsClientModule } from '../esClient.module';
 
 import VersionResolvers from './version.resolvers';
 

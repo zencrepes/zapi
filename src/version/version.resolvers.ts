@@ -1,4 +1,4 @@
-import { Query, Resolver, ResolveField, Parent } from '@nestjs/graphql';
+import { Query, Resolver } from '@nestjs/graphql';
 import { ConfService } from '../conf.service';
 
 import Version from './version.type';
