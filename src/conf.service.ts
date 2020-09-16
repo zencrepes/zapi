@@ -15,6 +15,7 @@ export interface EnvConf {
 export class ConfService {
   private readonly logger = new Logger(ConfService.name);
 
+  APP_VERSION: string;
   CONFIG_PATH: string;
   KEYCLOAK_DISABLED: boolean;
   KEYCLOAK_REALM: string;
@@ -33,6 +34,7 @@ export class ConfService {
     const defaultEnv = {
       CONFIG_DIR: '~/.config/zindexer/',
 
+      APP_VERSION: 'develop',
       KEYCLOAK_DISABLED: false,
       KEYCLOAK_REALM: 'ZenCrepes',
       KEYCLOAK_AUTH_SERVER_URL: 'http://localhost:8080/auth/',
@@ -43,6 +45,10 @@ export class ConfService {
     this.envConfig = {};
     this.envConfig.CONFIG_DIR =
       process.env.CONFIG_PATH === undefined ? untildify(defaultEnv.CONFIG_DIR) : untildify(process.env.CONFIG_PATH);
+
+    this.envConfig.APP_VERSION =
+      process.env.APP_VERSION === undefined ? defaultEnv.APP_VERSION : process.env.APP_VERSION;
+
     this.envConfig.KEYCLOAK_DISABLED =
       process.env.KEYCLOAK_DISABLED === undefined
         ? defaultEnv.KEYCLOAK_DISABLED

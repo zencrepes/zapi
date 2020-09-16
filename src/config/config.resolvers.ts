@@ -13,15 +13,4 @@ export default class ConfigResolvers {
   public async getConfig(): Promise<Config> {
     return new Config();
   }
-
-  @ResolveField(() => DatasetsConfig, {
-    name: 'datasets',
-    description: 'Collection of supported types of dataset, for example github issues, jira projects, etc...',
-  })
-  public async getDatasetsConfig(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Parent() parent: Config,
-  ): Promise<DatasetsConfig> {
-    return new DatasetsConfig();
-  }
 }
