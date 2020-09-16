@@ -12,7 +12,7 @@ export default class VersionResolvers {
     name: 'version',
     description: 'Fetches the currently running API version',
   })
-  public async getVersion(): Promise<String> {
+  public async getVersion(): Promise<string> {
     const appVersion = this.confService.get('APP_VERSION');
     return appVersion;
   }
