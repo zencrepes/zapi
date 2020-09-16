@@ -1,5 +1,10 @@
 FROM node:alpine as builder
+
+ARG APP_VERSION_ARG=latest
+
 WORKDIR /app
+
+ENV APP_VERSION=$APP_VERSION_ARG
 
 COPY package.json .
 COPY yarn.lock .
