@@ -15,13 +15,13 @@ export default class AggregationBucket {
   keyAsString: string;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'The number of elements in the bucket',
   })
   docCount: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'The count associated with the bucket',
   })
   count: number;

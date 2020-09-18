@@ -70,6 +70,13 @@ export const getDateHistogramAggregation = async (esClient, esIndex, query, fiel
 
   const datasets: ApiResponse = await esClient.search(esQuerySearch);
 
+  if (datasets.body.aggregations === undefined) {
+    return {
+      buckets: [],
+      field,
+      esQuery: JSON.stringify(esQuerySearch),
+    };
+  }
   results = datasets.body.aggregations.aggregations;
   return {
     buckets: results.buckets.map((bucket) => {
