@@ -155,23 +155,22 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
         },
       },
     });
-    if (aggOptions.points === true) {
-      resultsBuckets = [
-        ...datasets.body.aggregations.aggregations.buckets,
-        ...[
-          {
-            key: '__missing__',
-            points: datasets.body.aggregations.emptyValues.points,
-            doc_count: datasets.body.aggregations.emptyValues.doc_count,
-          },
-        ],
-      ];
-    } else {
-      resultsBuckets = [
-        ...datasets.body.aggregations.aggregations.buckets,
-        ...[{ key: '__missing__', doc_count: datasets.body.aggregations.emptyValues.doc_count }],
-      ];
+    let aggsBuckets = [];
+    let emptyBuckets = {
+      key: '__missing__',
+      points: 0,
+      doc_count: 0,
+    };
+    if (datasets.body.aggregations !== undefined) {
+      aggsBuckets = datasets.body.aggregations.aggregations.buckets;
+      emptyBuckets = {
+        key: '__missing__',
+        points: aggOptions.points === true ? datasets.body.aggregations.emptyValues.points : 0,
+        doc_count: datasets.body.aggregations.emptyValues.doc_count,
+      };
     }
+
+    resultsBuckets = [...aggsBuckets, ...[emptyBuckets]];
   }
 
   resultsBuckets = resultsBuckets.sort((a, b) => b.doc_count - a.doc_count);
