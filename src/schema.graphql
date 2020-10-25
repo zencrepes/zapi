@@ -12,11 +12,6 @@ type Config {
   dataset(id: String!): Dataset!
 }
 
-type DatasetsConfig {
-  """Query received as a parameter"""
-  query: String!
-}
-
 type Dataset {
   id: ID!
 
@@ -1365,10 +1360,10 @@ type AggregationBucket {
   keyAsString: String
 
   """The number of elements in the bucket"""
-  docCount: Float!
+  docCount: Float
 
   """The count associated with the bucket"""
-  count: Float!
+  count: Float
 
   """
   Metadata returned based on the aggOptions parameter, it allows additional fields to be returned
@@ -2236,6 +2231,9 @@ type GithubIssuesData {
 
   """Return velocity metrics"""
   velocity(
+    """ID of an issue to be used to gather assignees and build team."""
+    team: String = "default"
+
     """The dataset window to use for calculations"""
     window: Float = 53
 
@@ -3520,9 +3518,179 @@ type CircleciInsightsAggregationConnection {
   buckets: [AggregationBucket!]!
 }
 
+type TestingStates {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): TestingStatesData!
+
+  """Access to configuration values and metadata"""
+  config: TestingStatesConfig!
+}
+
+type TestingStatesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: StatesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataStateConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): State!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): StatesAggregationConnection!
+}
+
+input StatesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type TestingStatesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type Dependency {
+  id: ID!
+
+  """Name of the dependency"""
+  name: String!
+
+  """Version of the dependency"""
+  version: String
+
+  """Concatenated name and version, separated with a _"""
+  full: String!
+
+  """The HTTP URL for this PR."""
+  url: String
+}
+
+type DependencyEdge {
+  """The item at the end of the edge."""
+  node: Dependency!
+}
+
+type DependencyConnection {
+  """A list of edges."""
+  edges: [DependencyEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type State {
+  id: ID!
+
+  """Date at which the state event was recorded (last)"""
+  createdAt: String!
+
+  """Name of the element being tested"""
+  name: String!
+
+  """Version of the element being tested"""
+  version: String!
+
+  """Concatenated name and version, separated with a _"""
+  full: String!
+
+  """List of dependencyes to the element being tested"""
+  dependencies: DependencyConnection!
+
+  """State of the test execution (PASS, FAIL, ...)"""
+  state: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Total number of tests in the run"""
+  runTotal: Float!
+
+  """Total number of successful tests in the run"""
+  runSuccess: Float!
+
+  """Total number of failed tests in the run"""
+  runFailure: Float!
+
+  """Total duration of the run"""
+  runDuration: Float!
+}
+
+type DataStateConnection {
+  nodes: [State!]
+  totalCount: Int!
+}
+
+type StatesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
+
+  """Fetches the currently running API version"""
+  version: String!
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   githubPullrequests: GithubPullrequests!
@@ -3562,4 +3730,7 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   circleciInsights: CircleciInsights!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  testingStates: TestingStates!
 }
