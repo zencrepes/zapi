@@ -22,6 +22,7 @@ import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
 import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module';
 import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.module';
 import { CircleciInsightsModule } from './circleciInsights/circleciInsights.module';
+import { TestingStatesModule } from './testingStates/testingStates.module';
 import { join } from 'path';
 
 import { AuthenticationMiddleware } from './auth/authentication.middleware';
@@ -55,6 +56,7 @@ import { AuthenticationMiddleware } from './auth/authentication.middleware';
     CircleciEnvvarsModule,
     CircleciPipelinesModule,
     CircleciInsightsModule,
+    TestingStatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
