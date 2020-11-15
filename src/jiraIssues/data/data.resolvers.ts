@@ -9,6 +9,8 @@ import JiraIssuesSortorder from './items/itemSortorder.type';
 
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../../utils/data/items/items.service';
+import JiraDataMatrix from './matrix/matrix.type';
+import JiraDataMatrixService from './matrix/matrix.service';
 
 import JiraIssuesAggregationConnection from './aggregations/jiraIssuesAggregationConnection.type';
 
@@ -20,6 +22,7 @@ export default class DataResolver {
     private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
+    private readonly matrixService: JiraDataMatrixService,
   ) {}
 
   @ResolveField(() => JiraIssuesItemConnection, {
@@ -125,4 +128,37 @@ export default class DataResolver {
     );
     return data;
   }
+
+  @ResolveField(() => JiraDataMatrix, {
+    name: 'matrix',
+    description: 'Return a matrix aggregation per week and field',
+  })
+  public async getSomeFucntion(
+    @Args({
+      name: 'dateField',
+      type: () => String,
+      description: 'Date field to be used for the aggregation (for example: ClosedAt)',
+      nullable: false,
+    })
+    dateField: string,
+    @Args({
+      name: 'field',
+      type: () => String,
+      description: 'Field to be used for the aggregations (for example: repository.name)',
+      nullable: false,
+    })
+    field: string,
+    @Args({
+      name: 'aggOptions',
+      type: () => String,
+      description: 'Additional options as a stringified object (more details in the documentation)',
+      nullable: true,
+    })
+    aggOptions: string,
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.matrixService.getMatrix(dateField, field, parent.query, aggOptions);
+    return { ...data, field };
+  }  
 }
