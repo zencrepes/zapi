@@ -185,7 +185,10 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
             metadata[m] = getObjectValue(bucket.metadata.hits.hits[0]._source.node, m);
           }
         }
-        const count = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
+        let count = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
+        if (count === undefined && aggOptions.points !== true) {
+          count = bucket.doc_count
+        }
         const sum = bucket.points === undefined ? bucket.doc_count : bucket.points.value;
         return {
           key: bucket.key,
