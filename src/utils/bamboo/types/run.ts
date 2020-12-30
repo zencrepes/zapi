@@ -20,13 +20,13 @@ export default class BambooRun {
   plan: BambooPlan;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Date at which the run was started',
   })
   startedAt: string;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Date at which the run was completed',
   })
   completedAt: string;  
@@ -50,31 +50,31 @@ export default class BambooRun {
   duration: number;  
   
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Total number of tests in the run',
   })
   runTotal: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Total number of successful tests in the run',
   })
   runSuccess: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Total number of failed tests in the run',
   })
   runFailure: number;
   
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Total number of skipped tests in the run',
   })
   runSkipped: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Total number of quarantined tests in the run',
   })
   runQuarantined: number;    

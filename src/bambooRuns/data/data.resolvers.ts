@@ -7,6 +7,8 @@ import State from '../../utils/testing/types/state';
 import DataRunConnection from './items/runConnection.type';
 import ItemSortorder from './items/itemSortorder.type';
 import DataItemsService from '../../utils/data/items/items.service';
+import DataFailureRate from './failurerate/failurerate.type';
+import DataFailureRateService from './failurerate/failurerate.service';
 
 import RunsAggregationConnection from './aggregations/runsAggregationConnection.type';
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
@@ -19,6 +21,7 @@ export default class DataResolver {
     private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
     private readonly itemsService: DataItemsService,
+    private readonly failurerateService: DataFailureRateService,
   ) {}
 
   @ResolveField(() => DataRunConnection, {
@@ -123,4 +126,40 @@ export default class DataResolver {
     );
     return data;
   }
+
+  @ResolveField(() => DataFailureRate, {
+    name: 'failurerate',
+    description: 'Return an aggregation by a provided timeframe (week, day, month) of the average failure rate',
+  })
+  public async getDataFailureRate(
+    @Args({
+      name: 'interval',
+      type: () => String,
+      description: 'Specify the interval for the data histogram (day, week, month, year)',
+      defaultValue: 'week',
+      nullable: true,
+    })
+    dateInterval: string,
+    @Args({
+      name: 'field',
+      type: () => String,
+      description: 'Specify the field to aggregate by (such as plan.name.keyword)',
+      defaultValue: 'plan.name.keyword',
+      nullable: false,
+    })
+    field: string,
+    @Args({
+      name: 'buckets',
+      type: () => Number,
+      description: 'Specify the number of first level buckets to return',
+      defaultValue: 25,
+      nullable: false,
+    })
+    buckets: number,    
+    @Parent()
+    parent: Data,
+  ) {
+    const data = await this.failurerateService.getFailureRate(dateInterval, field, buckets, parent.query);
+    return { ...data, field };
+  }  
 }

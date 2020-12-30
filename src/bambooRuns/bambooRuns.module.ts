@@ -11,6 +11,7 @@ import DataResolver from './data/data.resolvers';
 import DataAggregationsService from '../utils/data/aggregations/aggregations.service';
 import DataItemsService from '../utils/data/items/items.service';
 import DataCountService from '../utils/data/count/count.service';
+import DataFailureRateService from './data/failurerate/failurerate.service';
 
 @Module({
   imports: [ConfModule.register(), EsClientModule],
@@ -23,6 +24,7 @@ import DataCountService from '../utils/data/count/count.service';
     DataAggregationsService,
     DataItemsService,
     DataCountService,
+    DataFailureRateService,
   ],
 })
 export class BambooRunsModule {}
