@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfModule } from '../conf.module';
 import { EsClientModule } from '../esClient.module';
 
-import BambooRunsResolvers from './bambooRuns.resolvers';
+import TestingRunsResolvers from './testingRuns.resolvers';
 
 import ConfigResolver from './config/config.resolvers';
 import ConfigAggregationsService from '../utils/config/aggregations/aggregations.service';
@@ -16,7 +16,7 @@ import DataFailureRateService from '../utils/data/failurerate/failurerate.servic
 @Module({
   imports: [ConfModule.register(), EsClientModule],
   providers: [
-    BambooRunsResolvers,
+    TestingRunsResolvers,
     ConfigResolver,
     DataResolver,
     ConfigAggregationsService,
@@ -27,4 +27,4 @@ import DataFailureRateService from '../utils/data/failurerate/failurerate.servic
     DataFailureRateService,
   ],
 })
-export class BambooRunsModule {}
+export class TestingRunsModule {}

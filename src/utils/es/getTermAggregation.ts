@@ -109,10 +109,14 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
           query: emptyValueEs,
         },
       });
-      resultsBuckets = [
-        ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
-        ...[{ key: '__missing__', doc_count: emptyBucket.body.hits.total.value }],
-      ];
+      if (datasets.body.aggregations.nestedAgg.doc_count === 0) {
+        resultsBuckets = [];
+      } else {
+        resultsBuckets = [
+          ...datasets.body.aggregations.nestedAgg.byTerm.buckets,
+          ...[{ key: '__missing__', doc_count: emptyBucket.body.hits.total.value }],
+        ];
+      }
     }
   } else {
     const pointsAgg =

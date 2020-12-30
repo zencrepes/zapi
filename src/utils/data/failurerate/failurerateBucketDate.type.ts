@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export default class BambooFailureRateBucketWeek {
+export default class FailureRateBucketDate {
   @Field({
     nullable: false,
     description: 'Start date of each bucket depending of the set interval',

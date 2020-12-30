@@ -3,17 +3,15 @@ import { Args, Resolver, ResolveField, Parent } from '@nestjs/graphql';
 import { ConfService } from '../../conf.service';
 
 import Data from './data.type';
-import State from '../../utils/testing/types/state';
-import DataRunConnection from './items/runConnection.type';
+import Run from '../../utils/testing/types/run';
+import DataTestingRunConnection from './items/runConnection.type';
 import ItemSortorder from './items/itemSortorder.type';
 import DataItemsService from '../../utils/data/items/items.service';
-// import DataFailureRate from './failurerate/failurerate.type';
-// import DataFailureRateService from './failurerate/failurerate.service';
-
-import RunsAggregationConnection from './aggregations/runsAggregationConnection.type';
-import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
-import BambooRunsFailureRateConnection from './failurerate/failurerateConnection.type';
+import TestingRunsFailureRateConnection from './failurerate/failurerateConnection.type';
 import DataFailureRateService from '../../utils/data/failurerate/failurerate.service';
+
+import TestingRunsAggregationConnection from './aggregations/runsAggregationConnection.type';
+import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
 
 // https://github.com/nestjs/graphql/issues/475
 
@@ -26,7 +24,7 @@ export default class DataResolver {
     private readonly failurerateService: DataFailureRateService,
   ) {}
 
-  @ResolveField(() => DataRunConnection, {
+  @ResolveField(() => DataTestingRunConnection, {
     name: 'items',
     description: 'Returns a paginated list of items',
   })
@@ -63,12 +61,12 @@ export default class DataResolver {
       size,
       parent.query,
       orderBy,
-      userConfig.elasticsearch.dataIndices.bambooRuns + '*',
+      userConfig.elasticsearch.dataIndices.testingRuns + '*',
     );
     return data;
   }
 
-  @ResolveField(() => State, {
+  @ResolveField(() => Run, {
     name: 'item',
     description: 'Returns a single item by providing its ID',
   })
@@ -82,13 +80,13 @@ export default class DataResolver {
     id: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
-  ): Promise<State> {
+  ): Promise<Run> {
     const userConfig = this.confService.getUserConfig();
-    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.bambooRuns);
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingRuns);
     return item;
   }
 
-  @ResolveField(() => RunsAggregationConnection, {
+  @ResolveField(() => TestingRunsAggregationConnection, {
     name: 'aggregations',
     description: 'Return aggregations (facets)',
   })
@@ -124,16 +122,16 @@ export default class DataResolver {
       parent.query,
       aggType,
       options,
-      userConfig.elasticsearch.dataIndices.bambooRuns + '*',
+      userConfig.elasticsearch.dataIndices.testingRuns + '*',
     );
     return data;
   }
 
-  @ResolveField(() => BambooRunsFailureRateConnection, {
+  @ResolveField(() => TestingRunsFailureRateConnection, {
     name: 'failurerate',
     description: 'Return an aggregation by a provided timeframe (week, day, month) of the average failure rate',
   })
-  public async getDataFailureRate(
+  public async getDataTestingRunFailureRate(
     @Args({
       name: 'interval',
       type: () => String,
@@ -146,10 +144,18 @@ export default class DataResolver {
       name: 'field',
       type: () => String,
       description: 'Specify the field to aggregate by (such as plan.name.keyword)',
-      defaultValue: 'plan.name.keyword',
+      defaultValue: 'name.keyword',
       nullable: false,
     })
     field: string,
+    @Args({
+      name: 'datefield',
+      type: () => String,
+      description: 'Specify the date field to aggregate on',
+      defaultValue: 'createdAt',
+      nullable: false,
+    })
+    datefield: string,
     @Args({
       name: 'buckets',
       type: () => Number,
@@ -158,21 +164,13 @@ export default class DataResolver {
       nullable: false,
     })
     buckets: number,
-    @Args({
-      name: 'datefield',
-      type: () => String,
-      description: 'Specify the date field to aggregate on',
-      defaultValue: 'startedAt',
-      nullable: false,
-    })
-    datefield: string,    
     @Parent()
     parent: Data,
   ) {
     const userConfig = this.confService.getUserConfig();
 
     const data = await this.failurerateService.getFailure(
-      userConfig.elasticsearch.dataIndices.bambooRuns + '*',
+      userConfig.elasticsearch.dataIndices.testingRuns + '*',
       dateInterval,
       field,
       datefield,
