@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import BambooFailureRateBucketWeek from './week.type';
+import FailureRateBucketDate from './failurerateBucketDate.type';
 
 @ObjectType()
-export default class BambooFailureRateBucket {
+export default class FailureRateBucket {
   @Field({
     nullable: false,
     description: 'The Bucket key',
@@ -41,9 +41,9 @@ export default class BambooFailureRateBucket {
   runTotalAvg: number;    
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  @Field(type => [BambooFailureRateBucketWeek], {
+  @Field(type => [FailureRateBucketDate], {
     nullable: false,
     description: 'Breakdown of the dataset per the defined interval',
   })
-  buckets: BambooFailureRateBucketWeek[];
+  buckets: FailureRateBucketDate[];
 }

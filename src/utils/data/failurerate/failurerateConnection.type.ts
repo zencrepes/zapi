@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import Bucket from './bucket.type';
+import FailureRateBucket from './failurerateBucket.type';
 
 @ObjectType({ isAbstract: true })
 export default abstract class FailureRateConnection {
@@ -10,11 +10,11 @@ export default abstract class FailureRateConnection {
   })
   field: string;
 
-  @Field(() => [Bucket], {
+  @Field(() => [FailureRateBucket], {
     nullable: false,
     description: 'A list of aggregation buckets',
   })
-  buckets: Bucket[];
+  buckets: FailureRateBucket[];
 
   @Field(() => String, {
     nullable: false,
