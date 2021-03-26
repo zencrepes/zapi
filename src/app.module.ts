@@ -18,6 +18,7 @@ import { GithubMilestonesModule } from './githubMilestones/githubMilestones.modu
 import { GithubProjectsModule } from './githubProjects/githubProjects.module';
 import { GithubReleasesModule } from './githubReleases/githubReleases.module';
 import { GithubIssuesModule } from './githubIssues/githubIssues.module';
+import { GithubMavenPomsModule } from './githubMavenPoms/githubMavenPoms.module';
 import { JiraIssuesModule } from './jiraIssues/jiraIssues.module';
 import { CircleciEnvvarsModule } from './circleciEnvvars/circleciEnvvars.module';
 import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.module';
@@ -42,7 +43,6 @@ import { AuthenticationMiddleware } from './auth/authentication.middleware';
     }),
     ConfModule.register(),
     EsClientModule,
-
     ConfigModule,
     VersionModule,
     GithubPullrequestsModule,
@@ -54,6 +54,7 @@ import { AuthenticationMiddleware } from './auth/authentication.middleware';
     GithubProjectsModule,
     GithubReleasesModule,
     GithubIssuesModule,
+    GithubMavenPomsModule,
     JiraIssuesModule,
     CircleciEnvvarsModule,
     CircleciPipelinesModule,
