@@ -4,6 +4,7 @@ import RepositoryOwner from './repositoryOwner';
 import Ref from './ref';
 import RepositoryTopicConnection from './repositoryTopicConnection';
 import MavenPomContent from './mavenPomContent';
+import Commit from './commit'
 
 @ObjectType()
 export default class MavenPom {
@@ -100,11 +101,11 @@ export default class MavenPom {
   })
   pushedAt: string;
 
-  @Field(() => Ref, {
+  @Field(() => Commit, {
     nullable: true,
     description: 'Link to the ref containing recent commits to master',
   })
-  lastCommitMainBranch: Ref;
+  lastCommitMainBranch: Commit;
 
   @Field(() => RepositoryTopicConnection, {
     nullable: true,
