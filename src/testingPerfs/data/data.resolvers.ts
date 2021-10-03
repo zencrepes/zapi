@@ -14,7 +14,7 @@ import DataAggregationsService from '../../utils/data/aggregations/aggregations.
 // https://github.com/nestjs/graphql/issues/475
 
 @Resolver(Data)
-export default class DataResolver {
+export default class DataPerfResolver {
   constructor(
     private readonly confService: ConfService,
     private readonly aggregationsService: DataAggregationsService,
@@ -43,16 +43,24 @@ export default class DataResolver {
     })
     size: number,
     @Args({
+      name: 'transaction',
+      type: () => String,
+      description: 'Transaction to return within runs',
+      nullable: true,
+    })
+    transaction: string,     
+    @Args({
       name: 'orderBy',
       type: () => ItemSortorder,
       nullable: true,
     })
-    orderBy: ItemSortorder,
+    orderBy: ItemSortorder,     
     @Parent()
     parent: Data,
   ) {
     const userConfig = this.confService.getUserConfig();
 
+    const filterTransaction = transaction === null ? "Total" : transaction
     const data = await this.itemsService.findAll(
       first,
       size,
@@ -60,7 +68,30 @@ export default class DataResolver {
       orderBy,
       userConfig.elasticsearch.dataIndices.testingPerfs + '*',
     );
-    return data;
+    console.log(data)
+
+    // This could probably be done way better since here we're fetching everything from Elasticsearch
+    const filteredNodes = data.nodes.map((d) => {
+      return {
+        ...d,
+        runs: {
+          ...d.runs,
+          edges: d.runs.edges.map((r) => {
+            return {
+              node: {
+                ...r.node,
+                statistics: r.node.statistics.filter((s) => s.transaction === filterTransaction)
+              }
+            }
+          })
+        }
+      }
+    })
+
+    return {
+      ...data,
+      nodes: filteredNodes,
+    };
   }
 
   @ResolveField(() => Perf, {
@@ -108,7 +139,7 @@ export default class DataResolver {
       description: 'Additional options as a stringified object (more details in the documentation)',
       nullable: true,
     })
-    options: string,
+    options: string,  
     @Parent()
     parent: Data,
   ) {

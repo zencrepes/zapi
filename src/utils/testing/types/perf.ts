@@ -1,12 +1,15 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
-import DependencyConnection from './dependencyConnection';
+import ResourceConnection from './resourceConnection';
+import PerfRunConnection from './perfRunConnection';
 import Platform from './platform';
 import RepositoryConnection from '../../github/types/repositoryConnection'
 
 @ObjectType()
 export default class Perf {
-  @Field(() => ID)
+  @Field(() => ID, {
+    nullable: true,
+  })
   id: string;
 
   @Field(() => String, {
@@ -33,20 +36,32 @@ export default class Perf {
   })
   duration: number;
 
+  @Field({
+    nullable: true,
+    description: 'Rampup used for the run',
+  })
+  rampUp: number; 
+
   @Field(() => Platform, {
     nullable: false,
-    description: 'List of dependencyes to the element being tested',
+    description: 'Platform used to run the tests',
   })
   platform: Platform;
 
-  @Field(() => DependencyConnection, {
+  @Field(() => ResourceConnection, {
     nullable: false,
-    description: 'List of dependencyes to the element being tested',
+    description: 'List of resources to the element being tested',
   })
-  dependencies: DependencyConnection;
+  resources: ResourceConnection;
+
+  @Field(() => PerfRunConnection, {
+    nullable: false,
+    description: 'Runs executed in the tests',
+  })
+  runs: PerfRunConnection;
 
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'The HTTP URL for this PR.',
   })
   url: string;
