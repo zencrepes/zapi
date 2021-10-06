@@ -68,7 +68,6 @@ export default class DataPerfResolver {
       orderBy,
       userConfig.elasticsearch.dataIndices.testingPerfs + '*',
     );
-    console.log(data)
 
     // This could probably be done way better since here we're fetching everything from Elasticsearch
     const filteredNodes = data.nodes.map((d) => {
