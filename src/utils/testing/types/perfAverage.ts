@@ -1,6 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
-import Statistics from './statistics'
 import Perf from './perf';
 import PerfAverageAverage from './perfAverageAverage';
 import PerfAverageValue from './perfAverageValue';

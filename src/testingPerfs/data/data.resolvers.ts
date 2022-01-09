@@ -11,10 +11,8 @@ import DataItemsService from '../../utils/data/items/items.service';
 
 import PerfsAggregationConnection from './aggregations/perfsAggregationConnection.type';
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
-import { runMain } from 'module';
 
 // https://github.com/nestjs/graphql/issues/475
-
 @Resolver(Data)
 export default class DataPerfResolver {
   constructor(
@@ -131,7 +129,7 @@ export default class DataPerfResolver {
     if (id === '') {
       return null;
     }
-    let item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     if (profileId !== undefined && profileId !== null) {
       const selectedRun = item.runs.edges.find((r) => r.node.id === profileId)
       if (selectedRun !== undefined) {
@@ -258,8 +256,8 @@ export default class DataPerfResolver {
 
     const transactions = filteredData[0].statistics.map((t) => t.transaction)
 
-    let statsValues = []
-    let statsComputed = []
+    const statsValues = []
+    const statsComputed = []
     // Iterate over all available transactions
     for (const t of transactions) {
       for (const key of statsKeys) {
@@ -296,7 +294,7 @@ export default class DataPerfResolver {
     }
   }
 
-  @Mutation(returns => Perf, {
+  @Mutation(() => Perf, {
     name: 'disableTestingsPerfsRuns',
     description: 'Prevent a testing perfs run from being included in the results',
   })
@@ -310,11 +308,11 @@ export default class DataPerfResolver {
     }
     await this.itemsService.disableDocument(id, userConfig.elasticsearch.dataIndices.testingPerfs, username);
 
-    let item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
   }
 
-  @Mutation(returns => Perf, {
+  @Mutation(() => Perf, {
     name: 'enableTestingsPerfsRuns',
     description: 'Prevent a testing perfs run from being included in the results',
   })
@@ -328,7 +326,7 @@ export default class DataPerfResolver {
     }
     await this.itemsService.enableDocument(id, userConfig.elasticsearch.dataIndices.testingPerfs, username);
 
-    let item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
   }  
 }

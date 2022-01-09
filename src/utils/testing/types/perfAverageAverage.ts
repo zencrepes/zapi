@@ -1,8 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
-import Statistics from './statistics'
-import Perf from './perf';
-
 @ObjectType()
 export default class PerfAverageAverage {
   @Field(() => ID, {
