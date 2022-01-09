@@ -11,7 +11,7 @@ export default class DataItemsService {
   private readonly logger = new Logger(DataItemsService.name);
   constructor(private readonly esClientService: EsClientService) {}
 
-  async findAll(from, size, query, orderBy, esIndex): Promise<any> {
+  async findAll(from, size, query, orderBy, esIndex, includeDisabled = false): Promise<any> {
     const esClient = this.esClientService.getEsClient();
 
     const queryObj = JSON.parse(query);
@@ -35,6 +35,16 @@ export default class DataItemsService {
       updatedQuery = {
         match_all: {},
       };
+    }
+
+    // Adding a filter not to return disabled documents
+    if (includeDisabled === false) {
+      updatedQuery = {
+        bool: {
+          must: updatedQuery,
+          must_not: {term: {disabled: true}}
+        }
+      }
     }
 
     // console.log('Query Transformation: ');
@@ -95,4 +105,38 @@ export default class DataItemsService {
     }
     return nodesSearch;
   }
+
+  async disableDocument(id: string, esIndex: string, username: string): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+    console.log('Receive request to disable: ' + id)
+    await esClient.update({ 
+      id: id, 
+      index: esIndex, 
+      body: {
+        doc: {
+          disabled: true,
+          disabled_date: new Date().toISOString(),
+          disabled_by: username === '' ? 'API' : username
+        }
+      },
+      refresh: 'wait_for'
+    });
+  }
+
+  async enableDocument(id: string, esIndex: string, username: string): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+    console.log('Receive request to enable: ' + id)
+    await esClient.update({ 
+      id: id, 
+      index: esIndex, 
+      body: {
+        doc: {
+          disabled: false,
+          disabled_date: new Date().toISOString(),
+          disabled_by: username === '' ? 'API' : username
+        }
+      },
+      refresh: 'wait_for'
+    });
+  }  
 }

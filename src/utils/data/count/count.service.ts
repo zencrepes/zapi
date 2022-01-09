@@ -28,6 +28,15 @@ export default class DataCountService {
       };
     }
 
+
+    // Adding a filter not to return disabled documents
+    updatedQuery = {
+      bool: {
+        must: updatedQuery,
+        must_not: {term: {disabled: true}}
+      }
+    }
+
     const countDocuments: ApiResponse = await esClient.count({
       index: esIndex,
       body: {

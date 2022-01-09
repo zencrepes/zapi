@@ -2,6 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 import ResourceConnection from './resourceConnection';
 import PerfRunConnection from './perfRunConnection';
+import PerfRun from './perfRun';
 import Platform from './platform';
 import RepositoryConnection from '../../github/types/repositoryConnection'
 
@@ -55,15 +56,39 @@ export default class Perf {
   resources: ResourceConnection;
 
   @Field(() => PerfRunConnection, {
-    nullable: false,
+    nullable: true,
     description: 'Runs executed in the tests',
   })
   runs: PerfRunConnection;
+
+  @Field(() => PerfRun, {
+    nullable: false,
+    description: 'Run corresponding to the selected profile (provided using profileid)',
+  })
+  run: PerfRun;  
 
   @Field(() => String, {
     nullable: true,
     description: 'The HTTP URL for this PR.',
   })
   url: string;
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description: 'Is the run disabled (removed from the records)',
+  })
+  disabled: boolean;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Who was the run disabled by',
+  })
+  disabled_by: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'When was the run disabled',
+  })
+  disabled_date: string;  
 
 }

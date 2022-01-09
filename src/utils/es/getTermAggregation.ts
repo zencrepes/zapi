@@ -21,7 +21,16 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
     filterQuery = clearCurrentField(filterQuery, field, aggOptions.tag);
   }
 
-  const convertedQuery = await convertSqonToEs(filterQuery);
+  let convertedQuery = await convertSqonToEs(filterQuery);
+
+  // Adding a filter not to return disabled documents
+  convertedQuery = {
+    bool: {
+      must: convertedQuery,
+      must_not: {term: {disabled: true}}
+    }
+  }
+
   const metadataFields = aggOptions.metadata === undefined ? [] : aggOptions.metadata;
 
   let resultsBuckets: any[] = [];
@@ -75,7 +84,16 @@ export const getTermAggregation = async (esClient, esIndex, query, field, aggOpt
     // Calculate how many elements have totalCount of 0 for the empty bucket
     const newFilter = createTermFilter('<=', splitField[0] + '.totalCount', 0);
     const emptyValueCountQuery = addFilterToQuery(newFilter, filterQuery);
-    const emptyValueEs = await convertSqonToEs(emptyValueCountQuery);
+    let emptyValueEs = await convertSqonToEs(emptyValueCountQuery);
+
+    // Adding a filter not to return disabled documents
+    emptyValueEs = {
+      bool: {
+        must: emptyValueEs,
+        must_not: {term: {disabled: true}}
+      }
+    }
+
     if (aggOptions.points === true) {
       const emptyBucket: ApiResponse = await esClient.search({
         index: esIndex,
