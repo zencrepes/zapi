@@ -254,6 +254,10 @@ export default class DataPerfResolver {
       }
     }
 
+    if (filteredData.length === 0) {
+      return null;
+    }
+
     const transactions = filteredData[0].statistics.map((t) => t.transaction)
 
     const statsValues = []
