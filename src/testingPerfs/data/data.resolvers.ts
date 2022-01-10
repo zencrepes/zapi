@@ -144,7 +144,11 @@ export default class DataPerfResolver {
         return updatedItem
       }
     }
-    return item;
+
+    return {
+      ...item,
+      _source: JSON.stringify(item)
+    };
   }
 
   @ResolveField(() => PerfsAggregationConnection, {

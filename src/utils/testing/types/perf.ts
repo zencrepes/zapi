@@ -5,7 +5,6 @@ import PerfRunConnection from './perfRunConnection';
 import PerfRun from './perfRun';
 import Platform from './platform';
 import RepositoryConnection from '../../github/types/repositoryConnection'
-import { truncate } from 'fs/promises';
 
 @ObjectType()
 export default class Perf {
@@ -13,6 +12,12 @@ export default class Perf {
     nullable: true,
   })
   id: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Full document source as a JSON string',
+  })
+  _source: string;
 
   @Field(() => String, {
     nullable: false,
