@@ -5,6 +5,7 @@ import PerfRunConnection from './perfRunConnection';
 import PerfRun from './perfRun';
 import Platform from './platform';
 import RepositoryConnection from '../../github/types/repositoryConnection'
+import { truncate } from 'fs/promises';
 
 @ObjectType()
 export default class Perf {
@@ -32,7 +33,7 @@ export default class Perf {
   startedAt: string;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'Execution time for the run',
   })
   duration: number;

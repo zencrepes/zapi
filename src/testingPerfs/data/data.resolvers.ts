@@ -248,7 +248,7 @@ export default class DataPerfResolver {
     const filteredData: any = []
     // Filtering out any document that might not be in the parent query.
     for (const item of data.nodes.filter((n) => dataParent.nodes.find((p) => p.id === n.id) !== undefined )) {      
-      const selectedRun = item.runs.edges.find((r) => r.node.name === profileId)
+      const selectedRun = item.runs.edges.filter((r) => r.node !== undefined).find((r) => r.node.name === profileId)
       if (selectedRun !== undefined) {
         filteredData.push({...item, statistics: selectedRun.node.statistics})
       }
