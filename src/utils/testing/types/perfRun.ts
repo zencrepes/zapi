@@ -19,7 +19,13 @@ export default class PerfRun {
     nullable: true,
     description: 'Number of users used for the run',
   })
-  userCount: number;   
+  userCount: number;
+
+  @Field({
+    nullable: true,
+    description: 'Execution time for the run',
+  })
+  duration: number;
 
   @Field(() => [Statistics], {
     nullable: false,
