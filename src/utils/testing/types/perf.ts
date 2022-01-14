@@ -25,6 +25,48 @@ export default class Perf {
   })
   name: string;
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Description of the run',
+  })
+  description: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Analysis of the run, written by a team member',
+  })
+  analysis: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Who did the analysis',
+  })
+  analysis_by: string;  
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Date the analysis was performed',
+  })
+  analysis_date: string;
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description: 'Was the run verified and relevant ?',
+  })
+  verified: boolean;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Who verified therun',
+  })
+  verified_by: string;  
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Date the run was verified',
+  })
+  verified_date: string;
+
   @Field(() => RepositoryConnection, {
     nullable: false,
     description: 'List of dependencyes to the element being tested',

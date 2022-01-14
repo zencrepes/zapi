@@ -138,5 +138,25 @@ export default class DataItemsService {
       },
       refresh: 'wait_for'
     });
-  }  
+  }
+
+  async updateDocumentField(id: string, esIndex: string, username: string, value: any, documentField: string): Promise<any> {
+    const esClient = this.esClientService.getEsClient();
+    console.log('Receive request to set value: ' + value + ' to document field: ' + documentField)
+
+    const docPayload = {}
+    docPayload[documentField] = value;
+    docPayload[documentField + '_date'] = new Date().toISOString();
+    docPayload[documentField + '_by'] = username === '' ? 'API' : username
+    
+    await esClient.update({ 
+      id: id, 
+      index: esIndex, 
+      body: {
+        doc: docPayload
+      },
+      refresh: 'wait_for'
+    });
+  }
+
 }

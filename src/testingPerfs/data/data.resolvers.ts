@@ -336,5 +336,66 @@ export default class DataPerfResolver {
 
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
+  }
+
+  @Mutation(() => Perf, {
+    name: 'unverifyTestingsPerfsRuns',
+    description: 'Mark a testing perf run as unverified',
+  })
+  async unverifyTestingsPerfsRuns(
+    @Args({ name: 'id', type: () => String }) id: string, 
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string
+  ) {
+    const userConfig = this.confService.getUserConfig();
+    if (id === '') {
+      return null;
+    }
+    await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, false, 'verified');
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    return item;
+  }
+
+  @Mutation(() => Perf, {
+    name: 'verifyTestingsPerfsRuns',
+    description: 'Mark a testing perf run as verified',
+  })
+  async verifyTestingsPerfsRuns(
+    @Args({ name: 'id', type: () => String }) id: string, 
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string    
+  ) {
+    const userConfig = this.confService.getUserConfig();
+
+    if (id === '') {
+      return null;
+    }
+    await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, true, 'verified');
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    return item;
+  }
+
+  @Mutation(() => Perf, {
+    name: 'updateTestingsPerfsRun',
+    description: 'Update description and analysis for a run',
+  })
+  async updateTestingsPerfsRun(
+    @Args({ name: 'id', type: () => String }) id: string, 
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string,
+    @Args({ name: 'description', type: () => String, nullable: true, defaultValue: null}) description: string,
+    @Args({ name: 'analysis', type: () => String, nullable: true, defaultValue: null}) analysis: string
+  ) {
+    const userConfig = this.confService.getUserConfig();
+
+    if (id === '') {
+      return null;
+    }
+
+    if (description !== null) {
+      await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, description, 'description');
+    }
+    if (analysis !== null) {
+      await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, analysis, 'analysis');
+    }    
+    const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
+    return item;
   }  
 }
