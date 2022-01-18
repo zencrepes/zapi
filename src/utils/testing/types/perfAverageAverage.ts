@@ -1,5 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
+import PerfRunMetric from './perfRunMetric'
+
 @ObjectType()
 export default class PerfAverageAverage {
   @Field(() => ID, {
@@ -25,4 +27,9 @@ export default class PerfAverageAverage {
   })
   value: number;  
 
+  @Field(() => [PerfRunMetric], {
+    nullable: false,
+    description: 'List of runs used when calculating the average',
+  })
+  runs: PerfRunMetric[];
 }

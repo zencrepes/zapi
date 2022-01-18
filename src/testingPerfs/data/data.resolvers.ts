@@ -264,30 +264,29 @@ export default class DataPerfResolver {
 
     const transactions = filteredData[0].statistics.map((t) => t.transaction)
 
-    const statsValues = []
     const statsComputed = []
     // Iterate over all available transactions
     for (const t of transactions) {
       for (const key of statsKeys) {
         const values = []
         for (const run of filteredData) {
-          const currentValue = run.statistics.filter((st) => t === st.transaction)
-          if (currentValue !== undefined && currentValue.length > 0) {
-            values.push(currentValue[0][key])
-            statsValues.push({
-              id: run.id,
-              name: run.name,
-              startedAt: run.startedAt,
-              value: currentValue[0][key],
-              statisticsKey: key,
-              transaction: t
-            })            
+          const currentValue = run.statistics.find((st) => t === st.transaction)
+          if (currentValue !== undefined) {
+            values.push({value: currentValue[key], run: {id: run.id, name: run.name, startedAt: run.startedAt}})
           }
         }
         statsComputed.push({
           statisticsKey: key,
           transaction: t,
-          value: values.reduce((acc, v) => acc + v, 0) / values.length
+          value: values.map(v => v.value).reduce((acc, v) => acc + v, 0) / values.length,
+          runs: values.map(v => {
+            return {
+              id: `${v.run.id}-${t}-${key}`,
+              name: v.run.name,
+              startedAt: v.run.startedAt,
+              value: v.value
+            }
+          })
         })
       }
     }
@@ -298,7 +297,7 @@ export default class DataPerfResolver {
       statisticsKeys: statsKeys,
       transactions: transactions,
       average: statsComputed,
-      values: statsValues
+      // values: statsValues
     }
   }
 

@@ -87,6 +87,12 @@ export default class Perf {
 
   @Field({
     nullable: true,
+    description: 'Value of a single run metric (where relevant)',
+  })
+  value: number;
+
+  @Field({
+    nullable: true,
     description: 'Rampup used for the run',
   })
   rampUp: number; 
