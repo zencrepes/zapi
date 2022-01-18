@@ -272,7 +272,7 @@ export default class DataPerfResolver {
         const values = []
         for (const run of filteredData) {
           const currentValue = run.statistics.filter((st) => t === st.transaction)
-          if (currentValue !== undefined) {
+          if (currentValue !== undefined && currentValue.length > 0) {
             values.push(currentValue[0][key])
             statsValues.push({
               id: run.id,
