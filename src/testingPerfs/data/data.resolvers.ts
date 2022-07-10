@@ -11,6 +11,8 @@ import DataItemsService from '../../utils/data/items/items.service';
 
 import PerfsAggregationConnection from './aggregations/perfsAggregationConnection.type';
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
+import { isNullableType } from 'graphql';
+import { run } from '@jahia/jahia-reporter';
 
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(Data)
@@ -43,12 +45,20 @@ export default class DataPerfResolver {
     })
     size: number,
     @Args({
-      name: 'transaction',
+      name: 'transactions',
+      type: () => [String],
+      description: 'Array of transactions keys to return, * for all',
+      nullable: true,
+      defaultValue: ['Total'],
+    })
+    transactions: string,
+    @Args({
+      name: 'profileName',
       type: () => String,
-      description: 'Transaction to return within runs',
+      description: 'Name of the profile to return, leave empty for all',
       nullable: true,
     })
-    transaction: string,     
+    profileName: string,
     @Args({
       name: 'orderBy',
       type: () => ItemSortorder,
@@ -62,20 +72,19 @@ export default class DataPerfResolver {
       nullable: true,
       defaultValue: false,
     })
-    includeDisabled: boolean, 
+    includeDisabled: boolean,
     @Parent()
     parent: Data,
   ) {
     const userConfig = this.confService.getUserConfig();
 
-    const filterTransaction = transaction === null ? "Total" : transaction
     const data = await this.itemsService.findAll(
       first,
       size,
       parent.query,
       orderBy,
       userConfig.elasticsearch.dataIndices.testingPerfs + '*',
-      includeDisabled
+      includeDisabled,
     );
 
     // This should probably be done way better since here we're fetching everything from Elasticsearch
@@ -84,17 +93,31 @@ export default class DataPerfResolver {
         ...d,
         runs: {
           ...d.runs,
-          edges: d.runs.edges.map((r) => {
-            return {
-              node: {
-                ...r.node,
-                statistics: r.node.statistics.filter((s) => s.transaction === filterTransaction)
+          edges: d.runs.edges
+            .filter((r) => {
+              if (!profileName) {
+                return true;
               }
-            }
-          })
-        }
-      }
-    })
+              return r.node.name === profileName;
+            })
+            .map((r) => {
+              return {
+                node: {
+                  ...r.node,
+                  statistics: r.node.statistics
+                    .map((o) => (o.transaction === undefined ? Object.values(o)[0] : o))
+                    .filter((s) => {
+                      if (transactions[0] === '*') {
+                        return true;
+                      }
+                      return transactions.includes(s.transaction);
+                    }),
+                },
+              };
+            }),
+        },
+      };
+    });
 
     return {
       ...data,
@@ -121,7 +144,7 @@ export default class DataPerfResolver {
       description: 'Return a single profile (a single run within a run)',
       nullable: true,
     })
-    profileId: string,   
+    profileId: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Parent() parent: Data,
   ): Promise<Perf> {
@@ -131,23 +154,35 @@ export default class DataPerfResolver {
     }
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     if (profileId !== undefined && profileId !== null) {
-      const selectedRun = item.runs.edges.find((r) => r.node.id === profileId)
+      const selectedRun = item.runs.edges.find((r) => r.node.id === profileId);
       if (selectedRun !== undefined) {
         const updatedItem = {
           ...item,
           run: {
             ...selectedRun.node,
             id: `${id} - ${selectedRun.node.id}`,
-          }
-        }
-        delete item.runs
-        return updatedItem
+          },
+        };
+        delete item.runs;
+        return updatedItem;
       }
     }
 
     return {
       ...item,
-      _source: JSON.stringify(item)
+      // Some older dataset might be using a different model, this converts it to a common format
+      runs: {
+        ...item.runs,
+        edges: item.runs.edges.map((r: any) => {
+          return {
+            node: {
+              ...r.node,
+              statistics: r.node.statistics.map((o) => (o.transaction === undefined ? Object.values(o)[0] : o)),
+            },
+          };
+        }),
+      },
+      _source: JSON.stringify(item),
     };
   }
 
@@ -176,7 +211,7 @@ export default class DataPerfResolver {
       description: 'Additional options as a stringified object (more details in the documentation)',
       nullable: true,
     })
-    options: string,  
+    options: string,
     @Parent()
     parent: Data,
   ) {
@@ -211,15 +246,27 @@ export default class DataPerfResolver {
       description: 'Query to fetch documents to be used to calculate the averages',
       nullable: true,
     })
-    averageQuery: string,    
+    averageQuery: string,
     @Args({
       name: 'statsKeys',
       type: () => [String],
       description: 'Array of statistics keys to return',
       nullable: true,
-      defaultValue: ['sampleCount', 'errorCount', 'errorPct', 'meanResTime', 'medianResTime', 'minResTime', 'maxResTime', 'pct1ResTime', 'pct2ResTime', 'pct3ResTime', 'throughput']
+      defaultValue: [
+        'sampleCount',
+        'errorCount',
+        'errorPct',
+        'meanResTime',
+        'medianResTime',
+        'minResTime',
+        'maxResTime',
+        'pct1ResTime',
+        'pct2ResTime',
+        'pct3ResTime',
+        'throughput',
+      ],
     })
-    statsKeys: string,     
+    statsKeys: string,
     @Parent()
     parent: Data,
   ) {
@@ -230,13 +277,13 @@ export default class DataPerfResolver {
     }
 
     // Get all records from the parent query, the records fetched using the other query MUST be part of that first array.
-    // This is to make sure that if we run an average on on a particular image, 
+    // This is to make sure that if we run an average on on a particular image,
     // we don't collect records corresponding to another type of run that might happen to be using the same image
     const dataParent = await this.itemsService.findAll(
       0,
       10000,
       parent.query,
-      {direction: 'DESC', field: 'startedAt'},
+      { direction: 'DESC', field: 'startedAt' },
       userConfig.elasticsearch.dataIndices.testingPerfs + '*',
     );
 
@@ -244,17 +291,17 @@ export default class DataPerfResolver {
       0,
       10000,
       averageQuery,
-      {direction: 'DESC', field: 'startedAt'},
+      { direction: 'DESC', field: 'startedAt' },
       userConfig.elasticsearch.dataIndices.testingPerfs + '*',
     );
-    
+
     // Place the data in an array filtered on the profile ID
-    const filteredData: any = []
+    const filteredData: any = [];
     // Filtering out any document that might not be in the parent query.
-    for (const item of data.nodes.filter((n) => dataParent.nodes.find((p) => p.id === n.id) !== undefined )) {      
-      const selectedRun = item.runs.edges.filter((r) => r.node !== undefined).find((r) => r.node.name === profileId)
+    for (const item of data.nodes.filter((n) => dataParent.nodes.find((p) => p.id === n.id) !== undefined)) {
+      const selectedRun = item.runs.edges.filter((r) => r.node !== undefined).find((r) => r.node.name === profileId);
       if (selectedRun !== undefined) {
-        filteredData.push({...item, statistics: selectedRun.node.statistics})
+        filteredData.push({ ...item, statistics: selectedRun.node.statistics });
       }
     }
 
@@ -262,43 +309,43 @@ export default class DataPerfResolver {
       return null;
     }
 
-    const transactions = filteredData[0].statistics.map((t) => t.transaction)
+    const transactions = filteredData[0].statistics.map((t) => t.transaction);
 
-    const statsComputed = []
+    const statsComputed = [];
     // Iterate over all available transactions
     for (const t of transactions) {
       for (const key of statsKeys) {
-        const values = []
+        const values = [];
         for (const run of filteredData) {
-          const currentValue = run.statistics.find((st) => t === st.transaction)
+          const currentValue = run.statistics.find((st) => t === st.transaction);
           if (currentValue !== undefined) {
-            values.push({value: currentValue[key], run: {id: run.id, name: run.name, startedAt: run.startedAt}})
+            values.push({ value: currentValue[key], run: { id: run.id, name: run.name, startedAt: run.startedAt } });
           }
         }
         statsComputed.push({
           statisticsKey: key,
           transaction: t,
-          value: values.map(v => v.value).reduce((acc, v) => acc + v, 0) / values.length,
-          runs: values.map(v => {
+          value: values.map((v) => v.value).reduce((acc, v) => acc + v, 0) / values.length,
+          runs: values.map((v) => {
             return {
               id: `${v.run.id}-${t}-${key}`,
               name: v.run.name,
               startedAt: v.run.startedAt,
-              value: v.value
-            }
-          })
-        })
+              value: v.value,
+            };
+          }),
+        });
       }
     }
 
     return {
-      id: 'average',      
+      id: 'average',
       runs: filteredData,
       statisticsKeys: statsKeys,
       transactions: transactions,
       average: statsComputed,
       // values: statsValues
-    }
+    };
   }
 
   @Mutation(() => Perf, {
@@ -306,8 +353,8 @@ export default class DataPerfResolver {
     description: 'Prevent a testing perfs run from being included in the results',
   })
   async disableTestingsPerfsRuns(
-    @Args({ name: 'id', type: () => String }) id: string, 
-    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
   ) {
     const userConfig = this.confService.getUserConfig();
     if (id === '') {
@@ -324,8 +371,8 @@ export default class DataPerfResolver {
     description: 'Prevent a testing perfs run from being included in the results',
   })
   async enableTestingsPerfsRuns(
-    @Args({ name: 'id', type: () => String }) id: string, 
-    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string    
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
   ) {
     const userConfig = this.confService.getUserConfig();
     if (id === '') {
@@ -342,14 +389,20 @@ export default class DataPerfResolver {
     description: 'Mark a testing perf run as unverified',
   })
   async unverifyTestingsPerfsRuns(
-    @Args({ name: 'id', type: () => String }) id: string, 
-    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
   ) {
     const userConfig = this.confService.getUserConfig();
     if (id === '') {
       return null;
     }
-    await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, false, 'verified');
+    await this.itemsService.updateDocumentField(
+      id,
+      userConfig.elasticsearch.dataIndices.testingPerfs,
+      username,
+      false,
+      'verified',
+    );
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
   }
@@ -359,15 +412,21 @@ export default class DataPerfResolver {
     description: 'Mark a testing perf run as verified',
   })
   async verifyTestingsPerfsRuns(
-    @Args({ name: 'id', type: () => String }) id: string, 
-    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string    
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
   ) {
     const userConfig = this.confService.getUserConfig();
 
     if (id === '') {
       return null;
     }
-    await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, true, 'verified');
+    await this.itemsService.updateDocumentField(
+      id,
+      userConfig.elasticsearch.dataIndices.testingPerfs,
+      username,
+      true,
+      'verified',
+    );
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
   }
@@ -377,10 +436,10 @@ export default class DataPerfResolver {
     description: 'Update description and analysis for a run',
   })
   async updateTestingsPerfsRun(
-    @Args({ name: 'id', type: () => String }) id: string, 
-    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: ''}) username: string,
-    @Args({ name: 'description', type: () => String, nullable: true, defaultValue: null}) description: string,
-    @Args({ name: 'analysis', type: () => String, nullable: true, defaultValue: null}) analysis: string
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
+    @Args({ name: 'description', type: () => String, nullable: true, defaultValue: null }) description: string,
+    @Args({ name: 'analysis', type: () => String, nullable: true, defaultValue: null }) analysis: string,
   ) {
     const userConfig = this.confService.getUserConfig();
 
@@ -389,12 +448,24 @@ export default class DataPerfResolver {
     }
 
     if (description !== null) {
-      await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, description, 'description');
+      await this.itemsService.updateDocumentField(
+        id,
+        userConfig.elasticsearch.dataIndices.testingPerfs,
+        username,
+        description,
+        'description',
+      );
     }
     if (analysis !== null) {
-      await this.itemsService.updateDocumentField(id, userConfig.elasticsearch.dataIndices.testingPerfs, username, analysis, 'analysis');
-    }    
+      await this.itemsService.updateDocumentField(
+        id,
+        userConfig.elasticsearch.dataIndices.testingPerfs,
+        username,
+        analysis,
+        'analysis',
+      );
+    }
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);
     return item;
-  }  
+  }
 }

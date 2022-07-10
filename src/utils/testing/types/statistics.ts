@@ -3,87 +3,86 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export default class Statistics {
   @Field(() => String, {
-    nullable: false,
+    nullable: true,
     description: 'Name of the transaction',
   })
   transaction: string;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'sampleCount result',
   })
-  sampleCount: number; 
+  sampleCount: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'errorCount result',
   })
-  errorCount: number; 
+  errorCount: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'errorPct result',
   })
-  errorPct: number; 
+  errorPct: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'meanResTime result',
   })
-  meanResTime: number; 
+  meanResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'medianResTime result',
   })
-  medianResTime: number; 
+  medianResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'minResTime result',
   })
-  minResTime: number; 
+  minResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'maxResTime result',
   })
-  maxResTime: number; 
+  maxResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'pct1ResTime result',
   })
-  pct1ResTime: number; 
+  pct1ResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'pct2ResTime result',
   })
-  pct2ResTime: number; 
+  pct2ResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'pct3ResTime result',
   })
-  pct3ResTime: number; 
+  pct3ResTime: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'throughput result',
   })
-  throughput: number; 
+  throughput: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'receivedKBytesPerSec result',
   })
-  receivedKBytesPerSec: number; 
+  receivedKBytesPerSec: number;
 
   @Field({
-    nullable: false,
+    nullable: true,
     description: 'sentKBytesPerSec result',
   })
-  sentKBytesPerSec: number; 
-
+  sentKBytesPerSec: number;
 }
