@@ -1,10 +1,11 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 import ResourceConnection from './resourceConnection';
+import TagConnection from './tagConnection';
 import PerfRunConnection from './perfRunConnection';
 import PerfRun from './perfRun';
 import Platform from './platform';
-import RepositoryConnection from '../../github/types/repositoryConnection'
+import RepositoryConnection from '../../github/types/repositoryConnection';
 
 @ObjectType()
 export default class Perf {
@@ -33,6 +34,18 @@ export default class Perf {
 
   @Field(() => String, {
     nullable: true,
+    description: 'Who did the description',
+  })
+  description_by: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Date the descruption was added',
+  })
+  description_date: string;
+
+  @Field(() => String, {
+    nullable: true,
     description: 'Analysis of the run, written by a team member',
   })
   analysis: string;
@@ -41,13 +54,31 @@ export default class Perf {
     nullable: true,
     description: 'Who did the analysis',
   })
-  analysis_by: string;  
+  analysis_by: string;
 
   @Field(() => String, {
     nullable: true,
     description: 'Date the analysis was performed',
   })
   analysis_date: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Group set by a user to allow quick filtering',
+  })
+  group: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Who did set the group',
+  })
+  group_by: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'When was the group set',
+  })
+  group_date: string;
 
   @Field(() => Boolean, {
     nullable: true,
@@ -59,7 +90,7 @@ export default class Perf {
     nullable: true,
     description: 'Who verified therun',
   })
-  verified_by: string;  
+  verified_by: string;
 
   @Field(() => String, {
     nullable: true,
@@ -95,7 +126,7 @@ export default class Perf {
     nullable: true,
     description: 'Rampup used for the run',
   })
-  rampUp: number; 
+  rampUp: number;
 
   @Field(() => Platform, {
     nullable: false,
@@ -109,6 +140,12 @@ export default class Perf {
   })
   resources: ResourceConnection;
 
+  @Field(() => TagConnection, {
+    nullable: false,
+    description: 'List of tags associated with the run',
+  })
+  tags: TagConnection;
+
   @Field(() => PerfRunConnection, {
     nullable: true,
     description: 'Runs executed in the tests',
@@ -119,7 +156,7 @@ export default class Perf {
     nullable: false,
     description: 'Run corresponding to the selected profile (provided using profileid)',
   })
-  run: PerfRun;  
+  run: PerfRun;
 
   @Field(() => String, {
     nullable: true,
@@ -143,6 +180,5 @@ export default class Perf {
     nullable: true,
     description: 'When was the run disabled',
   })
-  disabled_date: string;  
-
+  disabled_date: string;
 }

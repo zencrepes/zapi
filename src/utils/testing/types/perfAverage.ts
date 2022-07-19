@@ -30,14 +30,14 @@ export default class PerfAverage {
   values: PerfAverageValue[];
 
   @Field(() => [String], {
-    nullable: false,
+    nullable: true,
     description: 'List of available transactions',
   })
-  transactions: [string];    
+  transactions: [string];
 
   @Field(() => [String], {
     nullable: false,
     description: 'List of available statistics keys',
   })
-  statisticsKeys: [string];   
+  statisticsKeys: [string];
 }

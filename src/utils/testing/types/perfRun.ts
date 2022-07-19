@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
-import Statistics from './statistics'
+import Statistics from './statistics';
 
 @ObjectType()
 export default class PerfRun {
@@ -28,9 +28,8 @@ export default class PerfRun {
   duration: number;
 
   @Field(() => [Statistics], {
-    nullable: false,
+    nullable: true,
     description: 'Statistics coming from JMeter statistics.json file',
   })
   statistics: Statistics[];
-
 }
