@@ -438,6 +438,7 @@ export default class DataPerfResolver {
   async updateTestingsPerfsRun(
     @Args({ name: 'id', type: () => String }) id: string,
     @Args({ name: 'username', type: () => String, nullable: true, defaultValue: '' }) username: string,
+    @Args({ name: 'group', type: () => String, nullable: true, defaultValue: '' }) group: string,
     @Args({ name: 'description', type: () => String, nullable: true, defaultValue: null }) description: string,
     @Args({ name: 'analysis', type: () => String, nullable: true, defaultValue: null }) analysis: string,
   ) {
@@ -463,6 +464,15 @@ export default class DataPerfResolver {
         username,
         analysis,
         'analysis',
+      );
+    }
+    if (group !== null) {
+      await this.itemsService.updateDocumentField(
+        id,
+        userConfig.elasticsearch.dataIndices.testingPerfs,
+        username,
+        group,
+        'group',
       );
     }
     const item = await this.itemsService.findOneById(id, userConfig.elasticsearch.dataIndices.testingPerfs);

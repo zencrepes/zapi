@@ -62,6 +62,24 @@ export default class Perf {
   })
   analysis_date: string;
 
+  @Field(() => String, {
+    nullable: true,
+    description: 'Group set by a user to allow quick filtering',
+  })
+  group: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Who did set the group',
+  })
+  group_by: string;
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'When was the group set',
+  })
+  group_date: string;
+
   @Field(() => Boolean, {
     nullable: true,
     description: 'Was the run verified and relevant ?',
