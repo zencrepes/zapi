@@ -11,8 +11,6 @@ import DataItemsService from '../../utils/data/items/items.service';
 
 import PerfsAggregationConnection from './aggregations/perfsAggregationConnection.type';
 import DataAggregationsService from '../../utils/data/aggregations/aggregations.service';
-import { isNullableType } from 'graphql';
-import { run } from '@jahia/jahia-reporter';
 
 // https://github.com/nestjs/graphql/issues/475
 @Resolver(Data)
