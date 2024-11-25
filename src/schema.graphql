@@ -2520,6 +2520,193 @@ type IssueNetwork {
   source: String
 }
 
+type GithubMavenPoms {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): GithubMavenPomsData!
+
+  """Access to configuration values and metadata"""
+  config: GithubMavenPomsConfig!
+}
+
+type GithubMavenPomsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: MavenPomsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataMavenPomConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): MavenPom!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): MavenPomsAggregationConnection!
+}
+
+input MavenPomsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type GithubMavenPomsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type MavenPomContentParent {
+  """Version"""
+  version: String
+
+  """Artifact ID"""
+  artifactId: String
+
+  """Group ID"""
+  groupId: String
+}
+
+type MavenPomContent {
+  """Version"""
+  version: String
+
+  """Artifact ID"""
+  artifactId: String
+
+  """Name"""
+  name: String
+
+  """Description"""
+  description: String
+
+  """Parent detailed in the pom file"""
+  parent: MavenPomContentParent
+}
+
+type MavenPom {
+  id: ID!
+
+  """Identifies the primary key from the database."""
+  databaseId: Float
+
+  """The name of the repository."""
+  name: String
+
+  """Content of the POM file"""
+  pom: MavenPomContent
+
+  """The repository name with owner."""
+  nameWithOwner: String
+
+  """The HTTP URL for this repository."""
+  url: String!
+
+  """The User owner of the repository."""
+  owner: RepositoryOwner!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: String
+
+  """The Ref associated with the repository default branch."""
+  defaultBranchRef: Ref
+
+  """The description of the repository."""
+  description: String
+
+  """Indicates if the repository is unmaintained."""
+  isArchived: Boolean
+
+  """Returns whether or not this repository disabled."""
+  isDisabled: Boolean
+
+  """Identifies if the repository is a fork."""
+  isFork: Boolean
+
+  """Identifies if the repository contains a pom file"""
+  hasPom: Boolean
+
+  """Identifies if the repository pom file has a parent"""
+  hasParent: Boolean
+
+  """Identifies when the repository was last pushed to."""
+  pushedAt: String
+
+  """Link to the ref containing recent commits to master"""
+  lastCommitMainBranch: Commit
+
+  """A list of applied repository-topic associations for this repository."""
+  repositoryTopics: RepositoryTopicConnection
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: String
+}
+
+type DataMavenPomConnection {
+  nodes: [MavenPom!]
+  totalCount: Int!
+}
+
+type MavenPomsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
 type JiraIssues {
   """Access to the dataset as individual items, aggregations and more"""
   data(
@@ -2573,6 +2760,20 @@ type JiraIssuesData {
     """
     field: String!
   ): JiraIssuesAggregationConnection!
+
+  """Return a matrix aggregation per week and field"""
+  matrix(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Field to be used for the aggregations (for example: repository.name)"""
+    field: String!
+
+    """Date field to be used for the aggregation (for example: ClosedAt)"""
+    dateField: String!
+  ): JiraMatrixConnection!
 }
 
 input JiraIssuesSortorder {
@@ -2582,6 +2783,20 @@ input JiraIssuesSortorder {
   Order field (see config aggregations node for a sample of possible values)
   """
   field: String
+}
+
+type JiraMatrixConnection {
+  """Current Velocity data"""
+  field: String
+
+  """A list of aggregation buckets"""
+  buckets: [JiraIssueActivityBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromWeekStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toWeekStart: String!
 }
 
 type JiraIssuesConfig {
@@ -2913,6 +3128,34 @@ type JiraIssue {
 type JiraIssueItemConnection {
   nodes: [JiraIssue!]
   totalCount: Int!
+}
+
+type JiraIssueBucketWeek {
+  """First day of the week"""
+  weekStart: String!
+
+  """The number of documents that week"""
+  docCount: Float!
+
+  """The number of points that week"""
+  sum: Float
+}
+
+type JiraIssueActivityBucket {
+  """The Bucket key"""
+  key: String!
+
+  """Representation of the key as a string (useful for dates)"""
+  keyAsString: String
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+
+  """The number of points in the bucket"""
+  sum: Float
+
+  """Weeks of activity"""
+  weeks: [JiraIssueBucketWeek!]!
 }
 
 type JiraIssuesAggregationConnection {
@@ -3685,6 +3928,1044 @@ type StatesAggregationConnection {
   buckets: [AggregationBucket!]!
 }
 
+type TestingRuns {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): TestingRunsData!
+
+  """Access to configuration values and metadata"""
+  config: TestingRunsConfig!
+}
+
+type TestingRunsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: TestingRunsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): TestingRunsConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): TestingRun!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): TestingRunsAggregationConnection!
+
+  """
+  Return an aggregation by a provided timeframe (week, day, month) of the average failure rate
+  """
+  failurerate(
+    """Specify the number of first level buckets to return"""
+    buckets: Float = 25
+
+    """Specify the date field to aggregate on"""
+    datefield: String = "createdAt"
+
+    """Specify the field to aggregate by (such as plan.name.keyword)"""
+    field: String = "name.keyword"
+
+    """Specify the interval for the data histogram (day, week, month, year)"""
+    interval: String = "week"
+  ): TestingRunsFailureRateConnection!
+}
+
+input TestingRunsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type TestingRunsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type TestingRun {
+  id: ID!
+
+  """Date at which the state event was recorded (last)"""
+  createdAt: String!
+
+  """Name of the element being tested"""
+  name: String!
+
+  """Version of the element being tested"""
+  version: String!
+
+  """Concatenated name and version, separated with a _"""
+  full: String!
+
+  """List of dependencyes to the element being tested"""
+  dependencies: DependencyConnection!
+
+  """State of the test execution (PASS, FAIL, ...)"""
+  state: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Total number of tests in the run"""
+  runTotal: Float!
+
+  """Total number of successful tests in the run"""
+  runSuccess: Float!
+
+  """Rate of successful tests in the run"""
+  runSuccessRate: Float!
+
+  """Total number of failed tests in the run"""
+  runFailure: Float!
+
+  """Rate of failed tests in the run"""
+  runFailureRate: Float!
+
+  """Total duration of the run"""
+  runDuration: Float!
+}
+
+type TestingRunsConnection {
+  nodes: [TestingRun!]
+  totalCount: Int!
+}
+
+type FailureRateBucketDate {
+  """Start date of each bucket depending of the set interval"""
+  dateStart: String!
+
+  """The number of documents that week"""
+  docCount: Float!
+
+  """The failure rate (in %) over the bucket window"""
+  runFailureRate: Float!
+
+  """The total number of tests that were executed"""
+  runTotal: Float!
+
+  """The average number of tests that were executed per run"""
+  runTotalAvg: Float
+}
+
+type FailureRateBucket {
+  """The Bucket key"""
+  key: String!
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+
+  """Representation of the key as a string (useful for dates)"""
+  keyAsString: String
+
+  """The failure rate (in %) over the entire period"""
+  runFailureRate: Float!
+
+  """The total number of tests that were executed"""
+  runTotal: Float
+
+  """The average number of tests that were executed per run"""
+  runTotalAvg: Float
+
+  """Breakdown of the dataset per the defined interval"""
+  buckets: [FailureRateBucketDate!]!
+}
+
+type TestingRunsFailureRateConnection {
+  """Field used to aggregate on"""
+  field: String
+
+  """A list of aggregation buckets"""
+  buckets: [FailureRateBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromDateStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toDateStart: String!
+}
+
+type TestingRunsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type TestingCases {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): TestingCasesData!
+
+  """Access to configuration values and metadata"""
+  config: TestingCasesConfig!
+}
+
+type TestingCasesData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: TestingCasesSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): TestingCasesConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): TestingCase!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): TestingCasesAggregationConnection!
+
+  """
+  Return an aggregation by a provided timeframe (week, day, month) of the average failure rate
+  """
+  failurerate(
+    """Specify the number of first level buckets to return"""
+    buckets: Float = 25
+
+    """Specify the date field to aggregate on"""
+    datefield: String = "createdAt"
+
+    """Specify the field to aggregate by (such as plan.name.keyword)"""
+    field: String = "name.keyword"
+
+    """Specify the interval for the data histogram (day, week, month, year)"""
+    interval: String = "week"
+  ): TestingCasesFailureRateConnection!
+}
+
+input TestingCasesSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type TestingCasesConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type TestingCase {
+  id: ID!
+
+  """Date at which the state event was recorded (last)"""
+  createdAt: String!
+
+  """Name of the test case being executed"""
+  name: String!
+
+  """Name of the project in which the test case is being executed"""
+  project: String!
+
+  """Name of the test suite containing that the test case"""
+  suite: String!
+
+  """Jahia version used during the test"""
+  jahia: String!
+
+  """Jahia module used during the test"""
+  module: String!
+
+  """Concatenated name and version, separated with a _"""
+  full: String!
+
+  """List of dependencyes to the element being tested"""
+  dependencies: DependencyConnection!
+
+  """State of the test execution (PASS, FAIL, ...)"""
+  state: String!
+
+  """The HTTP URL for this PR."""
+  url: String!
+
+  """Total duration of the test case"""
+  duration: Float!
+}
+
+type TestingCasesConnection {
+  nodes: [TestingCase!]
+  totalCount: Int!
+}
+
+type FailureRateCasesBucketDate {
+  """Start date of each bucket depending of the set interval"""
+  dateStart: String!
+
+  """The number of documents that week"""
+  docCount: Float!
+
+  """The failure rate (in %) over the bucket window"""
+  caseFailureRate: Float!
+
+  """The total number of tests that were executed"""
+  caseTotal: Float!
+
+  """The average number of tests that were executed per case"""
+  caseTotalAvg: Float
+}
+
+type FailureRateCasesBucket {
+  """The Bucket key"""
+  key: String!
+
+  """The number of elements in the bucket"""
+  docCount: Float!
+
+  """Representation of the key as a string (useful for dates)"""
+  keyAsString: String
+
+  """The failure rate (in %) over the entire period"""
+  caseFailureRate: Float!
+
+  """The total number of tests that were executed"""
+  caseTotal: Float
+
+  """The average number of tests that were executed per case"""
+  caseTotalAvg: Float
+
+  """Breakdown of the dataset per the defined interval"""
+  buckets: [FailureRateCasesBucketDate!]!
+}
+
+type TestingCasesFailureRateConnection {
+  """Field used to aggregate on"""
+  field: String
+
+  """A list of aggregation buckets"""
+  buckets: [FailureRateCasesBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromDateStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toDateStart: String!
+}
+
+type TestingCasesAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type TestingPerfs {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): TestingPerfsData!
+
+  """Access to configuration values and metadata"""
+  config: TestingPerfsConfig!
+}
+
+type TestingPerfsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    """Should the respond include disabled (delete) documents?"""
+    includeDisabled: Boolean = false
+    orderBy: PerfsSortorder
+
+    """Name of the profile to return, leave empty for all"""
+    profileName: String
+
+    """Array of transactions keys to return, * for all"""
+    transactions: [String!] = ["Total"]
+
+    """Number if items to return """
+    size: Int = 100
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataPerfConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return a single profile (a single run within a run)"""
+    profileId: String
+
+    """Return items starting from"""
+    id: String!
+  ): Perf
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): PerfsAggregationConnection!
+
+  """Returns a paginated list of items"""
+  average(
+    """Array of statistics keys to return"""
+    statsKeys: [String!] = ["sampleCount", "errorCount", "errorPct", "meanResTime", "medianResTime", "minResTime", "maxResTime", "pct1ResTime", "pct2ResTime", "pct3ResTime", "throughput"]
+
+    """Query to fetch documents to be used to calculate the averages"""
+    averageQuery: String
+
+    """Return a single profile (a single run within a run)"""
+    profileId: String
+  ): PerfAverage
+}
+
+input PerfsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type TestingPerfsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type Resource {
+  id: ID
+
+  """Name of the resource"""
+  name: String!
+
+  """Size of the resource"""
+  size: String
+
+  """Name of the container that was used"""
+  image: String!
+
+  """JSON.stringify() of the tfsettings file"""
+  tfsettings: String
+}
+
+type ResourceEdge {
+  """The item at the end of the edge."""
+  node: Resource!
+}
+
+type ResourceConnection {
+  """A list of edges."""
+  edges: [ResourceEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Tag {
+  id: ID
+
+  """Name of the tag"""
+  name: String!
+}
+
+type TagEdge {
+  """The item at the end of the edge."""
+  node: Tag!
+}
+
+type TagConnection {
+  """A list of edges."""
+  edges: [TagEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Statistics {
+  """Name of the transaction"""
+  transaction: String
+
+  """sampleCount result"""
+  sampleCount: Float
+
+  """errorCount result"""
+  errorCount: Float
+
+  """errorPct result"""
+  errorPct: Float
+
+  """meanResTime result"""
+  meanResTime: Float
+
+  """medianResTime result"""
+  medianResTime: Float
+
+  """minResTime result"""
+  minResTime: Float
+
+  """maxResTime result"""
+  maxResTime: Float
+
+  """pct1ResTime result"""
+  pct1ResTime: Float
+
+  """pct2ResTime result"""
+  pct2ResTime: Float
+
+  """pct3ResTime result"""
+  pct3ResTime: Float
+
+  """throughput result"""
+  throughput: Float
+
+  """receivedKBytesPerSec result"""
+  receivedKBytesPerSec: Float
+
+  """sentKBytesPerSec result"""
+  sentKBytesPerSec: Float
+}
+
+type PerfRun {
+  id: ID
+
+  """Name of the run"""
+  name: String!
+
+  """Number of users used for the run"""
+  userCount: Float
+
+  """Execution time for the run"""
+  duration: Float
+
+  """Statistics coming from JMeter statistics.json file"""
+  statistics: [Statistics!]
+}
+
+type PerfRunEdge {
+  """The item at the end of the edge."""
+  node: PerfRun!
+}
+
+type PerfRunConnection {
+  """A list of edges."""
+  edges: [PerfRunEdge!]!
+
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+
+type Platform {
+  """Name of the vendor"""
+  vendor: String!
+
+  """Tenant/account within the vendor"""
+  tenant: String
+
+  """Region in which the run was executed"""
+  region: String!
+}
+
+type Perf {
+  id: ID
+
+  """Full document source as a JSON string"""
+  _source: String
+
+  """Name of the element being tested"""
+  name: String!
+
+  """Description of the run"""
+  description: String
+
+  """Who did the description"""
+  description_by: String
+
+  """Date the descruption was added"""
+  description_date: String
+
+  """Analysis of the run, written by a team member"""
+  analysis: String
+
+  """Who did the analysis"""
+  analysis_by: String
+
+  """Date the analysis was performed"""
+  analysis_date: String
+
+  """Group set by a user to allow quick filtering"""
+  group: String
+
+  """Who did set the group"""
+  group_by: String
+
+  """When was the group set"""
+  group_date: String
+
+  """Was the run verified and relevant ?"""
+  verified: Boolean
+
+  """Who verified therun"""
+  verified_by: String
+
+  """Date the run was verified"""
+  verified_date: String
+
+  """List of dependencyes to the element being tested"""
+  repository: RepositoryConnection!
+
+  """Date at which the performance run was started"""
+  startedAt: String!
+
+  """Execution time for the run"""
+  duration: Float
+
+  """Value of a single run metric (where relevant)"""
+  value: Float
+
+  """Rampup used for the run"""
+  rampUp: Float
+
+  """Platform used to run the tests"""
+  platform: Platform!
+
+  """List of resources to the element being tested"""
+  resources: ResourceConnection!
+
+  """List of tags associated with the run"""
+  tags: TagConnection!
+
+  """Runs executed in the tests"""
+  runs: PerfRunConnection
+
+  """Run corresponding to the selected profile (provided using profileid)"""
+  run: PerfRun!
+
+  """The HTTP URL for this PR."""
+  url: String
+
+  """Is the run disabled (removed from the records)"""
+  disabled: Boolean
+
+  """Who was the run disabled by"""
+  disabled_by: String
+
+  """When was the run disabled"""
+  disabled_date: String
+}
+
+type PerfRunMetric {
+  id: ID
+
+  """Name of the element being tested"""
+  name: String!
+
+  """Date at which the performance run was started"""
+  startedAt: String!
+
+  """Value of a single run metric (where relevant)"""
+  value: Float
+}
+
+type PerfAverageAverage {
+  id: ID
+
+  """
+  Object key in the statistics.json payload (sampleCount, errorCount, minResTime, ...)
+  """
+  statisticsKey: String!
+
+  """Name of the transaction"""
+  transaction: String!
+
+  """Average value for that key in that transaction"""
+  value: Float!
+
+  """List of runs used when calculating the average"""
+  runs: [PerfRunMetric!]!
+}
+
+type PerfAverageValue {
+  id: ID
+
+  """Name of the run"""
+  name: String!
+
+  """Date at which the performance run was started"""
+  startedAt: String!
+
+  """
+  Object key in the statistics.json payload (sampleCount, errorCount, minResTime, ...)
+  """
+  statisticsKey: String!
+
+  """Name of the transaction"""
+  transaction: String!
+
+  """Value for that key in that transaction"""
+  value: Float!
+}
+
+type PerfAverage {
+  id: ID
+
+  """List of runs used when calculating the average"""
+  runs: [Perf!]!
+
+  """Computed average values per key and transaction"""
+  average: [PerfAverageAverage!]!
+
+  """Indidual run metrics per key and per transaction"""
+  values: [PerfAverageValue!]!
+
+  """List of available transactions"""
+  transactions: [String!]
+
+  """List of available statistics keys"""
+  statisticsKeys: [String!]!
+}
+
+type DataPerfConnection {
+  nodes: [Perf!]
+  totalCount: Int!
+}
+
+type PerfsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type BambooRuns {
+  """Access to the dataset as individual items, aggregations and more"""
+  data(
+    """Query used to filter down content"""
+    query: String
+  ): BambooRunsData!
+
+  """Access to configuration values and metadata"""
+  config: BambooRunsConfig!
+}
+
+type BambooRunsData {
+  """Query received as a parameter"""
+  query: String!
+
+  """Transformation of the received query in an Elasticsearch query"""
+  esQuery: String!
+
+  """Total number of documents matching the query"""
+  count: Float!
+
+  """Returns a paginated list of items"""
+  items(
+    orderBy: RunsSortorder
+
+    """Number if items to return """
+    size: Int = 10
+
+    """Return items starting from"""
+    from: Int = 0
+  ): DataRunConnection!
+
+  """Returns a single item by providing its ID"""
+  item(
+    """Return items starting from"""
+    id: String!
+  ): State!
+
+  """Return aggregations (facets)"""
+  aggregations(
+    """
+    Additional options as a stringified object (more details in the documentation)
+    """
+    aggOptions: String
+
+    """Type of aggregation (default: term)"""
+    aggType: String
+
+    """
+    Field to aggregate on, using the node as the root object (examples: states, author.login)
+    """
+    field: String!
+  ): RunsAggregationConnection!
+
+  """
+  Return an aggregation by a provided timeframe (week, day, month) of the average failure rate
+  """
+  failurerate(
+    """Specify the date field to aggregate on"""
+    datefield: String = "startedAt"
+
+    """Specify the number of first level buckets to return"""
+    buckets: Float = 25
+
+    """Specify the field to aggregate by (such as plan.name.keyword)"""
+    field: String = "plan.name.keyword"
+
+    """Specify the interval for the data histogram (day, week, month, year)"""
+    interval: String = "week"
+  ): BambooRunsFailureRateConnection!
+}
+
+input RunsSortorder {
+  direction: OrderDirection!
+
+  """
+  Order field (see config aggregations node for a sample of possible values)
+  """
+  field: String
+}
+
+type BambooRunsConfig {
+  """Query received as a parameter"""
+  query: String!
+
+  """Returns a paginated list of available aggregations"""
+  aggregations: ConfigAggregations!
+
+  """Returns the table configuration for this datatype"""
+  table: ConfigTable!
+}
+
+type BambooProject {
+  id: ID!
+
+  """Name of the project"""
+  name: String!
+}
+
+type BambooPlan {
+  id: ID!
+
+  """Name of the plan"""
+  name: String!
+
+  """Short key of the plan"""
+  shortKey: String!
+
+  """Bamboo project attached to the run"""
+  project: BambooProject!
+}
+
+type BambooRun {
+  id: ID!
+
+  """The key of the run"""
+  key: String!
+
+  """Bamboo plan attached to the run"""
+  plan: BambooPlan!
+
+  """Date at which the run was started"""
+  startedAt: String
+
+  """Date at which the run was completed"""
+  completedAt: String
+
+  """Name of the run"""
+  name: String!
+
+  """Number of the run"""
+  number: Float!
+
+  """Duration of the run in seconds"""
+  duration: Float!
+
+  """Total number of tests in the run"""
+  runTotal: Float
+
+  """Total number of successful tests in the run"""
+  runSuccess: Float
+
+  """Total number of failed tests in the run"""
+  runFailure: Float
+
+  """Total number of skipped tests in the run"""
+  runSkipped: Float
+
+  """Total number of quarantined tests in the run"""
+  runQuarantined: Float
+
+  """State of the run"""
+  state: String!
+
+  """Was the run successful"""
+  successful: Boolean!
+}
+
+type DataRunConnection {
+  nodes: [BambooRun!]
+  totalCount: Int!
+}
+
+type RunsAggregationConnection {
+  """The field that was aggregated on"""
+  field: String!
+
+  """The ES Query executed to fetch the aggregation"""
+  esQuery: String!
+
+  """
+  When running a matrix aggregation, the field that was used for the comparison
+  """
+  compareField: String
+
+  """
+  When running a matrix aggregation, the value of the field that was used for the comparison
+  """
+  compareValue: String
+
+  """A list of aggregation buckets"""
+  buckets: [AggregationBucket!]!
+}
+
+type BambooRunsFailureRateConnection {
+  """Field used to aggregate on"""
+  field: String
+
+  """A list of aggregation buckets"""
+  buckets: [FailureRateBucket!]!
+
+  """Overall first week (first day of the week) in the aggregated buckets"""
+  fromDateStart: String!
+
+  """Overall last week (first day of the week) in the aggregated buckets"""
+  toDateStart: String!
+}
+
 type Query {
   """Fetch data useful for UI configuration"""
   config: Config!
@@ -3720,6 +5001,9 @@ type Query {
   githubIssues: GithubIssues!
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
+  githubMavenPoms: GithubMavenPoms!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
   jiraIssues: JiraIssues!
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
@@ -3733,4 +5017,33 @@ type Query {
 
   """Fetch data (items, aggregatiosn) related to the dataset"""
   testingStates: TestingStates!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  testingRuns: TestingRuns!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  testingCases: TestingCases!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  testingPerfs: TestingPerfs!
+
+  """Fetch data (items, aggregatiosn) related to the dataset"""
+  bambooRuns: BambooRuns!
+}
+
+type Mutation {
+  """Prevent a testing perfs run from being included in the results"""
+  disableTestingsPerfsRuns(username: String = "", id: String!): Perf!
+
+  """Prevent a testing perfs run from being included in the results"""
+  enableTestingsPerfsRuns(username: String = "", id: String!): Perf!
+
+  """Mark a testing perf run as unverified"""
+  unverifyTestingsPerfsRuns(username: String = "", id: String!): Perf!
+
+  """Mark a testing perf run as verified"""
+  verifyTestingsPerfsRuns(username: String = "", id: String!): Perf!
+
+  """Update description and analysis for a run"""
+  updateTestingsPerfsRun(analysis: String = null, description: String = null, group: String = "", username: String = "", id: String!): Perf!
 }

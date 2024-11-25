@@ -25,6 +25,7 @@ import { CircleciPipelinesModule } from './circleciPipelines/circleciPipelines.m
 import { CircleciInsightsModule } from './circleciInsights/circleciInsights.module';
 import { TestingStatesModule } from './testingStates/testingStates.module';
 import { TestingRunsModule } from './testingRuns/testingRuns.module';
+import { TestingCasesModule } from './testingCases/testingCases.module';
 import { TestingPerfsModule } from './testingPerfs/testingPerfs.module';
 import { BambooRunsModule } from './bambooRuns/bambooRuns.module';
 import { join } from 'path';
@@ -62,6 +63,7 @@ import { AuthenticationMiddleware } from './auth/authentication.middleware';
     CircleciInsightsModule,
     TestingStatesModule,
     TestingRunsModule,
+    TestingCasesModule,
     TestingPerfsModule,
     BambooRunsModule,
   ],
